@@ -438,7 +438,7 @@ async function saveUserData(){
   await db.collection("users").doc(currentUser.uid).set({
     visited:[...visited],
     meta,
-    profile:myPlayer,
+    profile:myPlayer?.profile||{},
     email:currentUser.email,
     lastUpdated:new Date()
   });
