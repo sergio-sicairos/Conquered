@@ -3,9 +3,6 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>SF Bar Crawl</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
 <style>
 :root{--bg:#f5f5f0;--card:#f9f9f7;--ink:#3a3a36;--muted:#888878;--line:#e0e0d8;--accent:#5a5a4a;--good:#6b8c6a;--chip:#f0f0e8;--todo:#8b7a5a}
 *{box-sizing:border-box}
@@ -341,9 +338,8 @@ h1{font-size:14px;margin:0;font-weight:bold}
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVyT5fPqhWKhShLsKVCr0rKJvz0yd5XPE&libraries=marker"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
@@ -388,7 +384,7 @@ const CATS={bar:"Bar",pub:"Pub",lounge:"Lounge",club:"Club",dive:"Dive",brewery:
 const ALLOWED_EMAILS=["sergio@usepylon.com","ashleyebell88@gmail.com","Nano.7733@gmail.com","sergio.sicairos.91@gmail.com"];
 const $=id=>document.getElementById(id);
 const icon=(name)=>`<i data-feather="${name}" style="display:inline-block;width:1em;height:1em;margin-right:4px;vertical-align:middle;"></i>`;
-let SEED=[],HOODS=[],visited=new Set(),meta={},view="all",map,markers={},cluster,cam,stream,curBar,myPlayer=null,currentUser=null;
+let SEED=[],HOODS=[],visited=new Set(),meta={},view="all",map,markers={},cluster,cam,stream,curBar,myPlayer=null,currentUser=null,currentInfoWindow=null;
 
 function isEmailAllowed(email){
   return ALLOWED_EMAILS.some(allowed=>email.toLowerCase()===allowed.toLowerCase());
@@ -544,21 +540,20 @@ function load(key,def){
 }
 
 function buildMap(){
-  map=L.map("mapContainer").setView([37.77,-122.42],12);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
-  cluster=L.markerClusterGroup();map.addLayer(cluster);
+  map=new google.maps.Map($("mapContainer"),{center:{lat:37.77,lng:-122.42},zoom:12,mapTypeId:"roadmap"});
 }
 
 function buildMarkers(){
-  cluster.clearLayers();markers={};
-  SEED.forEach(b=>{const key=keyOf(b),on=visited.has(key),pin=L.divIcon({className:"",html:`<div class="pin ${on?'done':'todo'}"></div>`,iconSize:[16,16],iconAnchor:[8,16]});
-    const m=L.marker([b.lat,b.lon],{icon:pin});
-    const info=meta[key]||{};
-    m.bindPopup(`<div class="pop"><b>${b.name}</b><small>${b.neighborhood}</small><br>${CATS[b.category]||b.category}<br><button class="popbtn ${on?'done':''}" onclick="startFlow(${JSON.stringify(b).replace(/"/g,'&quot;')})">${on?icon('check')+' Checked in':'Check in'}</button></div>`);
-    cluster.addLayer(m);markers[key]=m;});
+  markers={};
+  SEED.forEach(b=>{const key=keyOf(b),on=visited.has(key);
+    const icon=on?'http://maps.google.com/mapfiles/ms/icons/green-dot.png':'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+    const m=new google.maps.Marker({position:{lat:b.lat,lng:b.lon},map:map,title:b.name,icon:icon});
+    const infoWindow=new google.maps.InfoWindow({content:`<div class="pop"><b>${b.name}</b><small>${b.neighborhood}</small><br>${CATS[b.category]||b.category}<br><button class="popbtn ${on?'done':''}" onclick="startFlow(${JSON.stringify(b).replace(/"/g,'&quot;')})">${on?'✓ Checked in':'Check in'}</button></div>`});
+    m.addListener("click",()=>{if(currentInfoWindow)currentInfoWindow.close();infoWindow.open(map,m);currentInfoWindow=infoWindow;});
+    markers[key]={marker:m,infoWindow:infoWindow};});
 }
 
-function refreshMarker(b){const key=keyOf(b),on=visited.has(key),pin=L.divIcon({className:"",html:`<div class="pin ${on?'done':'todo'}"></div>`,iconSize:[16,16],iconAnchor:[8,16]});markers[key].setIcon(pin);}
+function refreshMarker(b){const key=keyOf(b),on=visited.has(key),icon=on?'http://maps.google.com/mapfiles/ms/icons/green-dot.png':'http://maps.google.com/mapfiles/ms/icons/red-dot.png';markers[key].marker.setIcon(icon);}
 
 function render(){
   const counts={done:visited.size,total:SEED.length};const pct=counts.total?Math.round(counts.done/counts.total*100):0;$("pct").textContent=pct+"%";$("pbar").style.width=pct+"%";
@@ -570,7 +565,7 @@ function render(){
     const wrap=document.createElement("div");const ph=Math.round(vis/inH.length*100);
     wrap.innerHTML=`<div class="nbhead"><h3>${h}</h3><div class="nbmeta"><span>${vis}/${inH.length}</span><span class="mini"><span style="width:${ph}%"></span></span></div></div><div class="rows"></div>`;
     const rows=wrap.querySelector(".rows");
-    filtered.sort((a,b)=>a.name.localeCompare(b.name)).forEach(b=>{const on=visited.has(keyOf(b));const r=document.createElement("div");r.className="row"+(on?" done":"");r.innerHTML=`<span class="badge">${on?icon('check-circle'):'<i data-feather="circle"></i>'}</span><span class="name">${b.name}</span><span class="chip">${CATS[b.category]||b.category}</span>`;r.addEventListener("click",()=>{map.setView([b.lat,b.lon],16,{animate:true});const m=markers[keyOf(b)];if(m)cluster.zoomToShowLayer(m,()=>m.openPopup());});rows.appendChild(r);feather.replace();});
+    filtered.sort((a,b)=>a.name.localeCompare(b.name)).forEach(b=>{const on=visited.has(keyOf(b));const r=document.createElement("div");r.className="row"+(on?" done":"");r.innerHTML=`<span class="badge">${on?icon('check-circle'):'<i data-feather="circle"></i>'}</span><span class="name">${b.name}</span><span class="chip">${CATS[b.category]||b.category}</span>`;r.addEventListener("click",()=>{map.panTo({lat:b.lat,lng:b.lon});map.setZoom(16);const key=keyOf(b),m=markers[key];if(m){if(currentInfoWindow)currentInfoWindow.close();m.infoWindow.open(map,m.marker);currentInfoWindow=m.infoWindow;}});rows.appendChild(r);feather.replace();});
     $("list").appendChild(wrap);});
 }
 
