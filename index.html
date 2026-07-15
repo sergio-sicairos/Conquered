@@ -701,6 +701,7 @@ function saveAvatarCrop(){
   if(!myPlayer)myPlayer={};
   if(!myPlayer.profile)myPlayer.profile={};
   myPlayer.profile.avatarUrl=dataUrl;
+  saveUserData();
 }
 
 // Avatar canvas drag and zoom
