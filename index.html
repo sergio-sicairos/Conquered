@@ -202,14 +202,39 @@ h1{font-size:14px;margin:0;font-weight:bold}
   <a class="tab" data-view="ranking" onclick="switchView('ranking'); return false;"><i data-feather="award"></i>Ranking</a>
 </div>
 
+<!-- AVATAR CROPPER MODAL -->
+<div id="avatarCropperModal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:2001">
+  <div style="background:var(--card);padding:20px;border:1px solid var(--line);max-width:400px;width:90%;border-radius:0">
+    <h3 style="margin-top:0">Crop Avatar</h3>
+    <div style="position:relative;width:200px;height:200px;margin:0 auto 16px;border:2px solid var(--line);border-radius:50%;overflow:hidden;background:#e8e8e0">
+      <canvas id="avatarCanvas" style="position:absolute;width:100%;height:100%;display:block"></canvas>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px">
+      <div style="flex:1">
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Zoom</label>
+        <input type="range" id="zoomSlider" min="0.5" max="3" step="0.1" value="1" style="width:100%" oninput="updateAvatarCrop()">
+      </div>
+      <div style="flex:1">
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Pan (drag)</label>
+        <button class="btn small" onclick="resetAvatarPosition()" style="width:100%">Reset</button>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:16px;text-align:center">Drag to move • Scroll to zoom</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn primary" onclick="saveAvatarCrop()" style="flex:1">Save</button>
+      <button class="btn" onclick="closeAvatarCropper()" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- PROFILE EDIT MODAL -->
 <div id="profileEditModal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;z-index:2000;overflow:auto">
   <div style="background:var(--card);margin:20px auto;padding:20px;border:1px solid var(--line);max-width:500px;width:90%;border-radius:0">
     <h2 style="margin-top:0">Edit Profile</h2>
     <div style="display:flex;gap:16px;margin-bottom:20px">
       <div>
-        <img id="avatarPreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='40' fill='%236b8c6a'/%3E%3C/svg%3E" style="width:80px;height:80px;border-radius:50%;border:1px solid var(--line)">
-        <input type="file" id="avatarInput" accept="image/*" onchange="previewAvatar()" style="margin-top:8px;font-size:11px">
+        <img id="avatarPreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='40' fill='%236b8c6a'/%3E%3C/svg%3E" style="width:80px;height:80px;border-radius:50%;border:1px solid var(--line);cursor:pointer" onclick="document.getElementById('avatarInput').click()">
+        <input type="file" id="avatarInput" accept="image/*" onchange="openAvatarCropper()" style="display:none">
       </div>
       <div style="flex:1">
         <label style="display:block;margin-bottom:12px">
@@ -578,14 +603,117 @@ function closeProfileEdit(){
   document.getElementById("profileEditModal").style.display="none";
 }
 
-function previewAvatar(){
+let avatarImg=null,avatarZoom=1,avatarOffsetX=0,avatarOffsetY=0,avatarDragging=false,avatarDragStartX=0,avatarDragStartY=0;
+
+function openAvatarCropper(){
   const input=document.getElementById("avatarInput");
-  if(input.files&&input.files[0]){
-    const reader=new FileReader();
-    reader.onload=e=>{document.getElementById("avatarPreview").src=e.target.result;};
-    reader.readAsDataURL(input.files[0]);
-  }
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    avatarImg=new Image();
+    avatarImg.onload=()=>{
+      avatarZoom=1;
+      avatarOffsetX=0;
+      avatarOffsetY=0;
+      document.getElementById("zoomSlider").value=1;
+      updateAvatarCrop();
+      document.getElementById("avatarCropperModal").style.display="flex";
+    };
+    avatarImg.src=e.target.result;
+  };
+  reader.readAsDataURL(input.files[0]);
 }
+
+function closeAvatarCropper(){
+  document.getElementById("avatarCropperModal").style.display="none";
+  avatarImg=null;
+}
+
+function updateAvatarCrop(){
+  const canvas=document.getElementById("avatarCanvas");
+  const ctx=canvas.getContext("2d");
+  const size=200;
+  canvas.width=size;
+  canvas.height=size;
+
+  ctx.fillStyle="#e8e8e0";
+  ctx.fillRect(0,0,size,size);
+
+  if(!avatarImg)return;
+
+  const zoom=parseFloat(document.getElementById("zoomSlider").value);
+  avatarZoom=zoom;
+
+  const imgWidth=avatarImg.width*zoom;
+  const imgHeight=avatarImg.height*zoom;
+  const x=(size-imgWidth)/2+avatarOffsetX;
+  const y=(size-imgHeight)/2+avatarOffsetY;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(size/2,size/2,size/2,0,Math.PI*2);
+  ctx.clip();
+  ctx.drawImage(avatarImg,x,y,imgWidth,imgHeight);
+  ctx.restore();
+
+  ctx.strokeStyle="var(--line)";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.arc(size/2,size/2,size/2,0,Math.PI*2);
+  ctx.stroke();
+}
+
+function resetAvatarPosition(){
+  avatarOffsetX=0;
+  avatarOffsetY=0;
+  updateAvatarCrop();
+}
+
+function saveAvatarCrop(){
+  const canvas=document.getElementById("avatarCanvas");
+  const dataUrl=canvas.toDataURL("image/png");
+  document.getElementById("avatarPreview").src=dataUrl;
+  document.getElementById("avatarPreview").style.backgroundImage="none";
+  closeAvatarCropper();
+
+  if(!myPlayer)myPlayer={};
+  if(!myPlayer.profile)myPlayer.profile={};
+  myPlayer.profile.avatarUrl=dataUrl;
+}
+
+// Avatar canvas drag and zoom
+document.addEventListener("DOMContentLoaded",()=>{
+  const canvas=document.getElementById("avatarCanvas");
+  if(!canvas)return;
+
+  canvas.addEventListener("wheel",e=>{
+    e.preventDefault();
+    const zoom=Math.max(0.5,Math.min(3,avatarZoom+(e.deltaY>0?-0.1:0.1)));
+    document.getElementById("zoomSlider").value=zoom;
+    updateAvatarCrop();
+  });
+
+  canvas.addEventListener("mousedown",e=>{
+    avatarDragging=true;
+    avatarDragStartX=e.clientX;
+    avatarDragStartY=e.clientY;
+  });
+
+  document.addEventListener("mousemove",e=>{
+    if(!avatarDragging||!avatarImg)return;
+    const dx=e.clientX-avatarDragStartX;
+    const dy=e.clientY-avatarDragStartY;
+    avatarOffsetX+=dx;
+    avatarOffsetY+=dy;
+    avatarDragStartX=e.clientX;
+    avatarDragStartY=e.clientY;
+    updateAvatarCrop();
+  });
+
+  document.addEventListener("mouseup",()=>{
+    avatarDragging=false;
+  });
+});
 
 async function saveProfile(){
   const profile={
