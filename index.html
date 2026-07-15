@@ -24,9 +24,11 @@ h1{font-size:14px;margin:0;font-weight:bold}
 #content{flex:1;display:grid;overflow:hidden;grid-template-columns:1fr}
 .view{display:none;grid-column:1;grid-row:1;flex-direction:column;overflow:auto}
 .view.active{display:flex}
-#mapView{background:#dfe6e9;flex:1;min-height:0;flex-direction:column}
+#mapView{background:#dfe6e9;flex:1;min-height:0;flex-direction:column;position:relative}
 #mapContainer{flex:1;min-height:0}
-.sidebar{width:100%;border-top:1px solid var(--line);background:var(--bg);flex:1;display:flex;flex-direction:column;min-height:0}
+.sidebar{width:100%;border-top:1px solid var(--line);background:var(--bg);display:flex;flex-direction:column;min-height:0;position:absolute;bottom:0;left:0;right:0;max-height:40vh;transition:transform 0.3s ease;touch-action:none;z-index:10}
+.sidebar.dragging{transition:none}
+.sidebar::before{content:'';display:block;height:8px;background:#ddd;border-radius:4px;margin:8px auto;width:40px;cursor:grab;flex-shrink:0}
 .controls{padding:9px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px;background:var(--bg)}
 .controls input,.controls select{padding:7px 9px;border:1px solid var(--line);border-radius:0;font-size:12px;background:var(--card);color:var(--ink);font-family:'Courier New',Courier,monospace}
 .controls input[type=text]{flex:1;min-width:110px}
@@ -1007,6 +1009,40 @@ $("ageYes").onclick=()=>{save(LS_AGE,true);$("ageDlg").close();};
 $("ageNo").onclick=()=>{document.body.innerHTML="<div style='padding:40px;font-family:sans-serif'>Sorry — you must be 21+ to use this app.</div>";};
 
 feather.replace();
+
+// Sidebar dragging for map view
+document.addEventListener("DOMContentLoaded",()=>{
+  const sidebar=document.querySelector(".sidebar");
+  if(!sidebar)return;
+  let startY=0,currentY=0,isDragging=false;
+  let minHeight=80,maxHeight=window.innerHeight-60;
+
+  sidebar.addEventListener("touchstart",e=>{
+    isDragging=true;
+    startY=e.touches[0].clientY;
+    sidebar.classList.add("dragging");
+  },false);
+
+  document.addEventListener("touchmove",e=>{
+    if(!isDragging)return;
+    currentY=e.touches[0].clientY;
+    const diff=startY-currentY;
+    const currentHeight=sidebar.offsetHeight;
+    const newHeight=Math.max(minHeight,Math.min(maxHeight,currentHeight+diff));
+    sidebar.style.height=newHeight+"px";
+    startY=currentY;
+  },false);
+
+  document.addEventListener("touchend",()=>{
+    if(!isDragging)return;
+    isDragging=false;
+    sidebar.classList.remove("dragging");
+    const currentHeight=sidebar.offsetHeight;
+    const midPoint=(minHeight+maxHeight)/2;
+    const targetHeight=currentHeight>midPoint?maxHeight:minHeight;
+    sidebar.style.height=targetHeight+"px";
+  },false);
+});
 </script>
 </body>
 </html>
