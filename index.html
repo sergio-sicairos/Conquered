@@ -430,7 +430,7 @@ async function loadUserData(){
     const data=userDoc.data();
     visited=new Set(data.visited||[]);
     meta=data.meta||{};
-    myPlayer=data.profile||null;
+    myPlayer={profile:data.profile||{}};
   }
 }
 
@@ -438,7 +438,7 @@ async function saveUserData(){
   await db.collection("users").doc(currentUser.uid).set({
     visited:[...visited],
     meta,
-    profile:myPlayer?.profile||{},
+    profile:myPlayer.profile||{},
     email:currentUser.email,
     lastUpdated:new Date()
   });
