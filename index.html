@@ -779,7 +779,7 @@ function renderProfile(){
   const completion=Math.round(totalBars/SEED.length*100);
 
   const players=load(LS_PLAYERS,{});const all=Object.values(players).map(p=>({...p,bars:p.bars||Object.keys(p.checkIns||{}).length})).sort((a,b)=>b.bars-a.bars);
-  const ranking=all.findIndex(p=>p.name===myPlayer.name)+1;
+  const ranking=all.findIndex(p=>p.name===profile.name)+1;
 
   const colors=['#6b8c6a','#5a7a8b','#8b6b7a','#7a8b6b','#8b7a6b','#6b7a8b'];const color=colors[(ranking-1)%colors.length];
 
@@ -790,9 +790,9 @@ function renderProfile(){
   const avatarStyle=profile.avatarUrl?`background-image:url('${profile.avatarUrl}');background-size:cover;background-position:center`:`background:${color}`;
   const html=`
     <div class="profile-header">
-      <div class="profile-avatar" style="${avatarStyle}">${!profile.avatarUrl?myPlayer.name.split(' ').map(w=>w[0]).join('').toUpperCase():''}</div>
+      <div class="profile-avatar" style="${avatarStyle}">${!profile.avatarUrl?profile.name.split(' ').map(w=>w[0]).join('').toUpperCase():''}</div>
       <div class="profile-info">
-        <h2>${myPlayer.name}</h2>
+        <h2>${profile.name}</h2>
         <div class="subtitle">Ranked #${ranking} of ${all.length}</div>
         <div class="subtitle">${totalBars} bars conquered</div>
       </div>
