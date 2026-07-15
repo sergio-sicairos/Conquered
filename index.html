@@ -554,15 +554,12 @@ function buildMarkers(){
 }
 
 function fetchBarImage(barName,key){
-  fetch(`https://pixabay.com/api/?key=45120084-a2e2f2b2c2f2c2f2c2f2c2f2c&q=${encodeURIComponent(barName + ' bar')}&image_type=photo&per_page=3`)
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.hits&&d.hits.length>0){
-        const img=$(`img-${key}`);
-        if(img)img.src=d.hits[Math.floor(Math.random()*Math.min(3,d.hits.length))].webformatURL;
-      }
-    })
-    .catch(e=>console.log('Image fetch failed for',barName));
+  const img=$(`img-${key}`);
+  if(!img)return;
+  // Generate a dynamic placeholder image with the bar name
+  const colors=['FF6B6B','4ECDC4','45B7D1','FFA07A','98D8C8','F7DC6F'];
+  const color=colors[Math.floor(Math.random()*colors.length)];
+  img.src=`https://via.placeholder.com/400x250/${color}/FFFFFF?text=${encodeURIComponent(barName)}`;
 }
 
 function refreshMarker(b){const key=keyOf(b),on=visited.has(key),icon=on?'http://maps.google.com/mapfiles/ms/icons/green-dot.png':'http://maps.google.com/mapfiles/ms/icons/red-dot.png';markers[key].marker.setIcon(icon);}
