@@ -869,11 +869,12 @@ async function updateLeaderboard(){
     usersSnapshot.forEach(doc=>{
       const data=doc.data();
       if(data.profile&&data.profile.name){
+        const lastUpdated=data.lastUpdated?.toDate?.()?.toLocaleDateString()||new Date().toLocaleDateString();
         players.push({
           uid:doc.id,
           name:data.profile.name,
           bars:data.visited?data.visited.length:0,
-          updated:data.lastUpdated?new Date(data.lastUpdated).toLocaleDateString():new Date().toLocaleDateString(),
+          updated:lastUpdated,
           avatarUrl:data.profile.avatarUrl||"",
           isCurrentUser:doc.id===currentUser.uid
         });
