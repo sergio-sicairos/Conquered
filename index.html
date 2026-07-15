@@ -307,6 +307,17 @@ h1{font-size:14px;margin:0;font-weight:bold}
   </div>
 </div>
 
+<!-- PUBLIC PROFILE MODAL -->
+<div id="publicProfileModal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;z-index:2000;overflow:auto">
+  <div style="background:var(--card);margin:20px auto;padding:20px;border:1px solid var(--line);max-width:500px;width:90%;border-radius:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="margin:0">Profile</h2>
+      <button onclick="closePublicProfile()" style="background:none;border:none;cursor:pointer;font-size:24px;padding:0">&times;</button>
+    </div>
+    <div id="publicProfileContent"></div>
+  </div>
+</div>
+
 <!-- CHECK-IN FLOW -->
 <dialog id="ageDlg" style="border:0;border-radius:12px;padding:20px;max-width:300px">
   <h2 style="margin-top:0">Age Verification</h2>
@@ -869,7 +880,7 @@ async function updateLeaderboard(){
 
     players.sort((a,b)=>b.bars-a.bars);
 
-    const html=players.length?players.map((p,i)=>{const initials=p.name.split(' ').map(w=>w[0]).join('').toUpperCase();const color=colors[i%colors.length];const avatarStyle=p.avatarUrl?`background-image:url('${p.avatarUrl}');background-size:cover;background-position:center`:`background:${color}`;return`<div class="leader-item ${p.isCurrentUser?'active':''}"><div class="leader-rank">#${i+1}</div><div class="leader-avatar" style="${avatarStyle}">${!p.avatarUrl?initials:''}</div><div class="leader-info"><div class="leader-name">${p.name}</div><div class="leader-stats">Last active ${p.updated}</div></div><div class="leader-bars">${p.bars}</div></div>`;}).join(""):`<div class="emptyState"><div class="icon">${icon('award')}</div><h3>No players yet</h3><p>Set your profile name to join the leaderboard</p></div>`;
+    const html=players.length?players.map((p,i)=>{const initials=p.name.split(' ').map(w=>w[0]).join('').toUpperCase();const color=colors[i%colors.length];const avatarStyle=p.avatarUrl?`background-image:url('${p.avatarUrl}');background-size:cover;background-position:center`:`background:${color}`;return`<div class="leader-item ${p.isCurrentUser?'active':''}" onclick="viewPublicProfile('${p.uid}')" style="cursor:pointer"><div class="leader-rank">#${i+1}</div><div class="leader-avatar" style="${avatarStyle}">${!p.avatarUrl?initials:''}</div><div class="leader-info"><div class="leader-name">${p.name}</div><div class="leader-stats">Last active ${p.updated}</div></div><div class="leader-bars">${p.bars}</div></div>`;}).join(""):`<div class="emptyState"><div class="icon">${icon('award')}</div><h3>No players yet</h3><p>Set your profile name to join the leaderboard</p></div>`;
     $("leaderboard").innerHTML=html;
     feather.replace();
   }catch(err){
@@ -881,6 +892,45 @@ async function updateLeaderboard(){
 $("search").addEventListener("input",render);$("fHood").addEventListener("change",render);$("fCat").addEventListener("change",render);
 $("segView").addEventListener("click",e=>{if(e.target.tagName!=="BUTTON")return;view=e.target.dataset.v;save(LS_VIEW,view);[...e.currentTarget.children].forEach(b=>b.classList.toggle("on",b===e.target));render();});
 [...$("segView").children].forEach(b=>b.classList.toggle("on",b.dataset.v===view));
+
+async function viewPublicProfile(uid){
+  try{
+    const userDoc=await db.collection("users").doc(uid).get();
+    if(!userDoc.exists){alert('Profile not found');return;}
+    const data=userDoc.data();
+    if(!data.profile||!data.profile.public){alert('This profile is private');return;}
+    const profile=data.profile;
+    const bars=data.visited?data.visited.length:0;
+    const colors=['#6b8c6a','#5a7a8b','#8b6b7a','#7a8b6b','#8b7a6b','#6b7a8b'];
+    const color=colors[Math.floor(Math.random()*colors.length)];
+    const avatarStyle=profile.avatarUrl?`background-image:url('${profile.avatarUrl}');background-size:cover;background-position:center`:`background:${color}`;
+    const initials=profile.name.split(' ').map(w=>w[0]).join('').toUpperCase();
+    const aboutHtml=profile.aboutMe?'<div style="background:var(--bg);border:1px solid var(--line);padding:12px;margin-bottom:16px;border-radius:0"><div style="font-size:11px;color:var(--muted);text-transform:uppercase">About</div><div style="font-size:13px;margin-top:8px">'+profile.aboutMe+'</div></div>':'';
+    const drinkHtml=profile.drinkChoice?'<div style="background:var(--bg);border:1px solid var(--line);padding:12px;border-radius:0"><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Drink</div><div style="font-size:13px;font-weight:bold;margin-top:4px">'+profile.drinkChoice+'</div></div>':'';
+    const instagramHtml=profile.instagramHandle?'<a href="https://instagram.com/'+profile.instagramHandle.replace('@','')+'" style="color:var(--accent);text-decoration:none">'+profile.instagramHandle+'</a>':'';
+    const html=`
+      <div style="display:flex;gap:16px;margin-bottom:20px">
+        <div class="profile-avatar" style="${avatarStyle};width:80px;height:80px">${!profile.avatarUrl?initials:''}</div>
+        <div>
+          <h3 style="margin:0 0 4px 0">${profile.name}</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${bars} bars conquered</div>
+          ${instagramHtml?'<div style="font-size:12px">'+instagramHtml+'</div>':''}
+        </div>
+      </div>
+      ${aboutHtml}
+      ${drinkHtml}
+    `;
+    $("publicProfileContent").innerHTML=html;
+    $("publicProfileModal").style.display="flex";
+  }catch(err){
+    console.error('Error loading profile:',err);
+    alert('Error loading profile');
+  }
+}
+
+function closePublicProfile(){
+  $("publicProfileModal").style.display="none";
+}
 
 function startFlow(b){
   curBar=b;
