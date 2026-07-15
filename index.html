@@ -635,6 +635,10 @@ function renderProfile(){
 
   const colors=['#6b8c6a','#5a7a8b','#8b6b7a','#7a8b6b','#8b7a6b','#6b7a8b'];const color=colors[(ranking-1)%colors.length];
 
+  const aboutHtml=profile.aboutMe?'<div style="background:var(--card);border:1px solid var(--line);padding:12px;margin-bottom:16px;border-radius:0"><div style="font-size:11px;color:var(--muted);text-transform:uppercase">About</div><div style="font-size:13px;margin-top:8px">'+profile.aboutMe+'</div></div>':'';
+  const drinkHtml=profile.drinkChoice?'<div style="background:var(--card);border:1px solid var(--line);padding:12px;border-radius:0"><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Drink</div><div style="font-size:13px;font-weight:bold;margin-top:4px">'+profile.drinkChoice+'</div></div>':'';
+  const hoodHtml=profile.favNeighborhood?'<div style="background:var(--card);border:1px solid var(--line);padding:12px;border-radius:0"><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Fav Neighborhood</div><div style="font-size:13px;font-weight:bold;margin-top:4px">'+profile.favNeighborhood+'</div></div>':'';
+
   const html=`
     <div class="profile-header">
       <div class="profile-avatar" style="background:${color};background-image:url('${profile.avatarUrl||''}');background-size:cover;background-position:center">${!profile.avatarUrl?myPlayer.name.split(' ').map(w=>w[0]).join('').toUpperCase():''}</div>
@@ -645,9 +649,12 @@ function renderProfile(){
       </div>
     </div>
 
-    ${profile.aboutMe?`<div style="background:var(--card);border:1px solid var(--line);padding:12px;margin-bottom:16px;border-radius:0"><div style="font-size:11px;color:var(--muted);text-transform:uppercase">About</div><div style="font-size:13px;margin-top:8px">${profile.aboutMe}</div></div>`:''}
+    ${aboutHtml}
 
-    ${profile.drinkChoice || profile.favNeighborhood?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">${profile.favNeighborhood?`<div style="background:var(--card);border:1px solid var(--line);padding:12px;border-radius:0"><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Fav Neighborhood</div><div style="font-size:13px;font-weight:bold;margin-top:4px">${profile.favNeighborhood}</div></div>`:''}${profile.drinkChoice?`<div style="background:var(--card);border:1px solid var(--line);padding:12px;border-radius:0"><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Drink</div><div style="font-size:13px;font-weight:bold;margin-top:4px">${profile.drinkChoice}</div></div>`:''}</div>`:''}`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      ${hoodHtml}
+      ${drinkHtml}
+    </div>`
 
     <div class="stat-grid">
       <div class="stat-card">
