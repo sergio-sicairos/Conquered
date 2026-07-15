@@ -842,12 +842,41 @@ function renderProfile(){
   feather.replace();
 }
 
-function updateLeaderboard(){
+async function updateLeaderboard(){
   const colors=['#6b8c6a','#5a7a8b','#8b6b7a','#7a8b6b','#8b7a6b','#6b7a8b'];
-  const players=load(LS_PLAYERS,{});const all=Object.values(players).map(p=>({...p,bars:p.bars||Object.keys(p.checkIns||{}).length})).sort((a,b)=>b.bars-a.bars);
-  const html=all.length?all.map((p,i)=>{const initials=p.name.split(' ').map(w=>w[0]).join('').toUpperCase();const color=colors[i%colors.length];return`<div class="leader-item ${myPlayer&&p.name===myPlayer.name?'active':''}"><div class="leader-rank">#${i+1}</div><div class="leader-avatar" style="background:${color}">${initials}</div><div class="leader-info"><div class="leader-name">${p.name}</div><div class="leader-stats">Last active ${new Date(p.updated).toLocaleDateString()}</div></div><div class="leader-bars">${p.bars}</div></div>`;}).join(""):`<div class="emptyState"><div class="icon">${icon('award')}</div><h3>No players yet</h3><p>Set your name to join the leaderboard</p></div>`;
-  $("leaderboard").innerHTML=html;
-  feather.replace();
+
+  if(!currentUser||!db){
+    $("leaderboard").innerHTML=`<div class="emptyState"><div class="icon">${icon('award')}</div><h3>No players yet</h3><p>Sign in to see the leaderboard</p></div>`;
+    feather.replace();
+    return;
+  }
+
+  try{
+    const usersSnapshot=await db.collection("users").get();
+    let players=[];
+
+    usersSnapshot.forEach(doc=>{
+      const data=doc.data();
+      if(data.profile&&data.profile.name){
+        players.push({
+          uid:doc.id,
+          name:data.profile.name,
+          bars:data.visited?data.visited.length:0,
+          updated:data.lastUpdated?new Date(data.lastUpdated).toLocaleDateString():new Date().toLocaleDateString(),
+          isCurrentUser:doc.id===currentUser.uid
+        });
+      }
+    });
+
+    players.sort((a,b)=>b.bars-a.bars);
+
+    const html=players.length?players.map((p,i)=>{const initials=p.name.split(' ').map(w=>w[0]).join('').toUpperCase();const color=colors[i%colors.length];return`<div class="leader-item ${p.isCurrentUser?'active':''}"><div class="leader-rank">#${i+1}</div><div class="leader-avatar" style="background:${color}">${initials}</div><div class="leader-info"><div class="leader-name">${p.name}</div><div class="leader-stats">Last active ${p.updated}</div></div><div class="leader-bars">${p.bars}</div></div>`;}).join(""):`<div class="emptyState"><div class="icon">${icon('award')}</div><h3>No players yet</h3><p>Set your profile name to join the leaderboard</p></div>`;
+    $("leaderboard").innerHTML=html;
+    feather.replace();
+  }catch(err){
+    console.error('Error loading leaderboard:',err);
+    $("leaderboard").innerHTML=`<div class="emptyState"><p>Error loading leaderboard</p></div>`;
+  }
 }
 
 $("search").addEventListener("input",render);$("fHood").addEventListener("change",render);$("fCat").addEventListener("change",render);
