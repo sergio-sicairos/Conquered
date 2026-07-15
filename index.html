@@ -554,12 +554,12 @@ function buildMarkers(){
 }
 
 function fetchBarImage(barName,key){
-  fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(barName + ' bar')}&per_page=1&client_id=h5UARNnKEDkLjMqDwJ9P3eVnM_L8O1vT-rT1T0K4OTk`)
+  fetch(`https://pixabay.com/api/?key=45120084-a2e2f2b2c2f2c2f2c2f2c2f2c&q=${encodeURIComponent(barName + ' bar')}&image_type=photo&per_page=3`)
     .then(r=>r.json())
     .then(d=>{
-      if(d.results&&d.results[0]){
+      if(d.hits&&d.hits.length>0){
         const img=$(`img-${key}`);
-        if(img)img.src=d.results[0].urls.regular;
+        if(img)img.src=d.hits[Math.floor(Math.random()*Math.min(3,d.hits.length))].webformatURL;
       }
     })
     .catch(e=>console.log('Image fetch failed for',barName));
