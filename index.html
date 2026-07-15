@@ -548,10 +548,21 @@ function buildMarkers(){
   SEED.forEach(b=>{const key=keyOf(b),on=visited.has(key);
     const icon=on?'http://maps.google.com/mapfiles/ms/icons/green-dot.png':'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
     const m=new google.maps.Marker({position:{lat:b.lat,lng:b.lon},map:map,title:b.name,icon:icon});
-    const streetViewUrl=`https://maps.googleapis.com/maps/api/streetview?size=400x250&location=${b.lat},${b.lon}&key=AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4`;
-    const infoWindow=new google.maps.InfoWindow({content:`<div class="pop"><img src="${streetViewUrl}" style="width:100%;height:auto;border-radius:4px;margin-bottom:8px"><b>${b.name}</b><small>${b.neighborhood}</small><br>${CATS[b.category]||b.category}<br><button class="popbtn ${on?'done':''}" onclick="startFlow(${JSON.stringify(b).replace(/"/g,'&quot;')})">${on?'✓ Checked in':'Check in'}</button></div>`});
-    m.addListener("click",()=>{if(currentInfoWindow)currentInfoWindow.close();infoWindow.open(map,m);currentInfoWindow=infoWindow;});
+    const infoWindow=new google.maps.InfoWindow({content:`<div class="pop"><img id="img-${key}" src="https://via.placeholder.com/400x250?text=Loading..." style="width:100%;height:auto;border-radius:4px;margin-bottom:8px"><b>${b.name}</b><small>${b.neighborhood}</small><br>${CATS[b.category]||b.category}<br><button class="popbtn ${on?'done':''}" onclick="startFlow(${JSON.stringify(b).replace(/"/g,'&quot;')})">${on?'✓ Checked in':'Check in'}</button></div>`});
+    m.addListener("click",()=>{if(currentInfoWindow)currentInfoWindow.close();infoWindow.open(map,m);currentInfoWindow=infoWindow;fetchBarImage(b.name,key);});
     markers[key]={marker:m,infoWindow:infoWindow};});
+}
+
+function fetchBarImage(barName,key){
+  fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(barName + ' bar')}&per_page=1&client_id=h5UARNnKEDkLjMqDwJ9P3eVnM_L8O1vT-rT1T0K4OTk`)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.results&&d.results[0]){
+        const img=$(`img-${key}`);
+        if(img)img.src=d.results[0].urls.regular;
+      }
+    })
+    .catch(e=>console.log('Image fetch failed for',barName));
 }
 
 function refreshMarker(b){const key=keyOf(b),on=visited.has(key),icon=on?'http://maps.google.com/mapfiles/ms/icons/green-dot.png':'http://maps.google.com/mapfiles/ms/icons/red-dot.png';markers[key].marker.setIcon(icon);}
