@@ -483,7 +483,7 @@ function initializeDummyData(){
 
 function setupAuthListener(){
   if(!auth)return;
-  auth.onAuthStateChanged(user=>{
+  auth.onAuthStateChanged(async user=>{
     if(user&&!isEmailAllowed(user.email)){
       auth.signOut();
       currentUser=null;
@@ -494,6 +494,7 @@ function setupAuthListener(){
     currentUser=user;
     onAuthStateChanged();
     if(user){
+      await loadUserData();
       fetch("data/bars_full.json").then(r=>r.json()).then(d=>{SEED=Array.isArray(d)?d:d.bars;init();});
     }
   });
