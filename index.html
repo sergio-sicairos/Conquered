@@ -251,10 +251,19 @@ const firebaseConfig = {
   appId: "1:531077493851:web:9f0542c4dd0919e13ffb7e"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Initialize Firebase (wait for SDK to load)
+let auth, db;
+function initFirebase(){
+  if(typeof firebase !== 'undefined'){
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    setupAuthListener();
+  }else{
+    setTimeout(initFirebase, 100);
+  }
+}
+initFirebase();
 
 const RADIUS_M=150,CLIP_MS=4000,FRAMES=8,MOTION_THRESH=6;
 const LS_V="sfbars_visited_v1",LS_META="sfbars_meta_v1",LS_VIEW="sfbars_view_v1",LS_CUSTOM="sfbars_custom_v1",LS_AGE="sfbars_age_v1",LS_PLAYER="sfbars_player_v1",LS_PLAYERS="sfbars_players_v1";
@@ -350,13 +359,16 @@ function initializeDummyData(){
   save(LS_PLAYERS,players);
 }
 
-auth.onAuthStateChanged(user=>{
-  currentUser=user;
-  onAuthStateChanged();
-  if(user){
-    fetch("data/bars_full.json").then(r=>r.json()).then(d=>{SEED=Array.isArray(d)?d:d.bars;init();});
-  }
-});
+function setupAuthListener(){
+  if(!auth)return;
+  auth.onAuthStateChanged(user=>{
+    currentUser=user;
+    onAuthStateChanged();
+    if(user){
+      fetch("data/bars_full.json").then(r=>r.json()).then(d=>{SEED=Array.isArray(d)?d:d.bars;init();});
+    }
+  });
+}
 
 function init(){
   HOODS=[...new Set(SEED.map(b=>b.neighborhood))].sort();
