@@ -860,6 +860,7 @@ async function updateLeaderboard(){
           name:data.profile.name,
           bars:data.visited?data.visited.length:0,
           updated:data.lastUpdated?new Date(data.lastUpdated).toLocaleDateString():new Date().toLocaleDateString(),
+          avatarUrl:data.profile.avatarUrl||"",
           isCurrentUser:doc.id===currentUser.uid
         });
       }
@@ -867,7 +868,7 @@ async function updateLeaderboard(){
 
     players.sort((a,b)=>b.bars-a.bars);
 
-    const html=players.length?players.map((p,i)=>{const initials=p.name.split(' ').map(w=>w[0]).join('').toUpperCase();const color=colors[i%colors.length];return`<div class="leader-item ${p.isCurrentUser?'active':''}"><div class="leader-rank">#${i+1}</div><div class="leader-avatar" style="background:${color}">${initials}</div><div class="leader-info"><div class="leader-name">${p.name}</div><div class="leader-stats">Last active ${p.updated}</div></div><div class="leader-bars">${p.bars}</div></div>`;}).join(""):`<div class="emptyState"><div class="icon">${icon('award')}</div><h3>No players yet</h3><p>Set your profile name to join the leaderboard</p></div>`;
+    const html=players.length?players.map((p,i)=>{const initials=p.name.split(' ').map(w=>w[0]).join('').toUpperCase();const color=colors[i%colors.length];const avatarStyle=p.avatarUrl?`background-image:url('${p.avatarUrl}');background-size:cover;background-position:center`:`background:${color}`;return`<div class="leader-item ${p.isCurrentUser?'active':''}"><div class="leader-rank">#${i+1}</div><div class="leader-avatar" style="${avatarStyle}">${!p.avatarUrl?initials:''}</div><div class="leader-info"><div class="leader-name">${p.name}</div><div class="leader-stats">Last active ${p.updated}</div></div><div class="leader-bars">${p.bars}</div></div>`;}).join(""):`<div class="emptyState"><div class="icon">${icon('award')}</div><h3>No players yet</h3><p>Set your profile name to join the leaderboard</p></div>`;
     $("leaderboard").innerHTML=html;
     feather.replace();
   }catch(err){
