@@ -182,10 +182,6 @@ h1{font-size:14px;margin:0;font-weight:bold}
 
     <!-- RANKING VIEW -->
     <div id="rankingView" class="view">
-      <div class="user-input">
-        <input type="text" id="playerName" placeholder="Your name (for leaderboard)…" maxlength="20">
-        <button onclick="setPlayerName()">Set</button>
-      </div>
       <div style="flex:1;overflow:auto">
         <div class="leaderboard" id="leaderboard"></div>
       </div>
@@ -596,11 +592,6 @@ function renderPending(){
     $("pendingList").innerHTML=html;
     feather.replace();
   },err=>{$("pendingList").innerHTML=`<div class="emptyState"><div class="icon">${icon('map-pin')}</div><h3>Location blocked</h3><p>Allow location access to see nearby bars</p></div>`;feather.replace();});
-}
-
-function setPlayerName(){
-  const name=$("playerName").value.trim();if(!name)return;myPlayer={name,bars:visited.size,updated:Date.now()};save(LS_PLAYER,myPlayer);
-  const players=load(LS_PLAYERS,{});players[name]=myPlayer;save(LS_PLAYERS,players);updateLeaderboard();
 }
 
 function openProfileEdit(){
