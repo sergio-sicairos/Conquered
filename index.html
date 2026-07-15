@@ -612,10 +612,13 @@ function openAvatarCropper(){
   reader.onload=e=>{
     avatarImg=new Image();
     avatarImg.onload=()=>{
-      avatarZoom=1;
+      // Calculate zoom to fit entire image in circle
+      const maxDim=Math.max(avatarImg.width,avatarImg.height);
+      const initialZoom=Math.min(200/maxDim,1);
+      avatarZoom=initialZoom;
       avatarOffsetX=0;
       avatarOffsetY=0;
-      document.getElementById("zoomSlider").value=1;
+      document.getElementById("zoomSlider").value=initialZoom;
       updateAvatarCrop();
       document.getElementById("avatarCropperModal").style.display="flex";
     };
