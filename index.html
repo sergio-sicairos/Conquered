@@ -374,9 +374,14 @@ initFirebase();
 const RADIUS_M=150,CLIP_MS=4000,FRAMES=8,MOTION_THRESH=6;
 const LS_V="sfbars_visited_v1",LS_META="sfbars_meta_v1",LS_VIEW="sfbars_view_v1",LS_CUSTOM="sfbars_custom_v1",LS_AGE="sfbars_age_v1",LS_PLAYER="sfbars_player_v1",LS_PLAYERS="sfbars_players_v1";
 const CATS={bar:"Bar",pub:"Pub",lounge:"Lounge",club:"Club",dive:"Dive",brewery:"Brewery",gastropub:"Gastropub",sports:"Sports",wine:"Wine"};
+const ALLOWED_EMAILS=["sergio@usepylon.com","ashleyebell88@gmail.com","Nano.7733@gmail.com"];
 const $=id=>document.getElementById(id);
 const icon=(name)=>`<i data-feather="${name}" style="display:inline-block;width:1em;height:1em;margin-right:4px;vertical-align:middle;"></i>`;
 let SEED=[],HOODS=[],visited=new Set(),meta={},view="all",map,markers={},cluster,cam,stream,curBar,myPlayer=null,currentUser=null;
+
+function isEmailAllowed(email){
+  return ALLOWED_EMAILS.some(allowed=>email.toLowerCase()===allowed.toLowerCase());
+}
 
 async function googleLogin(){
   if(!auth){
@@ -386,7 +391,13 @@ async function googleLogin(){
   const provider=new firebase.auth.GoogleAuthProvider();
   try{
     const result=await auth.signInWithPopup(provider);
-    currentUser=result.user;
+    const user=result.user;
+    if(!isEmailAllowed(user.email)){
+      auth.signOut();
+      alert('Access denied. Your email ('+user.email+') is not authorized to use this app.');
+      return;
+    }
+    currentUser=user;
     onAuthStateChanged();
   }catch(err){
     console.error('Login error:', err);
@@ -473,6 +484,13 @@ function initializeDummyData(){
 function setupAuthListener(){
   if(!auth)return;
   auth.onAuthStateChanged(user=>{
+    if(user&&!isEmailAllowed(user.email)){
+      auth.signOut();
+      currentUser=null;
+      onAuthStateChanged();
+      console.warn('User '+user.email+' is not authorized');
+      return;
+    }
     currentUser=user;
     onAuthStateChanged();
     if(user){
