@@ -326,13 +326,22 @@ const firebaseConfig = {
 // Initialize Firebase (wait for SDK to load)
 let auth, db;
 function initFirebase(){
-  if(typeof firebase !== 'undefined'){
-    firebase.initializeApp(firebaseConfig);
+  if(typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length === 0){
+    try{
+      firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+      console.log('Firebase initialized');
+      setupAuthListener();
+    }catch(err){
+      console.error('Firebase init error:', err);
+    }
+  }else if(!firebase.apps || firebase.apps.length === 0){
+    setTimeout(initFirebase, 100);
+  }else{
     auth = firebase.auth();
     db = firebase.firestore();
     setupAuthListener();
-  }else{
-    setTimeout(initFirebase, 100);
   }
 }
 initFirebase();
@@ -345,12 +354,17 @@ const icon=(name)=>`<i data-feather="${name}" style="display:inline-block;width:
 let SEED=[],HOODS=[],visited=new Set(),meta={},view="all",map,markers={},cluster,cam,stream,curBar,myPlayer=null,currentUser=null;
 
 async function googleLogin(){
+  if(!auth){
+    alert('Firebase not initialized yet. Please wait and try again.');
+    return;
+  }
   const provider=new firebase.auth.GoogleAuthProvider();
   try{
     const result=await auth.signInWithPopup(provider);
     currentUser=result.user;
     onAuthStateChanged();
   }catch(err){
+    console.error('Login error:', err);
     alert('Login failed: '+err.message);
   }
 }
