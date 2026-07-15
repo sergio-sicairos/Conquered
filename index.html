@@ -176,6 +176,7 @@ h1{font-size:14px;margin:0;font-weight:bold}
     <div id="profileView" class="view">
       <div style="flex:1;overflow:auto;padding:12px">
         <div id="profileContent"></div>
+        <button class="btn primary" onclick="openProfileEdit()" style="width:100%;margin-top:20px">Edit Profile</button>
       </div>
     </div>
 
@@ -199,6 +200,77 @@ h1{font-size:14px;margin:0;font-weight:bold}
   <a class="tab" data-view="pending" onclick="switchView('pending'); return false;"><i data-feather="map-pin"></i>Near me</a>
   <a class="tab" data-view="profile" onclick="switchView('profile'); return false;"><i data-feather="user"></i>Me</a>
   <a class="tab" data-view="ranking" onclick="switchView('ranking'); return false;"><i data-feather="award"></i>Ranking</a>
+</div>
+
+<!-- PROFILE EDIT MODAL -->
+<div id="profileEditModal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;z-index:2000;overflow:auto">
+  <div style="background:var(--card);margin:20px auto;padding:20px;border:1px solid var(--line);max-width:500px;width:90%;border-radius:0">
+    <h2 style="margin-top:0">Edit Profile</h2>
+    <div style="display:flex;gap:16px;margin-bottom:20px">
+      <div>
+        <img id="avatarPreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='40' fill='%236b8c6a'/%3E%3C/svg%3E" style="width:80px;height:80px;border-radius:50%;border:1px solid var(--line)">
+        <input type="file" id="avatarInput" accept="image/*" onchange="previewAvatar()" style="margin-top:8px;font-size:11px">
+      </div>
+      <div style="flex:1">
+        <label style="display:block;margin-bottom:12px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">About Me</div>
+          <textarea id="aboutMe" placeholder="Tell others about yourself..." style="width:100%;height:100px;padding:8px;border:1px solid var(--line);border-radius:0;font-family:'Courier New',Courier,monospace;font-size:12px"></textarea>
+        </label>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <label style="display:block">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Favorite Neighborhood</div>
+        <select id="favNeighborhood" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:0;font-family:'Courier New',Courier,monospace;font-size:12px"></select>
+      </label>
+      <label style="display:block">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Drink of Choice</div>
+        <input type="text" id="drinkChoice" placeholder="e.g., IPA, Martini..." style="width:100%;padding:8px;border:1px solid var(--line);border-radius:0;font-family:'Courier New',Courier,monospace;font-size:12px">
+      </label>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <label style="display:block">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Favorite Bar Type</div>
+        <select id="favCategory" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:0;font-family:'Courier New',Courier,monospace;font-size:12px"></select>
+      </label>
+      <label style="display:block">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Conquest Goal</div>
+        <input type="number" id="conquestGoal" min="1" max="575" placeholder="e.g., 100" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:0;font-family:'Courier New',Courier,monospace;font-size:12px">
+      </label>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <label style="display:block">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Instagram Handle</div>
+        <input type="text" id="instagramHandle" placeholder="@username" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:0;font-family:'Courier New',Courier,monospace;font-size:12px">
+      </label>
+      <label style="display:block">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase">Preferred Crawl Day</div>
+        <select id="crawlDay" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:0;font-family:'Courier New',Courier,monospace;font-size:12px">
+          <option value="">Any day</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+      </label>
+    </div>
+
+    <label style="display:flex;gap:8px;align-items:center;margin-bottom:16px">
+      <input type="checkbox" id="publicProfile">
+      <span style="font-size:12px">Make my profile public</span>
+    </label>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn primary" onclick="saveProfile()" style="flex:1">Save Profile</button>
+      <button class="btn" onclick="closeProfileEdit()" style="flex:1">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <!-- LOGIN MODAL -->
@@ -473,9 +545,64 @@ function setPlayerName(){
   const players=load(LS_PLAYERS,{});players[name]=myPlayer;save(LS_PLAYERS,players);updateLeaderboard();
 }
 
+function openProfileEdit(){
+  if(!currentUser)return;
+  const profile=myPlayer?.profile||{};
+  document.getElementById("aboutMe").value=profile.aboutMe||"";
+  document.getElementById("drinkChoice").value=profile.drinkChoice||"";
+  document.getElementById("favNeighborhood").value=profile.favNeighborhood||"";
+  document.getElementById("favCategory").value=profile.favCategory||"";
+  document.getElementById("conquestGoal").value=profile.conquestGoal||"";
+  document.getElementById("instagramHandle").value=profile.instagramHandle||"";
+  document.getElementById("crawlDay").value=profile.crawlDay||"";
+  document.getElementById("publicProfile").checked=profile.public||false;
+  if(profile.avatarUrl)document.getElementById("avatarPreview").src=profile.avatarUrl;
+  document.getElementById("profileEditModal").style.display="flex";
+}
+
+function closeProfileEdit(){
+  document.getElementById("profileEditModal").style.display="none";
+}
+
+function previewAvatar(){
+  const input=document.getElementById("avatarInput");
+  if(input.files&&input.files[0]){
+    const reader=new FileReader();
+    reader.onload=e=>{document.getElementById("avatarPreview").src=e.target.result;};
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+async function saveProfile(){
+  const profile={
+    aboutMe:document.getElementById("aboutMe").value,
+    drinkChoice:document.getElementById("drinkChoice").value,
+    favNeighborhood:document.getElementById("favNeighborhood").value,
+    favCategory:document.getElementById("favCategory").value,
+    conquestGoal:parseInt(document.getElementById("conquestGoal").value)||0,
+    instagramHandle:document.getElementById("instagramHandle").value,
+    crawlDay:document.getElementById("crawlDay").value,
+    public:document.getElementById("publicProfile").checked
+  };
+  if(myPlayer)myPlayer.profile=profile;
+  await saveUserData();
+  renderProfile();
+  closeProfileEdit();
+  alert('Profile saved!');
+}
+
+function populateProfileDropdowns(){
+  const hoodSelect=document.getElementById("favNeighborhood");
+  const catSelect=document.getElementById("favCategory");
+  hoodSelect.innerHTML=`<option value="">Select a neighborhood...</option>`+HOODS.map(h=>`<option>${h}</option>`).join("");
+  catSelect.innerHTML=`<option value="">Select a category...</option>`+Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+}
+
 function renderProfile(){
   if(!myPlayer){$("profileContent").innerHTML=`<div class="emptyState"><div class="icon">${icon('user')}</div><h3>No profile yet</h3><p>Set your name in the Ranking tab to see your stats</p></div>`;feather.replace();return;}
 
+  populateProfileDropdowns();
+  const profile=myPlayer.profile||{};
   const totalBars=visited.size;
   const timestamps=Object.values(meta).map(m=>m.time).sort((a,b)=>a-b);
   const firstCheckIn=timestamps.length?timestamps[0]:Date.now();
@@ -496,13 +623,17 @@ function renderProfile(){
 
   const html=`
     <div class="profile-header">
-      <div class="profile-avatar" style="background:${color}">${myPlayer.name.split(' ').map(w=>w[0]).join('').toUpperCase()}</div>
+      <div class="profile-avatar" style="background:${color};background-image:url('${profile.avatarUrl||''}');background-size:cover;background-position:center">${!profile.avatarUrl?myPlayer.name.split(' ').map(w=>w[0]).join('').toUpperCase():''}</div>
       <div class="profile-info">
         <h2>${myPlayer.name}</h2>
         <div class="subtitle">Ranked #${ranking} of ${all.length}</div>
         <div class="subtitle">${totalBars} bars conquered</div>
       </div>
     </div>
+
+    ${profile.aboutMe?`<div style="background:var(--card);border:1px solid var(--line);padding:12px;margin-bottom:16px;border-radius:0"><div style="font-size:11px;color:var(--muted);text-transform:uppercase">About</div><div style="font-size:13px;margin-top:8px">${profile.aboutMe}</div></div>`:''}
+
+    ${profile.drinkChoice || profile.favNeighborhood?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">${profile.favNeighborhood?`<div style="background:var(--card);border:1px solid var(--line);padding:12px;border-radius:0"><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Fav Neighborhood</div><div style="font-size:13px;font-weight:bold;margin-top:4px">${profile.favNeighborhood}</div></div>`:''}${profile.drinkChoice?`<div style="background:var(--card);border:1px solid var(--line);padding:12px;border-radius:0"><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Drink</div><div style="font-size:13px;font-weight:bold;margin-top:4px">${profile.drinkChoice}</div></div>`:''}</div>`:''}`
 
     <div class="stat-grid">
       <div class="stat-card">
