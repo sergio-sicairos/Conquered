@@ -548,7 +548,8 @@ function buildMarkers(){
   SEED.forEach(b=>{const key=keyOf(b),on=visited.has(key);
     const icon=on?'http://maps.google.com/mapfiles/ms/icons/green-dot.png':'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
     const m=new google.maps.Marker({position:{lat:b.lat,lng:b.lon},map:map,title:b.name,icon:icon});
-    const infoWindow=new google.maps.InfoWindow({content:`<div class="pop"><b>${b.name}</b><small>${b.neighborhood}</small><br>${CATS[b.category]||b.category}<br><button class="popbtn ${on?'done':''}" onclick="startFlow(${JSON.stringify(b).replace(/"/g,'&quot;')})">${on?'✓ Checked in':'Check in'}</button></div>`});
+    const streetViewUrl=`https://maps.googleapis.com/maps/api/streetview?size=400x250&location=${b.lat},${b.lon}&key=AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4`;
+    const infoWindow=new google.maps.InfoWindow({content:`<div class="pop"><img src="${streetViewUrl}" style="width:100%;height:auto;border-radius:4px;margin-bottom:8px"><b>${b.name}</b><small>${b.neighborhood}</small><br>${CATS[b.category]||b.category}<br><button class="popbtn ${on?'done':''}" onclick="startFlow(${JSON.stringify(b).replace(/"/g,'&quot;')})">${on?'✓ Checked in':'Check in'}</button></div>`});
     m.addListener("click",()=>{if(currentInfoWindow)currentInfoWindow.close();infoWindow.open(map,m);currentInfoWindow=infoWindow;});
     markers[key]={marker:m,infoWindow:infoWindow};});
 }
