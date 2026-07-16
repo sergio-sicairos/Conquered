@@ -381,6 +381,16 @@ initFirebase();
 const RADIUS_M=150,CLIP_MS=4000,FRAMES=8,MOTION_THRESH=6;
 const LS_V="sfbars_visited_v1",LS_META="sfbars_meta_v1",LS_VIEW="sfbars_view_v1",LS_CUSTOM="sfbars_custom_v1",LS_AGE="sfbars_age_v1",LS_PLAYER="sfbars_player_v1",LS_PLAYERS="sfbars_players_v1";
 const CATS={bar:"Bar",pub:"Pub",lounge:"Lounge",club:"Club",dive:"Dive",brewery:"Brewery",gastropub:"Gastropub",sports:"Sports",wine:"Wine"};
+const NEIGHBORHOODS={
+  "Nob Hill":[37.7930,-122.4161],"Tenderloin":[37.7840,-122.4130],"Financial District":[37.7946,-122.4006],"Telegraph Hill/Embarcadero":[37.8010,-122.4030],
+  "North Beach/Chinatown":[37.8000,-122.4100],"Fisherman's Wharf":[37.8080,-122.4177],"Russian Hill":[37.8010,-122.4180],"Marina/Cow Hollow":[37.8000,-122.4370],
+  "Fillmore/Pacific Heights":[37.7880,-122.4340],"Polk Gulch":[37.7900,-122.4200],"Lower Haight/Divisadero":[37.7720,-122.4380],"SoMa":[37.7785,-122.4060],
+  "South Beach":[37.7820,-122.3900],"Hayes Valley":[37.7760,-122.4240],"Duboce/Market":[37.7690,-122.4300],"Castro":[37.7620,-122.4350],
+  "Haight Ashbury/Cole Valley":[37.7690,-122.4470],"Upper Mission":[37.7590,-122.4190],"Lower Mission":[37.7530,-122.4140],"Potrero Hill":[37.7580,-122.4000],
+  "Dogpatch/Mission Bay":[37.7570,-122.3880],"Noe Valley":[37.7500,-122.4330],"Bernal Heights":[37.7390,-122.4160],"Inner Richmond":[37.7810,-122.4640],
+  "Outer Richmond":[37.7770,-122.4950],"Inner Sunset":[37.7630,-122.4690],"Outer Sunset":[37.7540,-122.4950],"Excelsior":[37.7240,-122.4270],
+  "West of Twin Peaks":[37.7350,-122.4560]
+};
 const ALLOWED_EMAILS=["sergio@usepylon.com","ashleyebell88@gmail.com","Nano.7733@gmail.com","sergio.sicairos.91@gmail.com"];
 const $=id=>document.getElementById(id);
 const icon=(name)=>`<i data-feather="${name}" style="display:inline-block;width:1em;height:1em;margin-right:4px;vertical-align:middle;"></i>`;
@@ -502,8 +512,36 @@ function setupAuthListener(){
     onAuthStateChanged();
     if(user){
       await loadUserData();
-      fetch("data/bars_full.json").then(r=>r.json()).then(d=>{SEED=Array.isArray(d)?d:d.bars;init();});
+      loadBarsFromPlaces().then(()=>init());
     }
+  });
+}
+
+function getClosestNeighborhood(lat,lon){
+  let closest=null,minDist=Infinity;
+  Object.entries(NEIGHBORHOODS).forEach(([hood,[hlat,hlon]])=>{
+    const d=distM(lat,lon,hlat,hlon);
+    if(d<minDist){minDist=d;closest=hood;}
+  });
+  return closest;
+}
+
+async function loadBarsFromPlaces(){
+  const service=new google.maps.places.PlacesService(document.createElement('div'));
+  const request={location:{lat:37.7749,lng:-122.4194},radius:15000,type:'bar',key:'AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4'};
+  return new Promise((resolve)=>{
+    service.nearbySearch(request,(results,status)=>{
+      if(status!==google.maps.places.PlacesServiceStatus.OK||!results){resolve([]);return;}
+      SEED=results.map((p,i)=>({
+        id:i+1,
+        name:p.name,
+        neighborhood:getClosestNeighborhood(p.geometry.location.lat(),p.geometry.location.lng()),
+        category:'bar',
+        lat:p.geometry.location.lat(),
+        lon:p.geometry.location.lng()
+      }));
+      resolve(SEED);
+    });
   });
 }
 
