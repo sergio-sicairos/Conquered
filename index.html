@@ -365,7 +365,7 @@ function initFirebase(){
       auth = firebase.auth();
       db = firebase.firestore();
       console.log('Firebase initialized');
-      setupAuthListener();
+      console.log("App starting"); setupAuthListener();
     }catch(err){
       console.error('Firebase init error:', err);
     }
@@ -374,7 +374,7 @@ function initFirebase(){
   }else{
     auth = firebase.auth();
     db = firebase.firestore();
-    setupAuthListener();
+    console.log("App starting"); setupAuthListener();
   }
 }
 initFirebase();
@@ -500,8 +500,10 @@ function initializeDummyData(){
 }
 
 function setupAuthListener(){
+  console.log("setupAuthListener called");
   if(!auth)return;
   auth.onAuthStateChanged(async user=>{
+    console.log("Auth state changed, user:", user?.email);
     if(user&&!isEmailAllowed(user.email)){
       auth.signOut();
       currentUser=null;
