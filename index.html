@@ -151,6 +151,7 @@ h1{font-size:14px;margin:0;font-weight:bold}
           <select id="fHood"></select><select id="fCat"></select>
           <div class="seg" id="segView"><button data-v="all" class="on">All</button><button data-v="todo">To go</button><button data-v="done">Done</button></div>
         </div>
+        <button class="btn primary" onclick="openAddBarModal()">+ Add Bar</button>
         <div id="list"></div>
       </div>
     </div>
@@ -1103,6 +1104,56 @@ document.addEventListener("DOMContentLoaded",()=>{
     sidebar.style.flex=`0 0 ${targetHeight}px`;
   },false);
 });
+  function openAddBarModal(){
+  const select=$("newBarNeighborhood");
+  select.innerHTML=`<option>Select neighborhood...</option>`+Object.keys(NEIGHBORHOODS).map(h=>`<option>${h}</option>`).join("");
+  const catSelect=$("newBarCategory");
+  catSelect.innerHTML=`<option>Select category...</option>`+Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+  $("addBarModal").style.display="flex";
+}
+
+function closeAddBarModal(){
+  $("addBarModal").style.display="none";
+}
+
+async function saveNewBar(){
+  const name=$("newBarName").value.trim();
+  const neighborhood=$("newBarNeighborhood").value;
+  const category=$("newBarCategory").value;
+  const lat=parseFloat($("newBarLat").value);
+  const lon=parseFloat($("newBarLon").value);
+
+  if(!name||!neighborhood||!category||!lat||!lon){
+    alert("Please fill in all fields");
+    return;
+  }
+
+  const newBar={id:SEED.length+1,name,neighbo
+  SEED.push(newBar);
+
+  if(currentUser&&db){
+    awaitdb.collection("users").doc(currentUser.uid).update({customBars:firebase.firestore.FieldValue.arrayUnion(newBar)});
+  }
+
+  buildMarkers();render();updateLeaderboard()
+  closeAddBarModal();
+  alert("Bar added! Reload to see it on the m
+}
 </script>
+  <!-- ADD BAR MODAL -->
+<div id="addBarModal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;z-index:2000;overflow:auto">
+  <div style="background:var(--card);margin:20px auto;padding:20px;border:1px solid var(--line);max-width:500px;width:90%;border-radius:0">
+    <h2 style="margin-top:0">Add New Bar</h2>
+    <input type="text" id="newBarName" placeholder="Bar name" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)">
+    <select id="newBarNeighborhood" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)"></select>
+    <select id="newBarCategory" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)"></select>
+    <input type="number" id="newBarLat" placeholder="Latitude" step="0.0001" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)">
+    <input type="number" id="newBarLon" placeholder="Longitude" step="0.0001" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)">
+    <div style="display:flex;gap:8px">
+      <button class="btn primary" onclick="saveNewBar()" style="flex:1">Add Bar</button>
+      <button class="btn" onclick="closeAddBarModal()" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
