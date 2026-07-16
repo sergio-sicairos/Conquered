@@ -513,8 +513,7 @@ function setupAuthListener(){
     if(user){
       await loadUserData();
       init();
-      await loadBarsFromPlaces();
-      initAfterBarsLoaded();
+      fetch("data/bars_full.json").then(r=>r.json()).then(d=>{SEED=Array.isArray(d)?d:d.bars;init();});
     }
   });
 }
