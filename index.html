@@ -529,26 +529,40 @@ function getClosestNeighborhood(lat,lon){
 }
 
 async function loadBarsFromPlaces(){
+  const service=new google.maps.places.PlacesService(map);
+  const searchPoints=[
+    {lat:37.7749,lng:-122.4194},{lat:37.7900,lng:-122.4100},{lat:37.7600,lng:-122.4300},
+    {lat:37.7700,lng:-122.3900},{lat:37.8000,lng:-122.4400}
+  ];
+  const allBars={};
+
   return new Promise((resolve)=>{
-    const service=new google.maps.places.PlacesService(map);
-    const request={location:{lat:37.7749,lng:-122.4194},radius:15000,type:'bar'};
-    service.nearbySearch(request,(results,status)=>{
-      if(status!==google.maps.places.PlacesServiceStatus.OK||!results){
-        console.log('Places API error:',status,'- using fallback');
-        SEED=[];
-        resolve([]);
-        return;
-      }
-      SEED=results.map((p,i)=>({
-        id:i+1,
-        name:p.name,
-        neighborhood:getClosestNeighborhood(p.geometry.location.lat(),p.geometry.location.lng()),
-        category:'bar',
-        lat:p.geometry.location.lat(),
-        lon:p.geometry.location.lng()
-      }));
-      console.log('Loaded',SEED.length,'bars from Places API');
-      resolve(SEED);
+    let completed=0;
+    searchPoints.forEach(point=>{
+      const request={location:point,radius:8000,type:'bar'};
+      service.nearbySearch(request,(results,status)=>{
+        if(status===google.maps.places.PlacesServiceStatus.OK&&results){
+          results.forEach(p=>{
+            const key=p.name.toLowerCase();
+            if(!allBars[key]){
+              allBars[key]={
+                id:Object.keys(allBars).length+1,
+                name:p.name,
+                neighborhood:getClosestNeighborhood(p.geometry.location.lat(),p.geometry.location.lng()),
+                category:'bar',
+                lat:p.geometry.location.lat(),
+                lon:p.geometry.location.lng()
+              };
+            }
+          });
+        }
+        completed++;
+        if(completed===searchPoints.length){
+          SEED=Object.values(allBars);
+          console.log('Loaded',SEED.length,'bars from Places API');
+          resolve(SEED);
+        }
+      });
     });
   });
 }
