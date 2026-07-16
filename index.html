@@ -514,7 +514,7 @@ function setupAuthListener(){
     if(user){
       await loadUserData();
       init();
-      fetch("data/bars_full.json").then(r=>r.json()).then(d=>{SEED=Array.isArray(d)?d:d.bars;HOODS=[...new Set(SEED.map(b=>b.neighborhood))].sort();fillSelects();buildMarkers();render();updateLeaderboard();});
+      console.log("Fetching bars_full.json"); fetch("data/bars_full.json").then(r=>r.json()).then(d=>{SEED=Array.isArray(d)?d:d.bars;HOODS=[...new Set(SEED.map(b=>b.neighborhood))].sort();fillSelects();buildMarkers();render();updateLeaderboard();});
     }
   });
 }
@@ -604,10 +604,12 @@ function load(key,def){
 }
 
 function buildMap(){
+  console.log("buildMap called, mapContainer:", $("mapContainer"), "dimensions:", $("mapContainer")?.offsetWidth, "x", $("mapContainer")?.offsetHeight);
   map=new google.maps.Map($("mapContainer"),{center:{lat:37.77,lng:-122.42},zoom:12,mapTypeId:"roadmap"});
 }
 
 function buildMarkers(){
+  console.log("buildMarkers called, SEED:", SEED?.length, "bars");
   markers={};
   SEED.forEach(b=>{const key=keyOf(b),on=visited.has(key);
     const icon=on?'http://maps.google.com/mapfiles/ms/icons/green-dot.png':'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
