@@ -516,7 +516,7 @@ function setupAuthListener(){
     if(user){
       await loadUserData();
       init();
-      console.log("Fetching bars_full.json"); fetch("data/bars_full.json").catch(e=>console.error("Failed to load bars_full.json:", e)).then(r=>{console.log("bars_full.json response:", r); return r.json();}).then(d=>{SEED=Array.isArray(d)?d:d.bars;HOODS=[...new Set(SEED.map(b=>b.neighborhood))].sort();fillSelects();buildMarkers();render();updateLeaderboard();});
+      console.log("Fetching bars_full.json"); fetch("data/bars_full.json").catch(e=>console.error("Failed to load bars_full.json:", e)).then(r=>{console.log("bars_full.json response:", r); return r.json();}).then(d=>{console.log("Raw response:", d); SEED=Array.isArray(d)?d:d.bars; console.log("SEED after load:", SEED?.length, "bars", SEED?.[0]);HOODS=[...new Set(SEED.map(b=>b.neighborhood))].sort();fillSelects();buildMarkers();render();updateLeaderboard();});
     }
   });
 }
