@@ -1136,12 +1136,12 @@ async function saveNewBar(){
   SEED.push(newBar);
 
   if(currentUser&&db){
-    awaitdb.collection("users").doc(currentUser.uid).update({customBars:firebase.firestore.FieldValue.arrayUnion(newBar)});
+    await db.collection("users").doc(currentUser.uid).update({customBars:firebase.firestore.FieldValue.arrayUnion(newBar)});
   }
 
   buildMarkers();render();updateLeaderboard()
   closeAddBarModal();
-  alert("Bar added! Reload to see it on the m
+  alert("Bar added! Reload to see it on the map");
 }
 </script>
   <!-- ADD BAR MODAL -->
