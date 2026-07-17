@@ -1134,7 +1134,7 @@ async function saveNewBar(){
     return;
   }
 
-  const newBar={id:SEED.length+1,name,neighbo
+  const newBar={id:SEED.length+1,name,neighborhood,category,lat,lon};
   SEED.push(newBar);
 
   if(currentUser&&db){
