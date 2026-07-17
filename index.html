@@ -1120,29 +1120,7 @@ function closeAddBarModal(){
   $("addBarModal").style.display="none";
 }
 
-async function saveNewBar(){
-  const name=$("newBarName").value.trim();
-  const neighborhood=$("newBarNeighborhood").value;
-  const category=$("newBarCategory").value;
-  const lat=parseFloat($("newBarLat").value);
-  const lon=parseFloat($("newBarLon").value);
-
-  if(!name||!neighborhood||!category||!lat||!lon){
-    alert("Please fill in all fields");
-    return;
-  }
-
-  const newBar={id:SEED.length+1,name,neighborhood,category,lat,lon};
-  SEED.push(newBar);
-
-  if(currentUser&&db){
-    await db.collection("users").doc(currentUser.uid).update({customBars:firebase.firestore.FieldValue.arrayUnion(newBar)});
-  }
-
-  buildMarkers();render();updateLeaderboard()
-  closeAddBarModal();
-  alert("Bar added! Reload to see it on the map");
-}
+function saveNewBar(){const name=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400"newBarName").value.trim();const neighborhood=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400"newBarNeighborhood").value;const category=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400"newBarCategory").value;const address=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400"newBarAddress").value.trim();if(!name||!neighborhood||!category||!address){alert("Please fill in all fields");return;}const geocoder=new google.maps.Geocoder();geocoder.geocode({address:address+", San Francisco, CA"},(results,status)=>{if(status===google.maps.GeocoderStatus.OK&&results[0]){const pos=results[0].geometry.location;const newBar={id:SEED.length+1,name,neighborhood,category,lat:pos.lat(),lon:pos.lng()};SEED.push(newBar);if(currentUser&&db){db.collection("users").doc(currentUser.uid).update({customBars:firebase.firestore.FieldValue.arrayUnion(newBar)});}buildMarkers();render();updateLeaderboard();closeAddBarModal();alert("Bar added!");}else{alert("Address not found");}});}
 </script>
   <!-- ADD BAR MODAL -->
 <div id="addBarModal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;z-index:2000;overflow:auto">
@@ -1151,8 +1129,7 @@ async function saveNewBar(){
     <input type="text" id="newBarName" placeholder="Bar name" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)">
     <select id="newBarNeighborhood" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)"></select>
     <select id="newBarCategory" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)"></select>
-    <input type="number" id="newBarLat" placeholder="Latitude" step="0.0001" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)">
-    <input type="number" id="newBarLon" placeholder="Longitude" step="0.0001" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)">
+    <input type="text" id="newBarAddress" placeholder="Address (e.g., 123 Main St, SF)" style="width:100%;padding:8px;margin-bottom:12px;border:1px solid var(--line)">
     <div style="display:flex;gap:8px">
       <button class="btn primary" onclick="saveNewBar()" style="flex:1">Add Bar</button>
       <button class="btn" onclick="closeAddBarModal()" style="flex:1">Cancel</button>
