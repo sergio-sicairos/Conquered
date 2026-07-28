@@ -339,10 +339,15 @@ h1{font-size:14px;margin:0;font-weight:bold}
   </div>
 </div>
 
+  function reportBarClosed(bar){if(!currentUser){alert("Please sign in to report");return;}if(confirm("Report this bar as permanently closed?")){db.collection("users").doc(currentUser.uid).collection("reports").add({barName:bar.name,barNeighborhood:bar.neighborhood,reportType:"closed",timestamp:new Date()}).then(()=>{alert("Thank you for reporting! We will review this.");}).catch(err=>{alert("Error reporting: "+err.message);});}}
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  function reportBarClosed(bar){if(!currentUser){alert("Please sign in to report");return;}if(confirm("Report this bar as permanently closed?")){db.collection("users").doc(currentUser.uid).collection("reports").add({barName:bar.name,barNeighborhood:bar.neighborhood,reportType:"closed",timestamp:new Date()}).then(()=>{alert("Thank you for reporting! We will review this.");}).catch(err=>{alert("Error reporting: "+err.message);});}}
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4&libraries=places,marker"></script>
+  function reportBarClosed(bar){if(!currentUser){alert("Please sign in to report");return;}if(confirm("Report this bar as permanently closed?")){db.collection("users").doc(currentUser.uid).collection("reports").add({barName:bar.name,barNeighborhood:bar.neighborhood,reportType:"closed",timestamp:new Date()}).then(()=>{alert("Thank you for reporting! We will review this.");}).catch(err=>{alert("Error reporting: "+err.message);});}}
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  function reportBarClosed(bar){if(!currentUser){alert("Please sign in to report");return;}if(confirm("Report this bar as permanently closed?")){db.collection("users").doc(currentUser.uid).collection("reports").add({barName:bar.name,barNeighborhood:bar.neighborhood,reportType:"closed",timestamp:new Date()}).then(()=>{alert("Thank you for reporting! We will review this.");}).catch(err=>{alert("Error reporting: "+err.message);});}}
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  function reportBarClosed(bar){if(!currentUser){alert("Please sign in to report");return;}if(confirm("Report this bar as permanently closed?")){db.collection("users").doc(currentUser.uid).collection("reports").add({barName:bar.name,barNeighborhood:bar.neighborhood,reportType:"closed",timestamp:new Date()}).then(()=>{alert("Thank you for reporting! We will review this.");}).catch(err=>{alert("Error reporting: "+err.message);});}}
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
 <script>
@@ -1121,6 +1126,7 @@ function closeAddBarModal(){
 }
 
 function saveNewBar(){const name=document.getElementById("newBarName").value.trim();const neighborhood=document.getElementById("newBarNeighborhood").value;const category=document.getElementById("newBarCategory").value;const address=document.getElementById("newBarAddress").value.trim();if(!name||!neighborhood||!category||!address){alert("Please fill in all fields");return;}const geocoder=new google.maps.Geocoder();geocoder.geocode({address:address+", San Francisco, CA"},(results,status)=>{if(status===google.maps.GeocoderStatus.OK&&results[0]){const pos=results[0].geometry.location;const newBar={id:SEED.length+1,name,neighborhood,category,lat:pos.lat(),lon:pos.lng()};SEED.push(newBar);if(currentUser&&db){db.collection("users").doc(currentUser.uid).update({customBars:firebase.firestore.FieldValue.arrayUnion(newBar)});}buildMarkers();render();updateLeaderboard();closeAddBarModal();alert("Bar added!");}else{alert("Address not found");}});}
+  function reportBarClosed(bar){if(!currentUser){alert("Please sign in to report");return;}if(confirm("Report this bar as permanently closed?")){db.collection("users").doc(currentUser.uid).collection("reports").add({barName:bar.name,barNeighborhood:bar.neighborhood,reportType:"closed",timestamp:new Date()}).then(()=>{alert("Thank you for reporting! We will review this.");}).catch(err=>{alert("Error reporting: "+err.message);});}}
 </script>
   <!-- ADD BAR MODAL -->
 <div id="addBarModal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;z-index:2000;overflow:auto">
