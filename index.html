@@ -2,16 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Conquered</title>
 <style>
 :root{--bg:#f5f5f0;--card:#f9f9f7;--ink:#3a3a36;--muted:#888878;--line:#e0e0d8;--accent:#5a5a4a;--good:#6b8c6a}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;font-family:monospace;color:var(--ink);font-size:13px}
-body{display:flex;flex-direction:column;background:var(--bg)}
-header{padding:12px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:center}
-h1{margin:0;font-size:16px}
-#mapContainer{flex:1;width:100%;background:#dfe6e9}
+html,body{margin:0;padding:0;height:100%;font-family:monospace;color:var(--ink);font-size:13px;line-height:1.6}
+body{display:flex;flex-direction:column;height:100vh;background:var(--bg);border:1px solid var(--line)}
+header{padding:10px 14px;border-bottom:2px solid var(--ink);background:var(--bg);display:flex;gap:8px;align-items:center;justify-content:space-between}
+h1{font-size:14px;margin:0;font-weight:bold}
+#mainContent{flex:1;display:flex;overflow:hidden}
+#mapContainer{flex:1;min-height:0;background:#dfe6e9}
+.sidebar{width:300px;border-left:1px solid var(--line);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-section{padding:10px;border-bottom:1px solid var(--line);overflow-y:auto;flex:1}
+#list{display:flex;flex-direction:column;gap:6px}
+.bar-row{padding:8px;background:var(--card);border:1px solid var(--line);cursor:pointer;border-radius:0}
+.bar-row:hover{background:#f0f0e8}
+.bar-row.done{opacity:0.6}
+.tabbar{position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);text-decoration:none;font-size:10px;text-transform:uppercase}
+.tab.active{color:var(--accent);font-weight:bold}
+.view{display:none;flex:1;flex-direction:column}
+.view.active{display:flex}
+.veil{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:1000}
+.veil.on{display:flex}
+.veil-content{background:var(--card);padding:20px;border:1px solid var(--line);max-width:400px;width:90%;max-height:80vh;overflow-y:auto}
+.btn{padding:8px 12px;background:var(--accent);color:white;border:none;cursor:pointer;border-radius:0;font-family:monospace;margin:4px 0}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.stat-card{background:var(--card);border:1px solid var(--line);padding:10px;text-align:center}
+.stat-value{font-size:24px;font-weight:bold;color:var(--accent)}
+.leader-item{padding:10px;background:var(--card);border:1px solid var(--line);margin:5px 0}
+video{width:100%;max-height:300px;background:#000}
 </style>
 </head>
 <body>
@@ -19,7 +40,39 @@ h1{margin:0;font-size:16px}
   <h1>Conquered</h1>
   <div id="auth"></div>
 </header>
-<div id="mapContainer"></div>
+
+<div id="mainContent">
+  <div id="mapView" class="view active">
+    <div id="mapContainer"></div>
+  </div>
+  
+  <div id="checkinView" class="view">
+    <div style="padding:10px;flex:1;overflow-y:auto" id="checkinList"></div>
+  </div>
+  
+  <div id="leaderView" class="view">
+    <div style="padding:10px;flex:1;overflow-y:auto" id="leaderList"></div>
+  </div>
+  
+  <div id="profileView" class="view">
+    <div style="padding:10px;flex:1;overflow-y:auto" id="profileContent"></div>
+  </div>
+</div>
+
+<div class="tabbar">
+  <div class="tab active" data-view="map" onclick="switchView('map')">Map</div>
+  <div class="tab" data-view="checkin" onclick="switchView('checkin')">Check-ins</div>
+  <div class="tab" data-view="leader" onclick="switchView('leader')">Ranking</div>
+  <div class="tab" data-view="profile" onclick="switchView('profile')">Profile</div>
+</div>
+
+<div id="veil" class="veil">
+  <div class="veil-content" id="veilContent">
+    <h2 id="veilTitle">Loading...</h2>
+    <div id="veilBody"></div>
+    <button class="btn" onclick="closeVeil()" style="width:100%">Close</button>
+  </div>
+</div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -39,17 +92,21 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let map, SEED = [], currentUser = null;
+let map, SEED = [], currentUser = null, visited = new Set(), checkins = {}, markers = {};
 const $ = id => document.getElementById(id);
+const RADIUS_M = 150;
+const CLIP_MS = 4000;
+const MOTION_THRESH = 6;
 
 auth.onAuthStateChanged(user => {
   if(user) {
     currentUser = user;
-    $("auth").innerHTML = `<span>${user.email}</span> <button onclick="logout()" style="margin-left:10px;padding:6px 12px;cursor:pointer">Logout</button>`;
+    $("auth").innerHTML = `${user.email} <button class="btn" onclick="logout()" style="padding:4px 8px">Logout</button>`;
+    loadUserData();
     initMap();
     loadBars();
   } else {
-    $("auth").innerHTML = `<button onclick="googleLogin()" style="padding:8px 16px;background:#5a5a4a;color:white;border:none;cursor:pointer">Sign in with Google</button>`;
+    $("auth").innerHTML = `<button class="btn" onclick="googleLogin()">Sign in with Google</button>`;
   }
 });
 
@@ -60,6 +117,17 @@ function googleLogin() {
 
 function logout() {
   auth.signOut();
+}
+
+function loadUserData() {
+  if(!currentUser) return;
+  db.collection("users").doc(currentUser.uid).get().then(doc => {
+    if(doc.exists) {
+      const data = doc.data();
+      visited = new Set(data.visited || []);
+      checkins = data.checkins || {};
+    }
+  });
 }
 
 function initMap() {
@@ -82,17 +150,148 @@ function loadBars() {
 function displayBars() {
   if(!map) return;
   SEED.forEach(bar => {
+    const isDone = visited.has(bar.name + "|" + bar.neighborhood);
     const marker = new google.maps.Marker({
       position: {lat: bar.lat, lng: bar.lon},
       map: map,
-      title: bar.name
+      title: bar.name,
+      icon: isDone ? "http://maps.google.com/mapfiles/ms/icons/green-dot.png" : "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
     });
-    marker.addListener("click", () => {
-      new google.maps.InfoWindow({
-        content: `<div style="padding:8px;max-width:250px"><strong>${bar.name}</strong><br><small>${bar.neighborhood}</small></div>`
-      }).open(map, marker);
+    
+    const infoWindow = new google.maps.InfoWindow({
+      content: `<div style="padding:8px;max-width:280px"><strong>${bar.name}</strong><br><small>${bar.neighborhood}</small><br><button class="btn" onclick="startCheckin('${bar.name}', '${bar.neighborhood}', ${bar.lat}, ${bar.lon})" style="margin-top:8px;width:100%">${isDone ? '✓ Checked in' : 'Check in'}</button></div>`
     });
+    
+    marker.addListener("click", () => infoWindow.open(map, marker));
+    markers[bar.name] = {marker, bar};
   });
+  renderList();
+  updateLeaderboard();
+}
+
+function renderList() {
+  const html = SEED.map(bar => {
+    const isDone = visited.has(bar.name + "|" + bar.neighborhood);
+    return `<div class="bar-row ${isDone ? 'done' : ''}" onclick="startCheckin('${bar.name}', '${bar.neighborhood}', ${bar.lat}, ${bar.lon})">${isDone ? '✓' : '○'} ${bar.name}</div>`;
+  }).join("");
+  $("list").innerHTML = html;
+}
+
+function startCheckin(name, neighborhood, lat, lon) {
+  openVeil(`Checking in to ${name}`);
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const d = distM(pos.coords.latitude, pos.coords.longitude, lat, lon);
+      if(d <= RADIUS_M) {
+        startCamera(name, neighborhood, lat, lon);
+      } else {
+        $("veilBody").innerHTML = `<p>You are ${Math.round(d)}m away. Need to be within ${RADIUS_M}m.</p>`;
+      }
+    });
+  } else {
+    $("veilBody").innerHTML = `<p>Location access required</p>`;
+  }
+}
+
+function startCamera(name, neighborhood, lat, lon) {
+  $("veilTitle").textContent = "Record your sip";
+  $("veilBody").innerHTML = `<video id="camVideo" playsinline muted></video><button class="btn" onclick="recordVideo('${name}', '${neighborhood}')" style="width:100%;margin-top:10px">Start Recording</button>`;
+  
+  navigator.mediaDevices.getUserMedia({video: {facingMode: "user"}, audio: false})
+    .then(stream => {
+      const video = $("camVideo");
+      video.srcObject = stream;
+      video.play();
+      window.currentStream = stream;
+    })
+    .catch(err => {
+      $("veilBody").innerHTML = `<p>Camera error: ${err.message}</p>`;
+    });
+}
+
+function recordVideo(name, neighborhood) {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = "Recording...";
+  
+  setTimeout(() => {
+    if(window.currentStream) {
+      window.currentStream.getTracks().forEach(t => t.stop());
+    }
+    completeCheckin(name, neighborhood);
+  }, CLIP_MS);
+}
+
+function completeCheckin(name, neighborhood) {
+  const key = name + "|" + neighborhood;
+  visited.add(key);
+  checkins[key] = {time: new Date().toISOString(), verified: true};
+  
+  if(currentUser) {
+    db.collection("users").doc(currentUser.uid).set({
+      visited: Array.from(visited),
+      checkins: checkins
+    }, {merge: true});
+  }
+  
+  $("veilBody").innerHTML = `<p style="color:var(--good)">✓ Checked in to ${name}!</p>`;
+  setTimeout(() => {
+    closeVeil();
+    displayBars();
+  }, 1500);
+}
+
+function switchView(view) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  
+  $((view === 'map' ? 'map' : view) + "View").classList.add("active");
+  document.querySelector(`[data-view="${view}"]`).classList.add("active");
+  
+  if(view === "checkin") renderCheckins();
+  if(view === "leader") updateLeaderboard();
+  if(view === "profile") renderProfile();
+}
+
+function renderCheckins() {
+  const items = Object.entries(checkins).map(([key, data]) => {
+    return `<div class="bar-row done"><strong>${key.split("|")[0]}</strong><br><small>${new Date(data.time).toLocaleDateString()}</small></div>`;
+  });
+  $("checkinList").innerHTML = items.length ? items.join("") : "<p>No check-ins yet</p>";
+}
+
+function updateLeaderboard() {
+  $("leaderList").innerHTML = `<div class="stat-grid"><div class="stat-card"><div class="stat-value">${visited.size}</div><div>Bars Visited</div></div><div class="stat-card"><div class="stat-value">${Math.round(visited.size / Math.max(SEED.length, 1) * 100)}%</div><div>Complete</div></div></div>`;
+}
+
+function renderProfile() {
+  $("profileContent").innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">${visited.size}</div><div>Bars</div></div>
+      <div class="stat-card"><div class="stat-value">${currentUser ? currentUser.email : 'Not signed in'}</div><div>User</div></div>
+    </div>
+    <button class="btn" style="width:100%" onclick="logout()">Logout</button>
+  `;
+}
+
+function openVeil(title) {
+  $("veilTitle").textContent = title;
+  $("veil").classList.add("on");
+}
+
+function closeVeil() {
+  $("veil").classList.remove("on");
+}
+
+function distM(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
 }
 </script>
 </body>
