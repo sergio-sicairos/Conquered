@@ -92,7 +92,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let map, SEED = [], currentUser = null, visited = new Set(), checkins = {}, markers = {};
+let map, SEED = [], currentUser = null, visited = new Set(), checkins = {}, markers = {}, currentInfoWindow = null;
 const $ = id => document.getElementById(id);
 const RADIUS_M = 150;
 const CLIP_MS = 4000;
@@ -162,7 +162,7 @@ function displayBars() {
       content: `<div style="padding:8px;max-width:280px"><strong>${bar.name}</strong><br><small>${bar.neighborhood}</small><br><button class="btn" onclick="startCheckin('${bar.name}', '${bar.neighborhood}', ${bar.lat}, ${bar.lon})" style="margin-top:8px;width:100%">${isDone ? '✓ Checked in' : 'Check in'}</button></div>`
     });
     
-    let currentInfoWindow = null; marker.addListener("click", () => { if(currentInfoWindow) currentInfoWindow.close(); infoWindow.open(map, marker); currentInfoWindow = infoWindow; });
+    marker.addListener("click", () => { if(currentInfoWindow) currentInfoWindow.close(); infoWindow.open(map, marker); currentInfoWindow = infoWindow; });
     markers[bar.name] = {marker, bar};
   });
   renderList();
