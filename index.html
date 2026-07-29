@@ -400,7 +400,7 @@ const NEIGHBORHOODS={
 const ALLOWED_EMAILS=["sergio@usepylon.com","ashleyebell88@gmail.com","Nano.7733@gmail.com","sergio.sicairos.91@gmail.com"];
 const $=id=>document.getElementById(id);
 const icon=(name)=>`<i data-feather="${name}" style="display:inline-block;width:1em;height:1em;margin-right:4px;vertical-align:middle;"></i>`;
-let SEED=[],HOODS=[],visited=new Set(),meta={},view="all",map,markers={},cluster,cam,stream,curBar,myPlayer=null,currentUser=null,currentInfoWindow=null;;const vStage=$("vStage");
+let SEED=[],HOODS=[],visited=new Set(),meta={},view="all",map,markers={},cluster,cam,stream,curBar,myPlayer=null,currentUser=null,currentInfoWindow=null;const vStage=$("vStage");
 
 function isEmailAllowed(email){
   return ALLOWED_EMAILS.some(allowed=>email.toLowerCase()===allowed.toLowerCase());
