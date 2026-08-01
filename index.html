@@ -141,8 +141,8 @@ function displayBars() {
       icon: isDone ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png" : "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
     });
     
-    const infoWindow = new google.maps.InfoWindow({
-      content: `<div style="padding:8px"><strong>${bar.name}</strong><br><small>${bar.neighborhood}</small><br><button class="btn" onclick="checkin('${bar.name}','${bar.neighborhood}',${bar.lat},${bar.lon})" style="width:100%;margin-top:8px">${isDone ? '✓ Done' : 'Check in'}</button></div>`
+    const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=300x200const infoWindow = new google.maps.InfoWindow({location=${bar.lat},${bar.lon}const infoWindow = new google.maps.InfoWindow({key=AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4`; const infoWindow = new google.maps.InfoWindow({
+      content: `<div style="padding:8px"><img src="${streetViewUrl}" style="width:100%;height:auto;border-radius:4px;margin-bottom:8px"><strong>${bar.name}</strong><br><small>${bar.neighborhood}</small><br><button class="btn" onclick="checkin('${bar.name}','${bar.neighborhood}',${bar.lat},${bar.lon})" style="width:100%;margin-top:8px">${isDone ? '✓ Done' : 'Check in'}</button></div>`
     });
     
     marker.addListener("click", () => {
