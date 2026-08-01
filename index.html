@@ -255,13 +255,19 @@ function switchView(view) {
 
 function renderCheckins() {
   if(!currentUser) { $("checkinList").innerHTML = "<p>Sign in first</p>"; return; }
+  $("checkinList").innerHTML = "<p>Loading...</p>";
   db.collection("users").doc(currentUser.uid).get().then(doc => {
-    if(doc.exists && doc.data().checkins) {
-      const c = doc.data().checkins;
-      const items = Object.entries(c).map(([k, v]) => `<div class="bar-row done"><strong>${k.split("|")[0]}</strong><br><small>${new Date(v.time).toLocaleDateString()}</small></div>`);
-      $("checkinList").innerHTML = items.join("") || "<p>No check-ins</p>";
-    }
-  });
+    if(!doc.exists) { $("checkinList").innerHTML = "<p>No data found</p>"; return; }
+    const data = doc.data();
+    const c = data.checkins || {};
+    if(Object.keys(c).length === 0) { $("checkinList").innerHTML = "<p>No check-ins yet</p>"; return; }
+    const items = Object.entries(c).map(([k, v]) => {
+      const parts = k.split("|");
+      const date = v.time ? new Date(v.time).toLocaleDateString() : "Unknown";
+      return `<div class="bar-row done"><strong>${parts[0]}</strong><br><small>${date}</small></div>`;
+    });
+    $("checkinList").innerHTML = items.join("");
+  }).catch(err => { $("checkinList").innerHTML = "<p>Error: " + err.message + "</p>"; });
 }
 
 function updateLeaderboard() {
