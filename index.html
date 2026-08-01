@@ -1,28 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Conquered</title>
 <style>
-:root{--bg:#f5f5f0;--card:#f9f9f7;--ink:#3a3a36;--muted:#888878;--line:#e0e0d8;--accent:#5a5a4a;--good:#6b8c6a}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;font-family:monospace;color:var(--ink);font-size:13px}
-body{display:flex;flex-direction:column;height:100vh;background:var(--bg)}
-header{padding:10px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:center}
-h1{margin:0;font-size:14px}
-#mainContent{flex:1;display:flex;overflow:hidden;margin-bottom:60px}
-.view{display:none;flex:1;flex-direction:column}
-.view.active{display:flex}
-#mapContainer{width:100%;height:100%;background:#dfe6e9}
-#listContainer,#checkinList,#leaderList,#profileContent{flex:1;overflow-y:auto;padding:10px}
-.item{padding:8px;background:var(--card);border:1px solid var(--line);margin-bottom:6px;cursor:pointer}
-.item:hover{background:#f0f0e8}
-.item.done{opacity:0.6}
-.tabbar{position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg);border-top:1px solid var(--line);display:flex;justify-content:space-around}
-.tab{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:10px;text-transform:uppercase;border:none;background:none}
-.tab.active{color:var(--accent);font-weight:bold}
-.btn{padding:6px 12px;background:var(--accent);color:white;border:none;cursor:pointer;font-family:monospace;font-size:12px}
+body{margin:0;padding:0;font-family:monospace;height:100vh;display:flex;flex-direction:column}
+header{padding:10px;border-bottom:2px solid #333;background:#f5f5f0;display:flex;justify-content:space-between}
+#mapContainer{flex:1;background:#ddd}
+.tabbar{position:fixed;bottom:0;left:0;right:0;height:60px;background:#f5f5f0;border-top:1px solid #ccc;display:flex;justify-content:space-around;padding:8px 0}
+.tab{flex:1;text-align:center;cursor:pointer;padding:10px;border:none;background:none;font-family:monospace}
+.tab.active{font-weight:bold;color:#5a5a4a}
 </style>
 </head>
 <body>
@@ -30,35 +18,9 @@ h1{margin:0;font-size:14px}
   <h1>Conquered</h1>
   <div id="auth"></div>
 </header>
-
-<div id="mainContent">
-  <div id="mapView" class="view active">
-    <div id="mapContainer"></div>
-  </div>
-  
-  <div id="barsView" class="view">
-    <div id="listContainer"></div>
-  </div>
-  
-  <div id="checkinView" class="view">
-    <div id="checkinList"></div>
-  </div>
-  
-  <div id="leaderView" class="view">
-    <div id="leaderList"></div>
-  </div>
-  
-  <div id="profileView" class="view">
-    <div id="profileContent"></div>
-  </div>
-</div>
-
+<div id="mapContainer"></div>
 <div class="tabbar">
-  <button class="tab active" onclick="switchTab('map')">Map</button>
-  <button class="tab" onclick="switchTab('bars')">Bars</button>
-  <button class="tab" onclick="switchTab('checkin')">Check-ins</button>
-  <button class="tab" onclick="switchTab('leader')">Ranking</button>
-  <button class="tab" onclick="switchTab('profile')">Profile</button>
+  <button class="tab active" onclick="auth.signOut()">Logout</button>
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4"></script>
@@ -66,53 +28,40 @@ h1{margin:0;font-size:14px}
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script>
-const firebaseConfig = {
+firebase.initializeApp({
   apiKey: "AIzaSyAq6Vtk7HsWQ7TYWG00pE_m06k428E9-lA",
   authDomain: "conquered-44781.firebaseapp.com",
   projectId: "conquered-44781",
   storageBucket: "conquered-44781.firebasestorage.app",
   messagingSenderId: "531077493851",
   appId: "1:531077493851:web:9f0542c4dd0919e13ffb7e"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let map, SEED = [], currentUser = null, visited = new Set(), currentInfoWindow = null;
-const $ = id => document.getElementById(id);
-const RADIUS_M = 150;
-
-auth.onAuthStateChanged(user => {
-  if(user) {
-    currentUser = user;
-    $("auth").innerHTML = `${user.email} <button class="btn" onclick="logout()">Logout</button>`;
-    loadUserData();
-    initMap();
-    loadBars();
-  } else {
-    $("auth").innerHTML = `<button class="btn" onclick="googleLogin()">Sign In</button>`;
-  }
 });
 
-function googleLogin() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
-}
+const auth = firebase.auth();
+const db = firebase.firestore();
+let map, SEED = [], currentUser = null, visited = new Set(), currentInfoWindow = null;
 
-function logout() {
-  auth.signOut();
-}
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if(user) {
+    document.getElementById("auth").innerHTML = user.email + ' <button onclick="auth.signOut()">Logout</button>';
+    loadUserData();
+    setTimeout(() => initMap(), 100);
+  } else {
+    document.getElementById("auth").innerHTML = '<button onclick="firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())">Sign In</button>';
+  }
+});
 
 function loadUserData() {
   if(!currentUser) return;
   db.collection("users").doc(currentUser.uid).get().then(doc => {
     if(doc.exists) visited = new Set(doc.data().visited || []);
+    loadBars();
   });
 }
 
 function initMap() {
-  map = new google.maps.Map($("mapContainer"), {
+  map = new google.maps.Map(document.getElementById("mapContainer"), {
     center: {lat: 37.7749, lng: -122.4194},
     zoom: 12
   });
@@ -123,15 +72,11 @@ function loadBars() {
     .then(r => r.json())
     .then(d => {
       SEED = Array.isArray(d) ? d : d.bars;
-      displayBars();
-      renderBarsList();
-      updateLeaderboard();
-    })
-    .catch(err => console.error("Error loading bars:", err));
+      if(map) showBars();
+    });
 }
 
-function displayBars() {
-  if(!map) return;
+function showBars() {
   SEED.forEach(bar => {
     const isDone = visited.has(bar.name + "|" + bar.neighborhood);
     const marker = new google.maps.Marker({
@@ -141,8 +86,8 @@ function displayBars() {
       icon: isDone ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png" : "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
     });
     
-    const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=300x200const infoWindow = new google.maps.InfoWindow({location=${bar.lat},${bar.lon}const infoWindow = new google.maps.InfoWindow({key=AIzaSyCkTOWPcSGNvApDDYUXFskZKvuqnOz5dw4`; const infoWindow = new google.maps.InfoWindow({
-      content: `<div style="padding:8px"><img src="${streetViewUrl}" style="width:100%;height:auto;border-radius:4px;margin-bottom:8px"><strong>${bar.name}</strong><br><small>${bar.neighborhood}</small><br><button class="btn" onclick="checkin('${bar.name}','${bar.neighborhood}',${bar.lat},${bar.lon})" style="width:100%;margin-top:8px">${isDone ? '✓ Done' : 'Check in'}</button></div>`
+    const infoWindow = new google.maps.InfoWindow({
+      content: '<div style="padding:8px"><strong>' + bar.name + '</strong><br><small>' + bar.neighborhood + '</small></div>'
     });
     
     marker.addListener("click", () => {
@@ -151,74 +96,6 @@ function displayBars() {
       currentInfoWindow = infoWindow;
     });
   });
-}
-
-function renderBarsList() {
-  const html = SEED.map(bar => {
-    const isDone = visited.has(bar.name + "|" + bar.neighborhood);
-    return `<div class="item ${isDone ? 'done' : ''}">${isDone ? '✓' : '○'} ${bar.name}</div>`;
-  }).join("");
-  $("listContainer").innerHTML = html;
-}
-  }).join("");
-  $("listContainer").innerHTML = html;
-}
-
-function checkin(name, neighborhood, lat, lon) {
-  if(!currentUser) { alert("Sign in first"); return; }
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const dist = Math.hypot(pos.coords.latitude - lat, pos.coords.longitude - lon) * 111000;
-      if(dist <= RADIUS_M) {
-        const key = name + "|" + neighborhood;
-        visited.add(key);
-        db.collection("users").doc(currentUser.uid).set({
-          visited: Array.from(visited)
-        }, {merge: true});
-        alert("Checked in!");
-        displayBars();
-        renderBarsList();
-        updateLeaderboard();
-      } else {
-        alert(`Too far (${Math.round(dist)}m away)`);
-      }
-    });
-  }
-}
-
-function renderCheckIns() {
-  if(!currentUser) { $("checkinList").innerHTML = "<p>Sign in first</p>"; return; }
-  db.collection("users").doc(currentUser.uid).get().then(doc => {
-    if(doc.exists && doc.data().visited) {
-      const html = doc.data().visited.map(v => `<div class="item done">${v}</div>`).join("");
-      $("checkinList").innerHTML = html || "<p>No check-ins</p>";
-    } else {
-      $("checkinList").innerHTML = "<p>No check-ins</p>";
-    }
-  });
-}
-
-function updateLeaderboard() {
-  const pct = Math.round(visited.size / Math.max(SEED.length, 1) * 100);
-  $("leaderList").innerHTML = `<div class="item"><strong>Your Progress</strong><br>Bars: ${visited.size}/${SEED.length}<br>Completion: ${pct}%</div>`;
-}
-
-function renderProfile() {
-  if(!currentUser) { $("profileContent").innerHTML = "<p>Sign in first</p>"; return; }
-  $("profileContent").innerHTML = `<div class="item"><strong>${currentUser.email}</strong><br>Visited: ${visited.size} bars<br><button class="btn" onclick="logout()" style="width:100%;margin-top:10px">Logout</button></div>`;
-}
-
-function switchTab(tab) {
-  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  
-  const viewMap = {map: "mapView", bars: "barsView", checkin: "checkinView", leader: "leaderView", profile: "profileView"};
-  $(viewMap[tab]).classList.add("active");
-  event.target.classList.add("active");
-  
-  if(tab === "checkin") renderCheckIns();
-  if(tab === "leader") updateLeaderboard();
-  if(tab === "profile") renderProfile();
 }
 </script>
 </body>
