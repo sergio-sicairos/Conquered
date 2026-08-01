@@ -254,10 +254,14 @@ function switchView(view) {
 }
 
 function renderCheckins() {
-  const items = Object.entries(checkins).map(([key, data]) => {
-    return `<div class="bar-row done"><strong>${key.split("|")[0]}</strong><br><small>${new Date(data.time).toLocaleDateString()}</small></div>`;
+  if(!currentUser) { $("checkinList").innerHTML = "<p>Sign in first</p>"; return; }
+  db.collection("users").doc(currentUser.uid).get().then(doc => {
+    if(doc.exists && doc.data().checkins) {
+      const c = doc.data().checkins;
+      const items = Object.entries(c).map(([k, v]) => `<div class="bar-row done"><strong>${k.split("|")[0]}</strong><br><small>${new Date(v.time).toLocaleDateString()}</small></div>`);
+      $("checkinList").innerHTML = items.join("") || "<p>No check-ins</p>";
+    }
   });
-  $("checkinList").innerHTML = items.length ? items.join("") : "<p>No check-ins yet</p>";
 }
 
 function updateLeaderboard() {
