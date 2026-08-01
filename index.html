@@ -154,25 +154,11 @@ function displayBars() {
 }
 
 function renderBarsList() {
-  if(!navigator.geolocation) { $("listContainer").innerHTML = "<p>Enable location to see nearby bars</p>"; return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-    const nearby = SEED.filter(bar => {
-      const dist = Math.hypot(bar.lat - lat, bar.lon - lon) * 111000;
-      return dist <= RADIUS_M;
-    }).sort((a, b) => {
-      const distA = Math.hypot(a.lat - lat, a.lon - lon) * 111000;
-      const distB = Math.hypot(b.lat - lat, b.lon - lon) * 111000;
-      return distA - distB;
-    });
-    const html = nearby.map(bar => {
-      const isDone = visited.has(bar.name + "|" + bar.neighborhood);
-      const dist = Math.hypot(bar.lat - lat, bar.lon - lon) * 111000;
-      return `<div class="item ${isDone ? 'done' : ''}">${isDone ? '✓' : '○'} ${bar.name}<br><small>${Math.round(dist)}m away</small></div>`;
-    }).join("");
-    $("listContainer").innerHTML = html || "<p>No nearby bars</p>";
-  }, () => { $("listContainer").innerHTML = "<p>Allow location access</p>"; });
+  const html = SEED.map(bar => {
+    const isDone = visited.has(bar.name + "|" + bar.neighborhood);
+    return `<div class="item ${isDone ? 'done' : ''}">${isDone ? '✓' : '○'} ${bar.name}</div>`;
+  }).join("");
+  $("listContainer").innerHTML = html;
 }
   }).join("");
   $("listContainer").innerHTML = html;
