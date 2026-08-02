@@ -237,6 +237,27 @@
     .friend-overlap-stat { font-weight: bold; }
     .friend-empty { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px; }
 
+    /* Profile Editor Modal */
+    #profileEditorOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 30; }
+    #profileEditorModal { position: absolute; bottom: 0; left: 0; right: 0; background: #F1EBDB; display: none; flex-direction: column; z-index: 31; border-top: 3px solid #17140F; max-height: 90vh; border-radius: 12px 12px 0 0; }
+    .profile-editor-header { padding: 16px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
+    .profile-editor-title { font-family: 'Anton', sans-serif; font-size: 28px; }
+    .profile-editor-content { flex: 1; overflow-y: auto; padding: 16px 24px; }
+    .profile-editor-avatar-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
+    .profile-editor-avatar-preview { width: 100px; height: 100px; border: 2px solid #17140F; background: repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px); background-size: cover; background-position: center; margin-bottom: 12px; }
+    .profile-editor-avatar-input { display: none; }
+    .profile-editor-avatar-btn { border: 1.5px solid #17140F; padding: 8px 16px; font-family: 'Space Mono', monospace; font-size: 10px; background: transparent; cursor: pointer; color: #17140F; }
+    .profile-editor-field { margin-bottom: 16px; }
+    .profile-editor-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; margin-bottom: 4px; display: block; }
+    .profile-editor-input { width: 100%; border: 2px solid #17140F; background: #FBF7EC; padding: 9px 11px; font-family: 'Archivo', sans-serif; font-size: 14px; color: #17140F; outline: none; border-radius: 0; }
+    .profile-editor-input::placeholder { color: #8A8175; }
+    .profile-editor-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 1.5px solid rgba(23, 20, 15, .16); }
+    .profile-editor-cancel { flex: 1; background: transparent; border: 2px solid rgba(23, 20, 15, .35); color: #8A8175; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; padding: 12px; }
+    .profile-editor-save { flex: 1; background: #F0451E; color: #F1EBDB; border: 2px solid #17140F; font-family: 'Anton', sans-serif; font-size: 16px; cursor: pointer; padding: 12px; }
+
+    /* Avatar display */
+    .avatar-image { width: 100%; height: 100%; object-fit: cover; }
+
     /* List Editor Modal */
     #listEditorOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 20; }
     #listEditorModal { position: absolute; bottom: 0; left: 0; right: 0; background: #F1EBDB; display: none; flex-direction: column; z-index: 21; border-top: 3px solid #17140F; max-height: 80vh; border-radius: 12px 12px 0 0; }
@@ -404,8 +425,15 @@
 
       <!-- Passport Screen -->
       <div id="passportScreen" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 24px 0;">
+          <div></div>
+          <button style="font-family: 'Space Mono', monospace; font-size: 10px; background: none; border: none; color: #8A8175; cursor: pointer; padding: 4px 8px;" onclick="openProfileEditor()">EDIT</button>
+        </div>
+
         <div class="passport-identity-row">
-          <div class="passport-avatar"></div>
+          <div class="passport-avatar" id="passportAvatarContainer">
+            <img id="passportAvatarImg" class="avatar-image" style="display: none;">
+          </div>
           <div style="flex: 1;">
             <div class="passport-name" id="passportName"></div>
             <div class="passport-handle" id="passportHandle"></div>
@@ -514,6 +542,38 @@
         <div class="ranks-content" id="ranksContent"></div>
       </div>
 
+      <!-- Profile Editor Modal -->
+      <div id="profileEditorOverlay" onclick="closeProfileEditor()"></div>
+      <div id="profileEditorModal">
+        <div class="profile-editor-header">
+          <div class="profile-editor-title">EDIT PROFILE</div>
+        </div>
+        <div class="profile-editor-content">
+          <div class="profile-editor-avatar-section">
+            <div class="profile-editor-avatar-preview" id="profileEditorAvatarPreview">
+              <img id="profileEditorAvatarImg" class="avatar-image" style="display: none;">
+            </div>
+            <input type="file" id="profileEditorAvatarInput" class="profile-editor-avatar-input" accept="image/*">
+            <button class="profile-editor-avatar-btn" onclick="document.getElementById('profileEditorAvatarInput').click()">CHANGE AVATAR</button>
+          </div>
+
+          <div class="profile-editor-field">
+            <label class="profile-editor-label">DISPLAY NAME</label>
+            <input type="text" class="profile-editor-input" id="profileEditorName" placeholder="Your name">
+          </div>
+
+          <div class="profile-editor-field">
+            <label class="profile-editor-label">HANDLE (@USERNAME)</label>
+            <input type="text" class="profile-editor-input" id="profileEditorHandle" placeholder="username">
+          </div>
+        </div>
+
+        <div class="profile-editor-footer">
+          <button class="profile-editor-cancel" onclick="closeProfileEditor()">CANCEL</button>
+          <button class="profile-editor-save" onclick="saveProfile()">SAVE PROFILE</button>
+        </div>
+      </div>
+
       <!-- List Editor Modal -->
       <div id="listEditorOverlay" onclick="closeListEditor()"></div>
       <div id="listEditorModal">
@@ -537,6 +597,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
   <script>
     // Initialize Firebase
@@ -551,6 +612,7 @@
 
     const auth = firebase.auth();
     const db = firebase.firestore();
+    const storage = firebase.storage();
 
     // State
     let currentUser = null;
@@ -573,6 +635,8 @@
     let viewingFriend = null; // currently viewing friend { uid, displayName, conqueredCount }
     let friendCheckins = {}; // friend's check-ins { barId: { stars, ... } }
     let userFollows = new Set(); // uids of users current user follows
+    let userHandle = ''; // custom @username
+    let selectedAvatarFile = null; // file selected for upload
 
     // Mapbox setup - token can be set via window.MAPBOX_TOKEN or localStorage.mapboxToken
     mapboxgl.accessToken = window.MAPBOX_TOKEN || localStorage.getItem('mapboxToken') || '';
@@ -623,6 +687,9 @@
           checkins = {};
         } else {
           const userData = userDoc.data();
+
+          // Load user's handle
+          userHandle = userData.handle || '';
 
           // Migration: if old "visited" field exists, migrate to new schema
           if(userData.visited && Array.isArray(userData.visited)) {
@@ -1250,7 +1317,19 @@
 
       // Identity row
       document.getElementById('passportName').textContent = currentUser.displayName || 'User';
-      document.getElementById('passportHandle').textContent = `@user · SF · RANK #1`; // TODO: calculate rank from leaderboard
+      document.getElementById('passportHandle').textContent = `@${userHandle || 'user'} · SF · RANK #1`; // TODO: calculate rank from leaderboard
+
+      // Avatar
+      const avatarImg = document.getElementById('passportAvatarImg');
+      const avatarContainer = document.getElementById('passportAvatarContainer');
+      if(currentUser.photoURL) {
+        avatarImg.src = currentUser.photoURL;
+        avatarImg.style.display = 'block';
+        avatarContainer.style.background = 'none';
+      } else {
+        avatarImg.style.display = 'none';
+        avatarContainer.style.background = 'repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px)';
+      }
 
       // Stats
       const totalBars = allBars.length;
@@ -1568,6 +1647,108 @@
       // TODO: Implement map comparison view
       alert('Map comparison coming soon');
     }
+
+    // ============ PROFILE EDITOR ============
+    function openProfileEditor() {
+      if(!currentUser) return;
+
+      // Pre-fill form
+      document.getElementById('profileEditorName').value = currentUser.displayName || '';
+      document.getElementById('profileEditorHandle').value = userHandle;
+
+      // Show current avatar
+      const avatarImg = document.getElementById('profileEditorAvatarImg');
+      const avatarPreview = document.getElementById('profileEditorAvatarPreview');
+      if(currentUser.photoURL) {
+        avatarImg.src = currentUser.photoURL;
+        avatarImg.style.display = 'block';
+        avatarPreview.style.background = 'none';
+      } else {
+        avatarImg.style.display = 'none';
+        avatarPreview.style.background = 'repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px)';
+      }
+
+      selectedAvatarFile = null;
+      document.getElementById('profileEditorAvatarInput').value = '';
+
+      document.getElementById('profileEditorOverlay').style.display = 'block';
+      document.getElementById('profileEditorModal').style.display = 'flex';
+    }
+
+    function closeProfileEditor() {
+      selectedAvatarFile = null;
+      document.getElementById('profileEditorAvatarInput').value = '';
+      document.getElementById('profileEditorOverlay').style.display = 'none';
+      document.getElementById('profileEditorModal').style.display = 'none';
+    }
+
+    async function saveProfile() {
+      if(!currentUser) return;
+
+      const displayName = document.getElementById('profileEditorName').value.trim();
+      const handle = document.getElementById('profileEditorHandle').value.trim();
+
+      if(!displayName) {
+        alert('Display name required');
+        return;
+      }
+
+      try {
+        let photoURL = currentUser.photoURL;
+
+        // Upload avatar if selected
+        if(selectedAvatarFile) {
+          const fileName = `avatars/${currentUser.uid}/${Date.now()}_${selectedAvatarFile.name}`;
+          const uploadRef = storage.ref(fileName);
+          await uploadRef.put(selectedAvatarFile);
+          photoURL = await uploadRef.getDownloadURL();
+        }
+
+        // Update Firebase auth profile
+        await currentUser.updateProfile({
+          displayName: displayName,
+          photoURL: photoURL
+        });
+
+        // Update Firestore user doc
+        await userDocRef.update({
+          displayName: displayName,
+          photoURL: photoURL,
+          handle: handle
+        });
+
+        // Update local state
+        userHandle = handle;
+
+        closeProfileEditor();
+        renderPassport(); // Refresh passport view
+      } catch(err) {
+        console.error('Error saving profile:', err);
+        alert('Failed to save profile');
+      }
+    }
+
+    // File input change handler
+    document.addEventListener('DOMContentLoaded', () => {
+      const avatarInput = document.getElementById('profileEditorAvatarInput');
+      if(avatarInput) {
+        avatarInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if(file) {
+            selectedAvatarFile = file;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const avatarImg = document.getElementById('profileEditorAvatarImg');
+              const avatarPreview = document.getElementById('profileEditorAvatarPreview');
+              avatarImg.src = ev.target.result;
+              avatarImg.style.display = 'block';
+              avatarPreview.style.background = 'none';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    });
 
     // ============ LISTS ============
     async function loadLists() {
