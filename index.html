@@ -159,6 +159,36 @@
     .saved-list-badge { background: #17140F; color: #F1EBDB; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .1em; padding: 6px 12px; margin-top: 16px; animation: riseIn .4s .6s both; }
     .saved-passport-btn { background: #17140F; color: #F1EBDB; font-family: 'Anton', sans-serif; font-size: 18px; padding: 14px 40px; border: none; cursor: pointer; margin-top: 24px; animation: riseIn .4s .7s both; }
 
+    /* Passport Screen */
+    #passportScreen { flex-direction: column; background: #F1EBDB; }
+    .passport-identity-row { display: flex; gap: 12px; align-items: center; padding: 16px 24px; }
+    .passport-avatar { width: 62px; height: 62px; flex: none; border: 2px solid #17140F; background: repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px); }
+    .passport-identity-content { flex: 1; min-width: 0; }
+    .passport-name { font-family: 'Anton', sans-serif; font-size: 25px; line-height: .95; }
+    .passport-handle { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; margin-top: 2px; }
+    .passport-pct { text-align: right; }
+    .passport-pct-num { font-family: 'Anton', sans-serif; font-size: 28px; color: #F0451E; line-height: .9; }
+    .passport-pct-label { font-family: 'Space Mono', monospace; font-size: 8px; color: #8A8175; }
+    .passport-stat-bar { display: flex; border-top: 3px solid #17140F; border-bottom: 3px solid #17140F; }
+    .passport-stat-col { flex: 1; text-align: center; padding: 12px; border-right: 1.5px solid rgba(23, 20, 15, .2); }
+    .passport-stat-col:last-child { border-right: none; }
+    .passport-stat-num { font-family: 'Anton', sans-serif; font-size: 19px; line-height: 1; }
+    .passport-stat-num.stars { color: #F0451E; }
+    .passport-stat-label { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; margin-top: 4px; }
+    .passport-tabs { display: flex; gap: 8px; padding: 12px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
+    .passport-tab { font-family: 'Space Mono', monospace; font-size: 10px; padding: 3px 9px; border: 1.5px solid #17140F; background: transparent; cursor: pointer; color: #17140F; }
+    .passport-tab.active { background: #17140F; color: #F1EBDB; border-color: #17140F; }
+    .passport-content { flex: 1; overflow-y: auto; }
+    .passport-section-heading { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .18em; padding: 12px 24px 8px; color: #8A8175; border-top: 1.5px solid rgba(23, 20, 15, .16); }
+    .passport-section-heading:first-child { border-top: none; }
+    .passport-checkin-row { display: flex; gap: 12px; align-items: center; padding: 12px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
+    .passport-checkin-stars { width: 50px; font-size: 13px; color: #F0451E; }
+    .passport-checkin-info { flex: 1; min-width: 0; }
+    .passport-checkin-name { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 15px; }
+    .passport-checkin-hood { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; margin-top: 2px; }
+    .passport-checkin-date { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; }
+    .passport-empty { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px; }
+
     /* Scrollbar hide */
     ::-webkit-scrollbar { width: 0; display: none; }
   </style>
@@ -293,7 +323,78 @@
         <div class="saved-bar-name" id="savedBarName"></div>
         <div class="saved-stats" id="savedStats">SAN FRANCISCO · 21.4%<br>MISSION NOW 43%</div>
         <div class="saved-list-badge" id="savedListBadge" style="display: none;">ADDED TO YOUR ★★★ LIST</div>
-        <button class="saved-passport-btn" onclick="goToPassport()">SEE MY PASSPORT</button>
+        <button class="saved-passport-btn" onclick="goToPassportTab()">SEE MY PASSPORT</button>
+      </div>
+
+      <!-- Passport Screen -->
+      <div id="passportScreen" class="screen">
+        <div class="passport-identity-row">
+          <div class="passport-avatar"></div>
+          <div style="flex: 1;">
+            <div class="passport-name" id="passportName"></div>
+            <div class="passport-handle" id="passportHandle"></div>
+          </div>
+          <div class="passport-pct">
+            <div class="passport-pct-num" id="passportPct">0.0%</div>
+            <div class="passport-pct-label">OF SF</div>
+          </div>
+        </div>
+
+        <div class="passport-stat-bar">
+          <div class="passport-stat-col">
+            <div class="passport-stat-num" id="passportCheckInCount">0</div>
+            <div class="passport-stat-label">CHECK-INS</div>
+          </div>
+          <div class="passport-stat-col">
+            <div class="passport-stat-num stars" id="passportThreeStarCount">0</div>
+            <div class="passport-stat-label">★★★ BARS</div>
+          </div>
+          <div class="passport-stat-col">
+            <div class="passport-stat-num" id="passportListCount">0</div>
+            <div class="passport-stat-label">LISTS</div>
+          </div>
+        </div>
+
+        <div class="passport-tabs">
+          <button class="passport-tab active" onclick="switchPassportTab('passport')">PASSPORT</button>
+          <button class="passport-tab" onclick="switchPassportTab('lists')">LISTS</button>
+          <button class="passport-tab" onclick="switchPassportTab('map')">MAP</button>
+        </div>
+
+        <div class="passport-content" id="passportContent"></div>
+      </div>
+
+      <!-- Lists Screen -->
+      <div id="listsScreen" class="screen">
+        <div style="padding: 16px 24px;">
+          <div style="font-family: 'Anton', sans-serif; font-size: 36px; line-height: .95;">YOUR LISTS</div>
+        </div>
+
+        <div class="passport-tabs" style="padding-left: 24px; padding-right: 24px; border: none;">
+          <button class="passport-tab" onclick="switchPassportTab('passport')">PASSPORT</button>
+          <button class="passport-tab active" onclick="switchPassportTab('lists')">LISTS</button>
+          <button class="passport-tab" onclick="switchPassportTab('map')">MAP</button>
+        </div>
+
+        <div class="passport-content" id="listsContent" style="padding: 16px 24px;">
+          <!-- Automatic 3-star list -->
+          <div style="border: 2px solid #17140F; padding: 14px; margin-bottom: 16px; position: relative;">
+            <div style="position: absolute; top: -9px; left: 12px; background: #F0451E; color: #17140F; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .06em; padding: 2px 8px;">AUTOMATIC</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+              <div style="font-family: 'Anton', sans-serif; font-size: 25px;">MY 3-STAR BARS</div>
+              <div style="font-family: 'Anton', sans-serif; font-size: 25px; color: #F0451E;" id="listsThreeStarCount">0</div>
+            </div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; margin-bottom: 12px;">EVERY BAR YOU RATED ★★★ · UPDATES ITSELF</div>
+            <div id="listsThreeStarPreview"></div>
+          </div>
+
+          <!-- Custom lists placeholder -->
+          <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .18em; margin-bottom: 8px;">LISTS YOU MADE</div>
+          <div id="listsCustom" style="text-align: center; color: #8A8175; padding: 16px;">No custom lists yet.</div>
+          <div style="border: 2px dashed #17140F; padding: 13px; text-align: center; margin-top: 12px; cursor: pointer;">
+            <div style="font-family: 'Anton', sans-serif; font-size: 17px;">＋ NEW LIST</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -729,6 +830,8 @@
         document.getElementById('tabBar').style.display = 'flex';
         document.getElementById('rankSheetOverlay').style.display = 'none';
         document.getElementById('rankSheet').style.display = 'none';
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab')[0].classList.add('active'); // MAP tab
       } else if(screen === 'bar') {
         document.getElementById('barDetailScreen').classList.add('active');
         document.getElementById('tabBar').style.display = 'none';
@@ -740,6 +843,13 @@
         document.getElementById('tabBar').style.display = 'none';
         document.getElementById('rankSheetOverlay').style.display = 'none';
         document.getElementById('rankSheet').style.display = 'none';
+      } else if(screen === 'passport') {
+        document.getElementById('passportScreen').classList.add('active');
+        document.getElementById('tabBar').style.display = 'flex';
+        document.getElementById('rankSheetOverlay').style.display = 'none';
+        document.getElementById('rankSheet').style.display = 'none';
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab')[4].classList.add('active'); // YOU tab
       }
     }
 
@@ -949,13 +1059,110 @@
       }
     }
 
-    function goToPassport() {
+    function goToPassportTab() {
       savedPayload = null;
       pendingRating = 0;
       pendingNote = '';
       selectedBar = null;
-      setScreen('map');
-      // TODO: switch to Passport tab
+      renderPassport();
+      currentScreen = 'passport';
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('passportScreen').classList.add('active');
+      document.getElementById('tabBar').style.display = 'flex';
+      // Update tab bar
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab')[4].classList.add('active'); // YOU tab
+    }
+
+    function switchPassportTab(tab) {
+      if(tab === 'passport') {
+        document.getElementById('passportScreen').classList.add('active');
+        document.getElementById('listsScreen').classList.remove('active');
+        document.querySelectorAll('#passportScreen .passport-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('#passportScreen .passport-tab')[0].classList.add('active');
+      } else if(tab === 'lists') {
+        document.getElementById('passportScreen').classList.remove('active');
+        document.getElementById('listsScreen').classList.add('active');
+        document.querySelectorAll('#listsScreen .passport-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('#listsScreen .passport-tab')[1].classList.add('active');
+      } else if(tab === 'map') {
+        goToMap();
+      }
+    }
+
+    function renderPassport() {
+      if(!currentUser) return;
+
+      // Identity row
+      document.getElementById('passportName').textContent = currentUser.displayName || 'User';
+      document.getElementById('passportHandle').textContent = `@user · SF · RANK #1`; // TODO: calculate rank from leaderboard
+
+      // Stats
+      const totalBars = allBars.length;
+      const conqueredCount = Object.keys(checkins).length;
+      const pct = totalBars > 0 ? (conqueredCount / totalBars * 100).toFixed(1) : 0;
+      const threeStarCount = Object.values(checkins).filter(c => c.stars === 3).length;
+
+      document.getElementById('passportPct').textContent = pct + '%';
+      document.getElementById('passportCheckInCount').textContent = conqueredCount;
+      document.getElementById('passportThreeStarCount').textContent = threeStarCount;
+      document.getElementById('passportListCount').textContent = '0'; // TODO: count custom lists
+
+      // Recent check-ins (newest first)
+      const recentCheckins = Object.entries(checkins)
+        .map(([barId, data]) => {
+          const bar = allBars.find(b => b.id === parseInt(barId));
+          return bar ? { bar, checkin: data, barId: parseInt(barId) } : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => {
+          const aTime = a.checkin.ts?.toDate?.() || new Date(a.checkin.ts);
+          const bTime = b.checkin.ts?.toDate?.() || new Date(b.checkin.ts);
+          return bTime - aTime;
+        });
+
+      const contentDiv = document.getElementById('passportContent');
+      contentDiv.innerHTML = '';
+
+      if(recentCheckins.length === 0) {
+        contentDiv.innerHTML = '<div class="passport-empty">No check-ins yet. Tap the ◎ tab to get started.</div>';
+      } else {
+        const heading = document.createElement('div');
+        heading.className = 'passport-section-heading';
+        heading.textContent = 'RECENT';
+        contentDiv.appendChild(heading);
+
+        recentCheckins.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'passport-checkin-row';
+          const stars = '★'.repeat(item.checkin.stars);
+          const date = item.checkin.ts ? (new Date(item.checkin.ts.toDate?.() || item.checkin.ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })) : '';
+          row.innerHTML = `
+            <div class="passport-checkin-stars">${stars}</div>
+            <div class="passport-checkin-info">
+              <div class="passport-checkin-name">${item.bar.name}</div>
+              <div class="passport-checkin-hood">${item.bar.neighborhood}</div>
+            </div>
+            <div class="passport-checkin-date">${date}</div>
+          `;
+          contentDiv.appendChild(row);
+        });
+      }
+
+      // Lists stats
+      document.getElementById('listsThreeStarCount').textContent = threeStarCount;
+      const threeStarBars = Object.entries(checkins)
+        .filter(([_, data]) => data.stars === 3)
+        .map(([barId]) => allBars.find(b => b.id === parseInt(barId)))
+        .filter(Boolean);
+
+      const previewDiv = document.getElementById('listsThreeStarPreview');
+      previewDiv.innerHTML = threeStarBars.slice(0, 5).map(bar => `
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(241,235,219,.18); font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 13px;">
+          <div>${bar.name}</div>
+          <div style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175;">${bar.neighborhood}</div>
+        </div>
+      `).join('');
     }
 
     // ============ EVENTS ============
@@ -963,13 +1170,20 @@
       renderBars();
     });
 
-    document.querySelectorAll('.tab').forEach(tab => {
+    document.querySelectorAll('.tab').forEach((tab, index) => {
       tab.addEventListener('click', () => {
         const tabName = tab.getAttribute('data-tab');
-        if(tabName) {
+        if(tabName === 'you') {
+          renderPassport();
+          currentScreen = 'passport';
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+          document.getElementById('passportScreen').classList.add('active');
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
-          // TODO: implement other tabs
+        } else if(tabName) {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          // TODO: implement other tabs (lists, ranks)
         }
       });
     });
