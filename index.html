@@ -950,10 +950,10 @@
 
       // Create GeoJSON
       const features = allBars.map(bar => ({
+        id: bar.id,
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [bar.lon, bar.lat] },
         properties: {
-          id: bar.id,
           name: bar.name,
           conquered: !!checkins[bar.id],
           stars: checkins[bar.id]?.stars || 0
@@ -970,7 +970,7 @@
         id: 'pins-conquered',
         type: 'circle',
         source: 'pins',
-        filter: ['boolean', ['feature-state', 'conquered']],
+        filter: ['==', ['get', 'conquered'], true],
         paint: {
           'circle-radius': 6,
           'circle-color': '#F0451E',
@@ -984,21 +984,13 @@
         id: 'pins-unconquered',
         type: 'circle',
         source: 'pins',
-        filter: ['!', ['boolean', ['feature-state', 'conquered']]],
+        filter: ['==', ['get', 'conquered'], false],
         paint: {
           'circle-radius': 4,
           'circle-color': '#F1EBDB',
           'circle-stroke-width': 1.5,
           'circle-stroke-color': '#F0451E'
         }
-      });
-
-      // Update feature state
-      allBars.forEach(bar => {
-        mapboxMap.setFeatureState(
-          { source: 'pins', id: bar.id },
-          { conquered: !!checkins[bar.id] }
-        );
       });
     }
 
