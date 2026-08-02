@@ -21,8 +21,8 @@
     #app { height: 100vh; display: flex; flex-direction: column; }
     #statusBar { height: 50px; flex: none; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 24px 5px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; background: #F1EBDB; }
     #contentArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-    #scrollContent { flex: 1; overflow-y: auto; overflow-x: hidden; }
-    #tabBar { height: 60px; flex: none; border-top: 3px solid #17140F; background: #F1EBDB; display: flex; justify-content: space-around; align-items: center; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; }
+    #scrollContent { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 60px; }
+    #tabBar { height: 60px; position: fixed; bottom: 0; left: 0; right: 0; border-top: 3px solid #17140F; background: #F1EBDB; display: flex; justify-content: space-around; align-items: center; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; z-index: 100; }
     .tab { flex: 1; text-align: center; padding: 13px 0; cursor: pointer; border: none; background: none; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; color: #17140F; }
     .tab.active { background: #F0451E; color: #F1EBDB; }
 
@@ -53,7 +53,10 @@
     .chip-1 { border: 1.5px solid #17140F; color: #17140F; background: transparent; }
 
     /* Map */
-    #map { height: 104px; margin: 14px 24px 0; border: 2px solid #17140F; }
+    #map { height: 300px; margin: 14px 24px 0; border: 2px solid #17140F; }
+    @media (min-width: 768px) {
+      #map { height: 104px; }
+    }
     .map-caption { position: absolute; bottom: 6px; right: 9px; font-family: 'Space Mono', monospace; font-size: 9px; color: #6B6153; background: rgba(241, 235, 219, .9); padding: 2px 4px; }
 
     /* Neighborhoods */
