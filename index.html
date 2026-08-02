@@ -1502,15 +1502,28 @@
 
         const row = document.createElement('div');
         row.className = 'ranks-row' + (isYou ? ' your-row' : '');
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'ranks-avatar';
+        if(user.photoURL) {
+          const img = document.createElement('img');
+          img.src = user.photoURL;
+          img.className = 'avatar-image';
+          img.style.display = 'block';
+          avatarDiv.appendChild(img);
+          avatarDiv.style.background = 'none';
+        }
+
         row.innerHTML = `
           <div class="ranks-number">${rank}</div>
-          <div class="ranks-avatar"></div>
           <div class="ranks-info">
             <div class="ranks-name">${user.displayName || 'User'}</div>
             <div class="ranks-meta">${conqueredCount} BARS · ${isYou ? "THAT'S YOU" : 'SEE THEIR LISTS'}</div>
           </div>
           <div class="ranks-pct">${pct}%</div>
         `;
+
+        row.insertBefore(avatarDiv, row.children[1]);
 
         if(!isYou) {
           row.style.cursor = 'pointer';
@@ -1564,6 +1577,22 @@
       document.getElementById('friendName').textContent = viewingFriend.displayName || 'User';
       document.getElementById('friendHandle').textContent = `@user · RANK #1 IN SF`; // TODO: calculate friend's rank
       document.getElementById('friendPct').textContent = pct + '%';
+
+      // Avatar
+      const friendAvatarContainer = document.querySelector('.friend-identity-row .friend-avatar');
+      if(friendAvatarContainer) {
+        friendAvatarContainer.innerHTML = '';
+        if(viewingFriend.photoURL) {
+          const img = document.createElement('img');
+          img.src = viewingFriend.photoURL;
+          img.className = 'avatar-image';
+          img.style.display = 'block';
+          friendAvatarContainer.appendChild(img);
+          friendAvatarContainer.style.background = 'none';
+        } else {
+          friendAvatarContainer.style.background = 'repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px)';
+        }
+      }
 
       // Follow button
       const followBtn = document.getElementById('friendFollowBtn');
