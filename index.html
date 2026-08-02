@@ -1409,17 +1409,21 @@
     document.querySelectorAll('.tab').forEach((tab, index) => {
       tab.addEventListener('click', () => {
         const tabName = tab.getAttribute('data-tab');
-        if(tabName === 'you') {
+        if(tabName === 'map') {
+          goToMap();
+        } else if(tabName === 'you') {
           renderPassport();
           currentScreen = 'passport';
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('passportScreen').classList.add('active');
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
-        } else if(tabName) {
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          // TODO: implement other tabs (lists, ranks)
+        } else if(tabName === 'lists') {
+          // TODO: implement lists leaderboard tab
+          alert('Lists tab coming soon');
+        } else if(tabName === 'ranks') {
+          // TODO: implement leaderboard tab
+          alert('Leaderboard coming soon');
         }
       });
     });
