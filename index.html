@@ -242,7 +242,7 @@
 
     /* Profile Editor Modal */
     #profileEditorOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 30; }
-    #profileEditorModal { position: absolute; bottom: 0; left: 0; right: 0; background: #F1EBDB; display: none; flex-direction: column; z-index: 31; border-top: 3px solid #17140F; max-height: 90vh; border-radius: 12px 12px 0 0; }
+    #profileEditorModal { position: absolute; bottom: 0; left: 0; right: 0; background: #F1EBDB; display: none; flex-direction: column; z-index: 31; border-top: 3px solid #17140F; max-height: 90vh; border-radius: 12px 12px 0 0; overflow: hidden; }
     .profile-editor-header { padding: 16px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
     .profile-editor-title { font-family: 'Anton', sans-serif; font-size: 28px; }
     .profile-editor-content { flex: 1; overflow-y: auto; padding: 16px 24px; }
@@ -254,7 +254,7 @@
     .profile-editor-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; margin-bottom: 4px; display: block; }
     .profile-editor-input { width: 100%; border: 2px solid #17140F; background: #FBF7EC; padding: 9px 11px; font-family: 'Archivo', sans-serif; font-size: 14px; color: #17140F; outline: none; border-radius: 0; }
     .profile-editor-input::placeholder { color: #8A8175; }
-    .profile-editor-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 1.5px solid rgba(23, 20, 15, .16); }
+    .profile-editor-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 1.5px solid rgba(23, 20, 15, .16); flex: none; }
     .profile-editor-cancel { flex: 1; background: transparent; border: 2px solid rgba(23, 20, 15, .35); color: #8A8175; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; padding: 12px; }
     .profile-editor-save { flex: 1; background: #F0451E; color: #F1EBDB; border: 2px solid #17140F; font-family: 'Anton', sans-serif; font-size: 16px; cursor: pointer; padding: 12px; }
 
