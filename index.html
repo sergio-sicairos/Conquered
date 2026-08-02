@@ -661,8 +661,15 @@
         document.getElementById('mapScreen').style.display = 'block';
         document.getElementById('tabBar').style.display = 'flex';
         userDocRef = db.collection('users').doc(user.uid);
-        loadUserData();
-        loadBars();
+
+        // Load data in proper sequence: user data (including checkins) first, then render
+        loadUserData().then(() => {
+          loadBars().then(() => {
+            render(); // Render after all data is loaded
+          });
+        });
+
+        // Other non-blocking loads
         loadAllUsers();
         initMapbox();
         startGeolocation();
@@ -774,7 +781,7 @@
         allBars = data.bars || data;
         document.getElementById('barCount').textContent = allBars.length;
         document.getElementById('totalBarCount').textContent = allBars.length;
-        render();
+        // Don't call render() here - it's called after both user data and bars are loaded
       } catch(err) {
         console.error('Error loading bars:', err);
       }
