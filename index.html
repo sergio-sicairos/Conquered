@@ -643,6 +643,7 @@
 
     // Mapbox setup
     mapboxgl.accessToken = 'pk.eyJ1Ijoic2Vyc2ljIiwiYSI6ImNtc2M2ZWY1YjFpeGEzNW93eXA3dXJ2Mm0ifQ.yJit-EW6_jxmqgnDYHU09w';
+    let mapEventsAttached = false; // Track if click/mousemove listeners are already attached
 
     // ============ AUTH ============
     auth.onAuthStateChanged(user => {
@@ -932,6 +933,7 @@
           attributionControl: false
         });
 
+        mapEventsAttached = false; // Reset flag for new map instance
         mapboxMap.on('load', () => {
           updateMapPins();
         });
@@ -998,30 +1000,34 @@
         }
       });
 
-      // Make pins clickable - use a wider hit area for mobile
-      mapboxMap.on('click', (e) => {
-        // Query rendered features with a large radius for easier mobile tapping
-        const features = mapboxMap.queryRenderedFeatures({
-          layers: ['pins-conquered', 'pins-unconquered'],
-          point: e.point
+      // Attach event listeners only once to prevent duplicates
+      if(!mapEventsAttached) {
+        mapboxMap.on('click', (e) => {
+          // Query rendered features with a large radius for easier mobile tapping
+          const features = mapboxMap.queryRenderedFeatures({
+            layers: ['pins-conquered', 'pins-unconquered'],
+            point: e.point
+          });
+
+          if(features.length > 0) {
+            const feature = features[0];
+            const barId = feature.id;
+            const bar = allBars.find(b => b.id === barId);
+            if(bar) openBar(bar);
+          }
         });
 
-        if(features.length > 0) {
-          const feature = features[0];
-          const barId = feature.id;
-          const bar = allBars.find(b => b.id === barId);
-          if(bar) openBar(bar);
-        }
-      });
-
-      // Change cursor on hover over pins
-      mapboxMap.on('mousemove', (e) => {
-        const features = mapboxMap.queryRenderedFeatures({
-          layers: ['pins-conquered', 'pins-unconquered'],
-          point: e.point
+        // Change cursor on hover over pins
+        mapboxMap.on('mousemove', (e) => {
+          const features = mapboxMap.queryRenderedFeatures({
+            layers: ['pins-conquered', 'pins-unconquered'],
+            point: e.point
+          });
+          mapboxMap.getCanvas().style.cursor = features.length > 0 ? 'pointer' : '';
         });
-        mapboxMap.getCanvas().style.cursor = features.length > 0 ? 'pointer' : '';
-      });
+
+        mapEventsAttached = true;
+      }
     }
 
     // ============ GEOLOCATION ============
