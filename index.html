@@ -956,8 +956,10 @@
 
       // Remove existing layers/sources
       if(mapboxMap.getSource('pins')) {
-        mapboxMap.removeLayer('pins-conquered');
-        mapboxMap.removeLayer('pins-unconquered');
+        if(mapboxMap.getLayer('clusters')) mapboxMap.removeLayer('clusters');
+        if(mapboxMap.getLayer('cluster-count')) mapboxMap.removeLayer('cluster-count');
+        if(mapboxMap.getLayer('pins-conquered')) mapboxMap.removeLayer('pins-conquered');
+        if(mapboxMap.getLayer('pins-unconquered')) mapboxMap.removeLayer('pins-unconquered');
         mapboxMap.removeSource('pins');
       }
 
@@ -975,15 +977,51 @@
 
       mapboxMap.addSource('pins', {
         type: 'geojson',
-        data: { type: 'FeatureCollection', features }
+        data: { type: 'FeatureCollection', features },
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50
       });
 
-      // Conquered pins (larger, solid red, prominent, easy to tap)
+      // Cluster layer (shows groups of bars when zoomed out)
+      mapboxMap.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: 'pins',
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': '#F0451E',
+          'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#17140F',
+          'circle-opacity': 0.8
+        }
+      });
+
+      // Cluster count labels
+      mapboxMap.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'pins',
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': '{point_count_abbreviated}',
+          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+          'text-size': 14,
+          'text-allow-overlap': true
+        },
+        paint: {
+          'text-color': '#F1EBDB'
+        }
+      });
+
+      // Conquered pins (larger, solid red, prominent, easy to tap) - only show when zoomed in
       mapboxMap.addLayer({
         id: 'pins-conquered',
         type: 'circle',
         source: 'pins',
-        filter: ['==', ['get', 'conquered'], true],
+        filter: ['and', ['!=', ['get', 'point_count'], null], ['==', ['get', 'conquered'], true]],
+        minzoom: 15,
         paint: {
           'circle-radius': 12,
           'circle-color': '#F0451E',
@@ -993,12 +1031,13 @@
         }
       });
 
-      // Unconquered pins (outlined, easier to tap on mobile)
+      // Unconquered pins (outlined, easier to tap on mobile) - only show when zoomed in
       mapboxMap.addLayer({
         id: 'pins-unconquered',
         type: 'circle',
         source: 'pins',
-        filter: ['==', ['get', 'conquered'], false],
+        filter: ['and', ['!=', ['get', 'point_count'], null], ['==', ['get', 'conquered'], false]],
+        minzoom: 15,
         paint: {
           'circle-radius': 8,
           'circle-color': 'rgba(255, 255, 255, 0)',
@@ -1013,22 +1052,37 @@
         mapboxMap.on('click', (e) => {
           // Query rendered features with a large radius for easier mobile tapping
           const features = mapboxMap.queryRenderedFeatures({
-            layers: ['pins-conquered', 'pins-unconquered'],
+            layers: ['clusters', 'pins-conquered', 'pins-unconquered'],
             point: e.point
           });
 
           if(features.length > 0) {
             const feature = features[0];
-            const barId = feature.id;
-            const bar = allBars.find(b => b.id === barId);
-            if(bar) openBar(bar);
+
+            // If it's a cluster, zoom in to it
+            if(feature.layer.id === 'clusters') {
+              const clusterId = feature.properties.cluster_id;
+              mapboxMap.getSource('pins').getClusterExpansionZoom(clusterId, (err, zoom) => {
+                if(err) return;
+                mapboxMap.flyTo({
+                  center: feature.geometry.coordinates,
+                  zoom: zoom,
+                  duration: 500
+                });
+              });
+            } else {
+              // If it's a pin, open the bar detail
+              const barId = feature.id;
+              const bar = allBars.find(b => b.id === barId);
+              if(bar) openBar(bar);
+            }
           }
         });
 
-        // Change cursor on hover over pins
+        // Change cursor on hover over pins or clusters
         mapboxMap.on('mousemove', (e) => {
           const features = mapboxMap.queryRenderedFeatures({
-            layers: ['pins-conquered', 'pins-unconquered'],
+            layers: ['clusters', 'pins-conquered', 'pins-unconquered'],
             point: e.point
           });
           mapboxMap.getCanvas().style.cursor = features.length > 0 ? 'pointer' : '';
