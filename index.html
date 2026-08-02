@@ -903,16 +903,17 @@
 
         const rowDiv = document.createElement('div');
         rowDiv.className = 'bar-row';
+        rowDiv.style.pointerEvents = 'auto';
         rowDiv.innerHTML = `
-          <div class="bar-chip ${isVisited ? 'bar-chip-visited' : 'bar-chip-unvisited'}" style="background: ${chipBg};">${chipContent}</div>
-          <div class="bar-info">
+          <div class="bar-chip ${isVisited ? 'bar-chip-visited' : 'bar-chip-unvisited'}" style="background: ${chipBg}; pointer-events: none;">${chipContent}</div>
+          <div class="bar-info" style="pointer-events: none;">
             <div class="bar-name">${bar.name}</div>
             <div class="bar-note">${noteText}</div>
             <div class="bar-meta">${bar.neighborhood} · ${distStr}</div>
           </div>
-          <div class="bar-chevron">›</div>
+          <div class="bar-chevron" style="pointer-events: none;">›</div>
         `;
-        rowDiv.onclick = () => openBar(bar);
+        rowDiv.addEventListener('click', () => openBar(bar), false);
         barsContainer.appendChild(rowDiv);
       });
     }
