@@ -968,14 +968,14 @@
         data: { type: 'FeatureCollection', features }
       });
 
-      // Conquered pins (larger, solid red, prominent)
+      // Conquered pins (larger, solid red, prominent, easy to tap)
       mapboxMap.addLayer({
         id: 'pins-conquered',
         type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], true],
         paint: {
-          'circle-radius': 10,
+          'circle-radius': 12,
           'circle-color': '#F0451E',
           'circle-stroke-width': 3,
           'circle-stroke-color': '#17140F',
@@ -983,46 +983,44 @@
         }
       });
 
-      // Unconquered pins (smaller, outline only, less prominent)
+      // Unconquered pins (outlined, easier to tap on mobile)
       mapboxMap.addLayer({
         id: 'pins-unconquered',
         type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], false],
         paint: {
-          'circle-radius': 5,
+          'circle-radius': 8,
           'circle-color': 'rgba(255, 255, 255, 0)',
-          'circle-stroke-width': 2,
+          'circle-stroke-width': 3,
           'circle-stroke-color': '#F0451E',
-          'circle-opacity': 0.7
+          'circle-opacity': 1
         }
       });
 
-      // Make pins clickable
-      mapboxMap.on('click', 'pins-conquered', (e) => {
-        const barId = e.features[0].id;
-        const bar = allBars.find(b => b.id === barId);
-        if(bar) openBar(bar);
+      // Make pins clickable - use a wider hit area for mobile
+      mapboxMap.on('click', (e) => {
+        // Query rendered features with a large radius for easier mobile tapping
+        const features = mapboxMap.queryRenderedFeatures({
+          layers: ['pins-conquered', 'pins-unconquered'],
+          point: e.point
+        });
+
+        if(features.length > 0) {
+          const feature = features[0];
+          const barId = feature.id;
+          const bar = allBars.find(b => b.id === barId);
+          if(bar) openBar(bar);
+        }
       });
 
-      mapboxMap.on('click', 'pins-unconquered', (e) => {
-        const barId = e.features[0].id;
-        const bar = allBars.find(b => b.id === barId);
-        if(bar) openBar(bar);
-      });
-
-      // Change cursor on hover
-      mapboxMap.on('mouseenter', 'pins-conquered', () => {
-        mapboxMap.getCanvas().style.cursor = 'pointer';
-      });
-      mapboxMap.on('mouseleave', 'pins-conquered', () => {
-        mapboxMap.getCanvas().style.cursor = '';
-      });
-      mapboxMap.on('mouseenter', 'pins-unconquered', () => {
-        mapboxMap.getCanvas().style.cursor = 'pointer';
-      });
-      mapboxMap.on('mouseleave', 'pins-unconquered', () => {
-        mapboxMap.getCanvas().style.cursor = '';
+      // Change cursor on hover over pins
+      mapboxMap.on('mousemove', (e) => {
+        const features = mapboxMap.queryRenderedFeatures({
+          layers: ['pins-conquered', 'pins-unconquered'],
+          point: e.point
+        });
+        mapboxMap.getCanvas().style.cursor = features.length > 0 ? 'pointer' : '';
       });
     }
 
