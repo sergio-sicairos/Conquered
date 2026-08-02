@@ -14,13 +14,24 @@
     html, body { margin: 0; padding: 0; height: 100%; font-family: 'Archivo', system-ui, sans-serif; overflow: hidden; }
     body { background: #F1EBDB; color: #17140F; }
 
+    @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes stampIn { 0% { transform: scale(2.4) rotate(-14deg); opacity: 0; } 60% { transform: scale(.92) rotate(-4deg); opacity: 1; } 100% { transform: scale(1) rotate(-4deg); opacity: 1; } }
+    @keyframes riseIn { from { transform: translateY(14px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
     #app { height: 100vh; display: flex; flex-direction: column; }
     #statusBar { height: 50px; flex: none; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 24px 5px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; background: #F1EBDB; }
-    #contentArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    #contentArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
     #scrollContent { flex: 1; overflow-y: auto; overflow-x: hidden; }
     #tabBar { height: 60px; flex: none; border-top: 3px solid #17140F; background: #F1EBDB; display: flex; justify-content: space-around; align-items: center; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; }
     .tab { flex: 1; text-align: center; padding: 13px 0; cursor: pointer; border: none; background: none; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; color: #17140F; }
     .tab.active { background: #F0451E; color: #F1EBDB; }
+
+    /* Screen visibility */
+    .screen { display: none; flex-direction: column; }
+    .screen.active { display: flex; }
+    #mapScreen { background: #F1EBDB; }
+    #barDetailScreen { background: #F1EBDB; }
+    #savedConfirmScreen { background: #F0451E; }
 
     /* Header */
     .header-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 24px 0; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .2em; }
@@ -80,6 +91,74 @@
     #authContainer button { background: #F0451E; color: #F1EBDB; border: 2px solid #17140F; padding: 12px 24px; font-family: 'Space Mono', monospace; font-size: 14px; cursor: pointer; border-radius: 0; }
     #authContainer button:hover { background: #17140F; color: #F1EBDB; }
 
+    /* Bar Detail Screen */
+    #barDetailScreen { flex-direction: column; }
+    .bar-detail-back { font-family: 'Space Mono', monospace; font-size: 12px; padding: 4px 24px 8px; background: none; border: none; cursor: pointer; color: #17140F; }
+    .bar-detail-photo { height: 176px; border-top: 3px solid #17140F; border-bottom: 3px solid #17140F; background: repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px); position: relative; }
+    .bar-detail-photo-overlay { position: absolute; inset: 0; background-image: radial-gradient(#F0451E 1.6px, transparent 2px); background-size: 19px 19px; opacity: .5; }
+    .bar-detail-stamp { position: absolute; top: 14px; left: 16px; transform: rotate(-7deg); border: 2px solid #F0451E; padding: 3px 10px; font-family: 'Anton', sans-serif; font-size: 15px; color: #F0451E; letter-spacing: .06em; background: transparent; }
+    .bar-detail-stamp.conquered { background: rgba(240, 69, 30, .15); }
+    .bar-detail-photo-caption { position: absolute; bottom: 6px; right: 9px; font-family: 'Space Mono', monospace; font-size: 9px; color: #6B6153; background: rgba(241, 235, 219, .9); padding: 2px 4px; }
+    .bar-detail-content { flex: 1; overflow-y: auto; }
+    .bar-detail-body { padding: 16px 24px; }
+    .bar-detail-name { font-family: 'Anton', sans-serif; font-size: 34px; line-height: .95; }
+    .bar-detail-address { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; margin-top: 8px; }
+    .bar-detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .bar-detail-tag { border: 1.5px solid #17140F; padding: 2px 7px; font-family: 'Space Mono', monospace; font-size: 9px; }
+    .bar-detail-card { border: 2px solid #17140F; padding: 12px; margin-top: 16px; }
+    .bar-detail-card.friends { background: #FBF7EC; position: relative; }
+    .bar-detail-card-label { position: absolute; top: -9px; left: 12px; background: #1F3FE0; color: #F1EBDB; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .12em; padding: 2px 8px; }
+    .bar-detail-card-body { font-size: 12px; color: #2A251D; line-height: 1.45; margin-top: 8px; }
+    .bar-detail-card-footer { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; margin-top: 8px; }
+    .bar-detail-card.rating { border-color: #F0451E; display: flex; justify-content: space-between; align-items: center; }
+    .bar-detail-rating-label { font-family: 'Space Mono', monospace; font-size: 9px; color: #F0451E; }
+    .bar-detail-rating-stars { font-size: 20px; color: #F0451E; }
+    .bar-detail-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 2px solid #17140F; background: #F1EBDB; }
+    .bar-detail-checkin-btn { flex: 1; background: #F0451E; color: #F1EBDB; border: 2px solid #17140F; font-family: 'Anton', sans-serif; font-size: 19px; padding: 15px; cursor: pointer; }
+    .bar-detail-directions-btn { width: 54px; height: 54px; background: #F1EBDB; border: 2px solid #17140F; font-family: 'Anton', sans-serif; font-size: 20px; cursor: pointer; }
+
+    /* Rank Sheet */
+    #rankSheetOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 10; }
+    #rankSheet { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; background: #17140F; color: #F1EBDB; display: none; flex-direction: column; z-index: 11; animation: sheetUp .28s ease-out; }
+    .rank-header { text-align: center; padding: 24px; }
+    .rank-time { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .22em; color: #F0451E; }
+    .rank-name { font-family: 'Anton', sans-serif; font-size: 38px; line-height: .9; margin: 8px 0; }
+    .rank-badge { display: inline-block; border: 2px solid #F0451E; color: #F0451E; font-family: 'Anton', sans-serif; font-size: 16px; padding: 4px 12px; transform: rotate(-3deg); margin-top: 8px; }
+    .rank-divider { height: 2px; background: rgba(241, 235, 219, .22); }
+    .rank-title { font-family: 'Anton', sans-serif; font-size: 21px; padding: 16px 24px 0; }
+    .rank-subtitle { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; padding: 0 24px 16px; }
+    .rank-options { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 0 24px; overflow-y: auto; }
+    .rank-option { display: flex; gap: 12px; padding: 13px; border: 2px rgba(241, 235, 219, .4) solid; background: transparent; cursor: pointer; transition: background .15s, border-color .15s; }
+    .rank-option:hover { background: rgba(241, 235, 219, .08); }
+    .rank-option.selected { border-color: #F0451E; background: #F0451E; }
+    .rank-option.selected .rank-option-stars { color: #17140F; }
+    .rank-option.selected .rank-option-title { color: #17140F; }
+    .rank-option.selected .rank-option-sub { color: #17140F; }
+    .rank-option.selected .rank-option-check { color: #17140F; }
+    .rank-option-stars { font-size: 18px; width: 56px; letter-spacing: 1px; }
+    .rank-option-content { flex: 1; }
+    .rank-option-title { font-family: 'Anton', sans-serif; font-size: 18px; color: #F1EBDB; }
+    .rank-option-sub { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; }
+    .rank-option-check { font-family: 'Anton', sans-serif; font-size: 19px; color: transparent; }
+    .rank-note-field { border: 2px dashed rgba(241, 235, 219, .35); padding: 11px; margin: 0 24px 16px; background: transparent; }
+    .rank-note-label { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; display: block; margin-bottom: 8px; }
+    .rank-note-input { width: 100%; background: transparent; border: none; outline: none; color: #F1EBDB; font-family: 'Archivo', sans-serif; font-size: 13px; }
+    .rank-note-input::placeholder { color: #8A8175; }
+    .rank-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 2px solid rgba(241, 235, 219, .22); }
+    .rank-cancel { width: 96px; background: transparent; border: 2px solid rgba(241, 235, 219, .35); color: #8A8175; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; }
+    .rank-save { flex: 1; background: rgba(241, 235, 219, .25); color: #8A8175; border: 2px solid rgba(241, 235, 219, .35); font-family: 'Anton', sans-serif; font-size: 19px; cursor: not-allowed; padding: 12px; }
+    .rank-save.enabled { background: #F1EBDB; color: #17140F; cursor: pointer; border-color: #F1EBDB; }
+
+    /* Saved Confirmation */
+    #savedConfirmScreen { flex-direction: column; background: #F0451E; color: #17140F; align-items: center; justify-content: center; padding: 0 34px; }
+    .saved-stamp { border: 4px solid #17140F; padding: 12px 20px; text-align: center; animation: stampIn .5s cubic-bezier(.2,1.4,.4,1) both; }
+    .saved-stamp-word { font-family: 'Anton', sans-serif; font-size: 44px; line-height: .9; }
+    .saved-stamp-badge { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .2em; margin-top: 4px; }
+    .saved-bar-name { font-family: 'Anton', sans-serif; font-size: 26px; margin-top: 26px; animation: riseIn .4s .3s both; }
+    .saved-stats { font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.7; text-align: center; margin-top: 16px; animation: riseIn .4s .45s both; }
+    .saved-list-badge { background: #17140F; color: #F1EBDB; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .1em; padding: 6px 12px; margin-top: 16px; animation: riseIn .4s .6s both; }
+    .saved-passport-btn { background: #17140F; color: #F1EBDB; font-family: 'Anton', sans-serif; font-size: 18px; padding: 14px 40px; border: none; cursor: pointer; margin-top: 24px; animation: riseIn .4s .7s both; }
+
     /* Scrollbar hide */
     ::-webkit-scrollbar { width: 0; display: none; }
   </style>
@@ -98,8 +177,41 @@
           <div id="authContainer"></div>
         </div>
 
+        <!-- Bar Detail screen -->
+        <div id="barDetailScreen" class="screen" style="flex-direction: column; background: #F1EBDB;">
+          <button class="bar-detail-back" onclick="goToMap()">‹ MAP</button>
+          <div class="bar-detail-photo">
+            <div class="bar-detail-photo-overlay"></div>
+            <div class="bar-detail-stamp" id="barDetailStamp">UNCONQUERED</div>
+            <div class="bar-detail-photo-caption"><span id="barDetailPhotoCaption">PHOTO</span></div>
+          </div>
+          <div class="bar-detail-content">
+            <div class="bar-detail-body">
+              <div class="bar-detail-name" id="barDetailName"></div>
+              <div class="bar-detail-address" id="barDetailAddress"></div>
+              <div class="bar-detail-tags" id="barDetailTags"></div>
+              <div class="bar-detail-card friends">
+                <div class="bar-detail-card-label">YOUR FRIENDS</div>
+                <div class="bar-detail-card-body">"The back patio is where it's at."</div>
+                <div class="bar-detail-card-footer">3 × ★★★ · ON 4 FRIENDS' LISTS</div>
+              </div>
+              <div class="bar-detail-card rating" id="barDetailRatingCard" style="display: none;">
+                <div>
+                  <div class="bar-detail-rating-label">YOUR RATING</div>
+                  <div class="bar-detail-rating-stars" id="barDetailRatingStars"></div>
+                </div>
+                <div style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175;">CHECKED IN TODAY</div>
+              </div>
+            </div>
+          </div>
+          <div class="bar-detail-footer">
+            <button class="bar-detail-checkin-btn" id="barDetailCheckinBtn" onclick="startCheckin()">◎ CHECK IN</button>
+            <button class="bar-detail-directions-btn">▲</button>
+          </div>
+        </div>
+
         <!-- Map / Conquest Home screen -->
-        <div id="mapScreen" style="display: none;">
+        <div id="mapScreen" class="screen active">
           <div class="header-row">
             <div>SAN FRANCISCO</div>
             <div style="color: #8A8175;"><span id="barCount">575</span> BARS ON MAP</div>
@@ -149,6 +261,40 @@
         <button class="tab" data-tab="ranks">RANKS</button>
         <button class="tab" data-tab="you">YOU</button>
       </div>
+
+      <!-- Rank Sheet Modal -->
+      <div id="rankSheetOverlay"></div>
+      <div id="rankSheet">
+        <div class="rank-header">
+          <div class="rank-time" id="rankTime">CHECKED IN · 9:41 PM</div>
+          <div class="rank-name" id="rankBarName"></div>
+          <div class="rank-badge" id="rankBadge">BAR #1 CONQUERED</div>
+        </div>
+        <div class="rank-divider"></div>
+        <div class="rank-title">RANK IT</div>
+        <div class="rank-subtitle">ONE TAP. YOU CAN CHANGE IT LATER.</div>
+        <div class="rank-options" id="rankOptions"></div>
+        <div class="rank-note-field">
+          <label class="rank-note-label">ADD A NOTE (OPTIONAL)</label>
+          <input class="rank-note-input" id="rankNote" type="text" placeholder="Sit at the back bar…">
+        </div>
+        <div class="rank-footer">
+          <button class="rank-cancel" onclick="cancelCheckin()">CANCEL</button>
+          <button class="rank-save" id="rankSaveBtn" onclick="saveCheckin()">PICK A RATING</button>
+        </div>
+      </div>
+
+      <!-- Saved Confirmation Screen -->
+      <div id="savedConfirmScreen" class="screen">
+        <div class="saved-stamp">
+          <div class="saved-stamp-word">CONQUERED</div>
+          <div class="saved-stamp-badge" id="savedStampBadge">★★★ · BAR #1</div>
+        </div>
+        <div class="saved-bar-name" id="savedBarName"></div>
+        <div class="saved-stats" id="savedStats">SAN FRANCISCO · 21.4%<br>MISSION NOW 43%</div>
+        <div class="saved-list-badge" id="savedListBadge" style="display: none;">ADDED TO YOUR ★★★ LIST</div>
+        <button class="saved-passport-btn" onclick="goToPassport()">SEE MY PASSPORT</button>
+      </div>
     </div>
   </div>
 
@@ -179,6 +325,11 @@
     let mapboxMap = null;
     let geolocationWatchId = null;
     let userLocation = null;
+    let currentScreen = 'map'; // 'map' | 'bar' | 'rank' | 'saved'
+    let selectedBar = null; // currently open bar object
+    let pendingRating = 0; // 1 | 2 | 3
+    let pendingNote = ''; // draft note
+    let savedPayload = null; // { name, stars, neighborhood, pct }
 
     // Mapbox setup - token can be set via window.MAPBOX_TOKEN or localStorage.mapboxToken
     mapboxgl.accessToken = window.MAPBOX_TOKEN || localStorage.getItem('mapboxToken') || '';
@@ -430,6 +581,7 @@
           </div>
           <div class="bar-chevron">›</div>
         `;
+        rowDiv.onclick = () => openBar(bar);
         barsContainer.appendChild(rowDiv);
       });
     }
@@ -566,6 +718,244 @@
         navigator.geolocation.clearWatch(geolocationWatchId);
         geolocationWatchId = null;
       }
+    }
+
+    // ============ NAVIGATION ============
+    function setScreen(screen) {
+      currentScreen = screen;
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      if(screen === 'map') {
+        document.getElementById('mapScreen').classList.add('active');
+        document.getElementById('tabBar').style.display = 'flex';
+        document.getElementById('rankSheetOverlay').style.display = 'none';
+        document.getElementById('rankSheet').style.display = 'none';
+      } else if(screen === 'bar') {
+        document.getElementById('barDetailScreen').classList.add('active');
+        document.getElementById('tabBar').style.display = 'none';
+      } else if(screen === 'rank') {
+        document.getElementById('rankSheetOverlay').style.display = 'block';
+        document.getElementById('rankSheet').style.display = 'flex';
+      } else if(screen === 'saved') {
+        document.getElementById('savedConfirmScreen').classList.add('active');
+        document.getElementById('tabBar').style.display = 'none';
+        document.getElementById('rankSheetOverlay').style.display = 'none';
+        document.getElementById('rankSheet').style.display = 'none';
+      }
+    }
+
+    function openBar(bar) {
+      selectedBar = bar;
+      const checkin = checkins[bar.id];
+      const isVisited = !!checkin;
+
+      // Render bar detail screen
+      document.getElementById('barDetailName').textContent = bar.name;
+      document.getElementById('barDetailPhotoCaption').textContent = 'PHOTO — ' + bar.name;
+
+      const dist = userLocation ? getDistance(userLocation.lat, userLocation.lng, bar.lat, bar.lon) : 0;
+      const distStr = dist < 0.1 ? '< 0.1 MI' : (dist / 1609).toFixed(1) + ' MI';
+      document.getElementById('barDetailAddress').textContent = `▲ ${bar.name} · ${distStr}`;
+
+      const stamp = document.getElementById('barDetailStamp');
+      if(isVisited) {
+        stamp.textContent = 'CONQUERED';
+        stamp.classList.add('conquered');
+      } else {
+        stamp.textContent = 'UNCONQUERED';
+        stamp.classList.remove('conquered');
+      }
+
+      // Tags (placeholder)
+      document.getElementById('barDetailTags').innerHTML = '<div class="bar-detail-tag">Bar</div><div class="bar-detail-tag">' + bar.neighborhood + '</div>';
+
+      // Show rating card only if visited
+      const ratingCard = document.getElementById('barDetailRatingCard');
+      if(isVisited) {
+        ratingCard.style.display = 'flex';
+        const stars = '★'.repeat(checkin.stars);
+        document.getElementById('barDetailRatingStars').textContent = stars;
+      } else {
+        ratingCard.style.display = 'none';
+      }
+
+      // Update button label
+      const btn = document.getElementById('barDetailCheckinBtn');
+      btn.textContent = isVisited ? '◎ CHANGE MY RATING' : '◎ CHECK IN';
+
+      setScreen('bar');
+    }
+
+    function goToMap() {
+      selectedBar = null;
+      pendingRating = 0;
+      pendingNote = '';
+      setScreen('map');
+    }
+
+    function startCheckin() {
+      if(!selectedBar || !userLocation) {
+        alert('Location required for check-in');
+        return;
+      }
+
+      // Geofence gate: must be within ~150m of the bar
+      const distM = getDistance(userLocation.lat, userLocation.lng, selectedBar.lat, selectedBar.lon);
+      const GEOFENCE_RADIUS_M = 150;
+      if(distM > GEOFENCE_RADIUS_M) {
+        alert(`Too far away (${Math.round(distM)}m). Get within ${GEOFENCE_RADIUS_M}m of the bar to check in.`);
+        return;
+      }
+
+      // Pre-fill rating if re-rating
+      const existingCheckin = checkins[selectedBar.id];
+      pendingRating = existingCheckin ? existingCheckin.stars : 0;
+      pendingNote = existingCheckin?.note || '';
+
+      // Render rank sheet
+      document.getElementById('rankTime').textContent = `CHECKED IN · ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+      document.getElementById('rankBarName').textContent = selectedBar.name;
+      document.getElementById('rankBadge').textContent = `BAR #${selectedBar.id} CONQUERED`;
+
+      // Render rank options
+      const optionsDiv = document.getElementById('rankOptions');
+      optionsDiv.innerHTML = '';
+      const options = [
+        { stars: 3, title: 'ONE OF THE CITY\'S BEST', sub: 'ADDS IT TO YOUR 3-STAR LIST', color: '#F0451E' },
+        { stars: 2, title: 'SOLID. WOULD RETURN.', sub: 'SAVED TO YOUR PASSPORT', color: '#1F3FE0' },
+        { stars: 1, title: 'BEEN THERE. DONE.', sub: 'COUNTS FOR THE MAP ONLY', color: '#8A8175' }
+      ];
+      options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'rank-option' + (pendingRating === opt.stars ? ' selected' : '');
+        div.innerHTML = `
+          <div class="rank-option-stars" style="color: ${opt.color};">${'★'.repeat(opt.stars)}</div>
+          <div class="rank-option-content">
+            <div class="rank-option-title">${opt.title}</div>
+            <div class="rank-option-sub">${opt.sub}</div>
+          </div>
+          <div class="rank-option-check">✓</div>
+        `;
+        div.onclick = () => {
+          document.querySelectorAll('.rank-option').forEach(o => o.classList.remove('selected'));
+          div.classList.add('selected');
+          pendingRating = opt.stars;
+          updateRankSaveBtn();
+        };
+        optionsDiv.appendChild(div);
+      });
+
+      document.getElementById('rankNote').value = pendingNote;
+      document.getElementById('rankNote').addEventListener('input', (e) => {
+        pendingNote = e.target.value;
+      });
+
+      updateRankSaveBtn();
+      setScreen('rank');
+    }
+
+    function updateRankSaveBtn() {
+      const btn = document.getElementById('rankSaveBtn');
+      if(pendingRating > 0) {
+        btn.classList.add('enabled');
+        btn.textContent = 'SAVE CHECK-IN';
+        btn.disabled = false;
+      } else {
+        btn.classList.remove('enabled');
+        btn.textContent = 'PICK A RATING';
+        btn.disabled = true;
+      }
+    }
+
+    function cancelCheckin() {
+      pendingRating = 0;
+      pendingNote = '';
+      setScreen('bar');
+    }
+
+    async function saveCheckin() {
+      if(!currentUser || !selectedBar || !pendingRating) return;
+
+      try {
+        const checkinId = `${currentUser.uid}_${selectedBar.id}`;
+        const isNewCheckin = !checkins[selectedBar.id];
+
+        // Write check-in to Firestore
+        await db.collection('checkins').doc(checkinId).set({
+          uid: currentUser.uid,
+          barId: selectedBar.id,
+          barName: selectedBar.name,
+          neighborhood: selectedBar.neighborhood,
+          stars: pendingRating,
+          note: pendingNote,
+          ts: firebase.firestore.FieldValue.serverTimestamp(),
+          lat: userLocation.lat,
+          lng: userLocation.lng,
+          distanceM: getDistance(userLocation.lat, userLocation.lng, selectedBar.lat, selectedBar.lon),
+          verified: true
+        });
+
+        // Update local state
+        checkins[selectedBar.id] = {
+          stars: pendingRating,
+          note: pendingNote,
+          ts: new Date()
+        };
+
+        // Increment conqueredCount if new check-in
+        if(isNewCheckin) {
+          const userDoc = await userDocRef.get();
+          const currentCount = userDoc.data().conqueredCount || 0;
+          await userDocRef.update({
+            conqueredCount: currentCount + 1
+          });
+        }
+
+        // Build saved payload
+        const totalBars = allBars.length;
+        const conqueredCount = Object.keys(checkins).length;
+        const pct = totalBars > 0 ? (conqueredCount / totalBars * 100).toFixed(1) : 0;
+
+        savedPayload = {
+          name: selectedBar.name,
+          stars: pendingRating,
+          neighborhood: selectedBar.neighborhood,
+          pct: pct,
+          barId: selectedBar.id
+        };
+
+        // Render saved confirmation
+        document.getElementById('savedStampBadge').textContent = '★'.repeat(pendingRating) + ' · BAR #' + selectedBar.id;
+        document.getElementById('savedBarName').textContent = selectedBar.name;
+        // Calculate neighborhood percentage
+        const hoodBars = allBars.filter(b => b.neighborhood === selectedBar.neighborhood);
+        const hoodConquered = hoodBars.filter(b => !!checkins[b.id]).length;
+        const hoodPct = hoodBars.length > 0 ? Math.round(hoodConquered / hoodBars.length * 100) : 0;
+        document.getElementById('savedStats').textContent = `SAN FRANCISCO · ${pct}%\n${selectedBar.neighborhood} NOW ${hoodPct}%`;
+
+        const listBadge = document.getElementById('savedListBadge');
+        if(pendingRating === 3) {
+          listBadge.style.display = 'block';
+        } else {
+          listBadge.style.display = 'none';
+        }
+
+        // Refresh map state
+        render();
+        setScreen('saved');
+
+      } catch(err) {
+        console.error('Error saving check-in:', err);
+        alert('Failed to save check-in. Try again.');
+      }
+    }
+
+    function goToPassport() {
+      savedPayload = null;
+      pendingRating = 0;
+      pendingNote = '';
+      selectedBar = null;
+      setScreen('map');
+      // TODO: switch to Passport tab
     }
 
     // ============ EVENTS ============
