@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#211E1A;}
+  *{box-sizing:border-box;}
+  ::-webkit-scrollbar{width:0;display:none;}
+  button{font:inherit;cursor:pointer;}
+  input{font:inherit;}
+  a{color:#F0451E;}
+  a:hover{color:#1F3FE0;}
+  @keyframes stampIn{0%{transform:scale(2.4) rotate(-14deg);opacity:0}60%{transform:scale(.92) rotate(-4deg);opacity:1}100%{transform:scale(1) rotate(-4deg);opacity:1}}
+  @keyframes riseIn{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#211E1A;display:flex;flex-direction:column;align-items:center;padding:44px 24px 60px;font-family:'Archivo',system-ui,sans-serif;gap:26px;">
+
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;justify-content:center;">
+    <div style="font-family:'Anton',sans-serif;font-size:34px;color:#F1EBDB;letter-spacing:.02em;">CONQUEST — LIVE PROTOTYPE</div>
+    <div style="font-family:'Space Mono',monospace;font-size:12px;color:#8A8175;">tap anything · check-ins really move your %</div>
+  </div>
+
+  <div style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 30px 60px rgba(0,0,0,.55);">
+    <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#17140F;position:relative;">
+
+      <div style="height:50px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 5px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;">
+        <span>9:41</span><span>LTE · 100</span>
+      </div>
+
+      <!-- ===================== MAP / HOME ===================== -->
+      <sc-if value="{{ isMap }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;">
+          <div style="padding:4px 24px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;">SAN FRANCISCO</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">412 BARS ON MAP</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;margin-top:12px;">
+              <div style="width:108px;height:108px;flex:none;border-radius:50%;background:conic-gradient(#F0451E 0 {{ pct }}%,rgba(23,20,15,.13) {{ pct }}% 100%);display:flex;align-items:center;justify-content:center;transition:background .5s;">
+                <div style="width:82px;height:82px;border-radius:50%;background:#F1EBDB;border:2px solid #17140F;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <div style="font-family:'Anton',sans-serif;font-size:27px;line-height:.9;color:#F0451E;">{{ pctLabel }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.1em;color:#8A8175;">CONQUERED</div>
+                </div>
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-family:'Anton',sans-serif;font-size:40px;line-height:.85;">{{ conquered }}<span style="font-size:20px;color:#8A8175;">/412</span></div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;letter-spacing:.06em;margin-top:5px;">BARS CHECKED IN</div>
+                <div style="display:flex;gap:5px;margin-top:8px;font-family:'Space Mono',monospace;font-size:9px;">
+                  <span style="background:#F0451E;color:#F1EBDB;padding:2px 6px;">★★★ {{ n3 }}</span>
+                  <span style="background:#1F3FE0;color:#F1EBDB;padding:2px 6px;">★★ {{ n2 }}</span>
+                  <span style="border:1.5px solid #17140F;padding:2px 6px;">★ {{ n1 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin:14px 24px 0;height:104px;border:2px solid #17140F;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background-image:radial-gradient(#F0451E 1.6px,transparent 2px);background-size:19px 19px;opacity:.5;"></div>
+            <span style="position:absolute;bottom:6px;right:9px;font-family:'Space Mono',monospace;font-size:9px;color:#6B6153;">CITY MAP — YOUR PINS</span>
+          </div>
+
+          <div style="padding:14px 24px 0;">
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;margin-bottom:8px;">BY NEIGHBORHOOD</div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <sc-for list="{{ hoods }}" as="h" hint-placeholder-count="6">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;"><span>{{ h.name }}</span><span style="color:#8A8175;">{{ h.label }}</span></div>
+                  <div style="height:7px;background:rgba(23,20,15,.13);margin-top:3px;"><div style="width:{{ h.pct }}%;height:100%;background:#F0451E;transition:width .5s;"></div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding:16px 24px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;">NEARBY · UNCONQUERED FIRST</div>
+            </div>
+            <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search bars…" style="width:100%;margin-top:9px;border:2px solid #17140F;background:#FBF7EC;padding:9px 11px;font-family:'Space Mono',monospace;font-size:12px;color:#17140F;outline:none;" />
+          </div>
+
+          <div style="padding:6px 24px 20px;">
+            <sc-for list="{{ visibleBars }}" as="b" hint-placeholder-count="8">
+              <div onClick="{{ b.open }}" style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1.5px solid rgba(23,20,15,.16);cursor:pointer;">
+                <div style="width:38px;height:38px;flex:none;border:2px solid #17140F;display:flex;align-items:center;justify-content:center;font-size:13px;letter-spacing:.5px;color:#F0451E;background:{{ b.chipBg }};line-height:1;">{{ b.chip }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ b.name }}</div>
+                  <div style="font-size:11px;color:#4A4237;margin-top:2px;">{{ b.note }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:3px;">{{ b.hood }} · {{ b.dist }}</div>
+                </div>
+                <div style="font-family:'Anton',sans-serif;font-size:20px;">›</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;padding:22px 0;text-align:center;">NO BARS MATCH THAT.</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===================== BAR DETAIL ===================== -->
+      <sc-if value="{{ isBar }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+          <div style="flex:1;overflow-y:auto;">
+            <div onClick="{{ backToMap }}" style="padding:4px 24px 8px;font-family:'Space Mono',monospace;font-size:12px;cursor:pointer;">‹ MAP</div>
+            <div style="height:176px;position:relative;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);border-top:3px solid #17140F;border-bottom:3px solid #17140F;">
+              <div style="position:absolute;top:14px;left:16px;transform:rotate(-7deg);border:2px solid #F0451E;color:#F0451E;background:{{ statusBg }};font-family:'Anton',sans-serif;font-size:15px;padding:3px 10px;letter-spacing:.06em;">{{ statusLabel }}</div>
+              <span style="position:absolute;bottom:8px;right:12px;font-family:'Space Mono',monospace;font-size:9px;color:#6B6153;">PHOTO — {{ barUpper }}</span>
+            </div>
+            <div style="padding:14px 24px 18px;">
+              <div style="font-family:'Anton',sans-serif;font-size:34px;line-height:.95;">{{ barName }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;margin-top:6px;">▲ {{ barAddr }} · {{ barDist }}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-family:'Space Mono',monospace;font-size:9px;">
+                <sc-for list="{{ barTags }}" as="t" hint-placeholder-count="3">
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">{{ t.label }}</span>
+                </sc-for>
+              </div>
+              <div style="border:2px solid #17140F;margin-top:16px;padding:12px;background:#FBF7EC;position:relative;">
+                <div style="position:absolute;top:-9px;left:12px;background:#1F3FE0;color:#F1EBDB;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;padding:2px 8px;">YOUR FRIENDS</div>
+                <div style="font-size:12px;color:#2A251D;margin-top:6px;line-height:1.45;">{{ barBlurb }}</div>
+                <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;margin-top:8px;">{{ barFriends }}</div>
+              </div>
+              <sc-if value="{{ hasVisited }}" hint-placeholder-val="{{ false }}">
+                <div style="border:2px solid #F0451E;margin-top:14px;padding:12px;">
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;color:#F0451E;">YOUR RATING</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                    <span style="font-size:20px;color:#F0451E;letter-spacing:2px;line-height:1;">{{ myStars }}</span>
+                    <span style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">CHECKED IN TODAY</span>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="flex:none;padding:10px 24px;display:flex;gap:9px;border-top:1.5px solid rgba(23,20,15,.16);">
+            <button onClick="{{ startCheckin }}" style="flex:1;background:#F0451E;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:19px;padding:15px;border:2px solid #17140F;letter-spacing:.03em;">{{ ctaLabel }}</button>
+            <button style="width:54px;background:#F1EBDB;border:2px solid #17140F;font-size:18px;">▲</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===================== RANK SHEET ===================== -->
+      <sc-if value="{{ isRank }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;background:#17140F;color:#F1EBDB;display:flex;flex-direction:column;overflow:hidden;animation:sheetUp .28s ease-out;">
+          <div style="flex:1;overflow-y:auto;padding:0 24px;">
+            <div style="text-align:center;padding-top:16px;">
+              <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.22em;color:#F0451E;">CHECKED IN · 9:41 PM</div>
+              <div style="font-family:'Anton',sans-serif;font-size:38px;line-height:.9;margin-top:8px;">{{ barName }}</div>
+              <div style="display:inline-block;margin-top:12px;border:2px solid #F0451E;color:#F0451E;font-family:'Anton',sans-serif;font-size:16px;padding:4px 12px;transform:rotate(-3deg);letter-spacing:.06em;">BAR #{{ nextNumber }} CONQUERED</div>
+            </div>
+            <div style="height:2px;background:rgba(241,235,219,.22);margin-top:18px;"></div>
+            <div style="font-family:'Anton',sans-serif;font-size:21px;margin-top:16px;">RANK IT</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:4px;">ONE TAP. YOU CAN CHANGE IT LATER.</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+              <sc-for list="{{ rankOptions }}" as="r" hint-placeholder-count="3">
+                <div onClick="{{ r.pick }}" style="display:flex;gap:12px;align-items:center;border:2px solid {{ r.border }};background:{{ r.bg }};color:{{ r.fg }};padding:13px;cursor:pointer;transition:background .15s;">
+                  <div style="font-size:18px;letter-spacing:1px;width:56px;line-height:1;color:{{ r.starColor }};">{{ r.stars }}</div>
+                  <div style="flex:1;">
+                    <div style="font-family:'Anton',sans-serif;font-size:18px;">{{ r.title }}</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;margin-top:2px;color:{{ r.subColor }};">{{ r.sub }}</div>
+                  </div>
+                  <div style="font-family:'Anton',sans-serif;font-size:19px;">{{ r.check }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="border:2px dashed rgba(241,235,219,.35);margin-top:14px;padding:11px;">
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;letter-spacing:.1em;">ADD A NOTE (OPTIONAL)</div>
+              <input value="{{ note }}" onChange="{{ onNote }}" placeholder="Sit at the back bar…" style="width:100%;background:transparent;border:none;outline:none;color:#F1EBDB;font-size:13px;margin-top:6px;padding:0;" />
+            </div>
+          </div>
+          <div style="flex:none;padding:10px 24px;display:flex;gap:9px;">
+            <button onClick="{{ cancelCheckin }}" style="width:96px;background:transparent;color:#8A8175;border:2px solid rgba(241,235,219,.35);font-family:'Space Mono',monospace;font-size:11px;padding:15px 0;">CANCEL</button>
+            <button onClick="{{ saveCheckin }}" style="flex:1;background:{{ saveBg }};color:{{ saveFg }};font-family:'Anton',sans-serif;font-size:19px;padding:15px;border:none;letter-spacing:.03em;">{{ saveLabel }}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===================== SAVED CONFIRMATION ===================== -->
+      <sc-if value="{{ isSaved }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;background:#F0451E;color:#17140F;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 34px;text-align:center;">
+          <div style="border:4px solid #17140F;padding:12px 20px;animation:stampIn .5s cubic-bezier(.2,1.4,.4,1) both;">
+            <div style="font-family:'Anton',sans-serif;font-size:44px;line-height:.9;">CONQUERED</div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;margin-top:5px;">{{ savedStars }} · BAR #{{ conquered }}</div>
+          </div>
+          <div style="font-family:'Anton',sans-serif;font-size:26px;margin-top:26px;animation:riseIn .4s .3s both;">{{ savedName }}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:12px;margin-top:14px;line-height:1.7;animation:riseIn .4s .45s both;">SAN FRANCISCO · {{ pctLabel }}<br>{{ savedHoodLine }}</div>
+          <sc-if value="{{ savedToList }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#17140F;color:#F1EBDB;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;padding:6px 12px;margin-top:18px;animation:riseIn .4s .6s both;">ADDED TO YOUR ★★★ LIST</div>
+          </sc-if>
+          <button onClick="{{ afterSave }}" style="margin-top:34px;background:#17140F;color:#F1EBDB;border:none;font-family:'Anton',sans-serif;font-size:18px;padding:14px 40px;animation:riseIn .4s .7s both;">SEE MY PASSPORT</button>
+        </div>
+      </sc-if>
+
+      <!-- ===================== PASSPORT ===================== -->
+      <sc-if value="{{ isPassport }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;overflow-y:auto;">
+          <div style="padding:4px 24px 0;">
+            <div style="display:flex;gap:13px;align-items:center;">
+              <div style="width:62px;height:62px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 6px,#F1EBDB 6px,#F1EBDB 12px);border:2px solid #17140F;"></div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-family:'Anton',sans-serif;font-size:25px;line-height:.92;">SAM REYES</div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:4px;">@sam · SF · RANK {{ myRank }}</div>
+              </div>
+              <div style="text-align:right;"><div style="font-family:'Anton',sans-serif;font-size:28px;color:#F0451E;line-height:.9;">{{ pctLabel }}</div><div style="font-family:'Space Mono',monospace;font-size:8px;color:#8A8175;">OF SF</div></div>
+            </div>
+            <div style="display:flex;margin-top:14px;border-top:3px solid #17140F;border-bottom:3px solid #17140F;">
+              <div style="flex:1;padding:8px 0;text-align:center;border-right:1.5px solid rgba(23,20,15,.2);"><div style="font-family:'Anton',sans-serif;font-size:19px;">{{ conquered }}</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">CHECK-INS</div></div>
+              <div style="flex:1;padding:8px 0;text-align:center;border-right:1.5px solid rgba(23,20,15,.2);"><div style="font-family:'Anton',sans-serif;font-size:19px;color:#F0451E;">{{ n3 }}</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">★★★ BARS</div></div>
+              <div style="flex:1;padding:8px 0;text-align:center;"><div style="font-family:'Anton',sans-serif;font-size:19px;">{{ listCount }}</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">LISTS</div></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:7px;padding:12px 24px 0;font-family:'Space Mono',monospace;font-size:10px;">
+            <span style="background:#17140F;color:#F1EBDB;padding:3px 9px;">PASSPORT</span>
+            <span onClick="{{ goLists }}" style="border:1.5px solid #17140F;padding:3px 9px;cursor:pointer;">LISTS</span>
+            <span onClick="{{ goMap }}" style="border:1.5px solid #17140F;padding:3px 9px;cursor:pointer;">MAP</span>
+          </div>
+          <div style="padding:12px 24px 20px;">
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;color:#8A8175;margin-bottom:4px;">RECENT</div>
+            <sc-for list="{{ passport }}" as="p" hint-placeholder-count="6">
+              <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                <div style="width:50px;flex:none;font-size:13px;letter-spacing:1px;color:#F0451E;line-height:1;">{{ p.stars }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ p.name }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:2px;">{{ p.hood }}</div>
+                </div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">{{ p.date }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===================== LISTS ===================== -->
+      <sc-if value="{{ isLists }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;overflow-y:auto;">
+          <div style="padding:4px 24px 0;">
+            <div style="font-family:'Anton',sans-serif;font-size:36px;line-height:.9;">YOUR LISTS</div>
+            <div style="display:flex;gap:7px;margin-top:12px;font-family:'Space Mono',monospace;font-size:10px;">
+              <span onClick="{{ goPassport }}" style="border:1.5px solid #17140F;padding:3px 9px;cursor:pointer;">PASSPORT</span>
+              <span style="background:#17140F;color:#F1EBDB;padding:3px 9px;">LISTS</span>
+              <span onClick="{{ goMap }}" style="border:1.5px solid #17140F;padding:3px 9px;cursor:pointer;">MAP</span>
+            </div>
+          </div>
+          <div style="margin:14px 24px 0;border:2px solid #17140F;background:#17140F;color:#F1EBDB;padding:14px;position:relative;">
+            <div style="position:absolute;top:-9px;left:12px;background:#F0451E;color:#17140F;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;padding:2px 8px;">AUTOMATIC</div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:4px;">
+              <div style="font-family:'Anton',sans-serif;font-size:25px;line-height:.95;">MY 3-STAR BARS</div>
+              <div style="font-family:'Anton',sans-serif;font-size:25px;color:#F0451E;">{{ n3 }}</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:6px;">EVERY BAR YOU RATED ★★★ · UPDATES ITSELF</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:11px;">
+              <sc-for list="{{ threeStarPreview }}" as="b" hint-placeholder-count="4">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid rgba(241,235,219,.18);padding-bottom:5px;">
+                  <span style="font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;">{{ b.name }}</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">{{ b.hood }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:16px 24px 4px;">
+            <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;">LISTS YOU MADE</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">4</span>
+          </div>
+          <div style="padding:0 24px 20px;">
+            <sc-for list="{{ customLists }}" as="c" hint-placeholder-count="4">
+              <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                <div style="font-family:'Anton',sans-serif;font-size:23px;color:#F0451E;width:30px;">{{ c.n }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;">{{ c.title }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:2px;">{{ c.meta }}</div>
+                </div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;border:1.5px solid #17140F;padding:2px 7px;">EDIT</div>
+              </div>
+            </sc-for>
+            <div style="margin-top:13px;border:2px dashed #17140F;padding:13px;text-align:center;font-family:'Anton',sans-serif;font-size:17px;">＋ NEW LIST</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===================== RANKS ===================== -->
+      <sc-if value="{{ isRanks }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;overflow-y:auto;">
+          <div style="padding:4px 24px 0;">
+            <div style="font-family:'Anton',sans-serif;font-size:38px;line-height:.9;">THE RANKS</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.14em;color:#8A8175;margin-top:7px;">% OF SAN FRANCISCO CONQUERED</div>
+            <div style="display:flex;gap:7px;margin-top:12px;font-family:'Space Mono',monospace;font-size:10px;">
+              <span style="background:#F0451E;color:#F1EBDB;padding:3px 9px;">FRIENDS</span>
+              <span style="border:1.5px solid #17140F;padding:3px 9px;">CITY-WIDE</span>
+              <span style="border:1.5px solid #17140F;padding:3px 9px;">MISSION</span>
+            </div>
+          </div>
+          <div style="height:3px;background:#17140F;margin:12px 24px 0;"></div>
+          <div style="padding:0 24px 20px;">
+            <sc-for list="{{ leaders }}" as="L" hint-placeholder-count="6">
+              <div onClick="{{ L.open }}" style="display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1.5px solid rgba(23,20,15,.16);background:{{ L.bg }};cursor:pointer;">
+                <div style="font-family:'Anton',sans-serif;font-size:28px;width:32px;color:#F0451E;">{{ L.r }}</div>
+                <div style="width:38px;height:38px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 5px,#F1EBDB 5px,#F1EBDB 10px);border:1.5px solid #17140F;"></div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ L.name }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:2px;">{{ L.sub }}</div>
+                </div>
+                <div style="font-family:'Anton',sans-serif;font-size:21px;">{{ L.pct }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===================== FRIEND PROFILE ===================== -->
+      <sc-if value="{{ isFriend }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;overflow-y:auto;">
+          <div style="padding:4px 24px 0;">
+            <div onClick="{{ goRanks }}" style="font-family:'Space Mono',monospace;font-size:12px;cursor:pointer;">‹ THE RANKS</div>
+            <div style="display:flex;gap:13px;align-items:center;margin-top:12px;">
+              <div style="width:62px;height:62px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 6px,#F1EBDB 6px,#F1EBDB 12px);border:2px solid #17140F;"></div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-family:'Anton',sans-serif;font-size:25px;line-height:.92;">DEV ANAND</div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:4px;">@devdrinks · RANK #1 IN SF</div>
+              </div>
+              <div style="text-align:right;"><div style="font-family:'Anton',sans-serif;font-size:28px;color:#F0451E;line-height:.9;">39.8%</div><div style="font-family:'Space Mono',monospace;font-size:8px;color:#8A8175;">164 BARS</div></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;">
+              <button style="flex:1;background:#F0451E;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:14px;padding:9px;border:2px solid #17140F;">FOLLOWING ✓</button>
+              <button style="flex:1;background:#F1EBDB;font-family:'Anton',sans-serif;font-size:14px;padding:9px;border:2px solid #17140F;">COMPARE MAPS</button>
+            </div>
+          </div>
+          <div style="padding:14px 24px 20px;">
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;margin-bottom:2px;">HIS LISTS</div>
+            <sc-for list="{{ devLists }}" as="d" hint-placeholder-count="4">
+              <div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                <div style="font-family:'Anton',sans-serif;font-size:24px;color:#F0451E;width:30px;">{{ d.n }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ d.title }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:2px;">{{ d.meta }}</div>
+                  <div style="font-size:12px;color:#4A4237;margin-top:3px;">#1 · {{ d.top }}</div>
+                </div>
+                <div style="font-family:'Anton',sans-serif;font-size:19px;">›</div>
+              </div>
+            </sc-for>
+            <div style="border:2px solid #17140F;background:#FBF7EC;margin-top:14px;padding:12px;">
+              <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;color:#1F3FE0;">OVERLAP</div>
+              <div style="font-size:13px;color:#2A251D;margin-top:5px;line-height:1.4;">You've both conquered <strong>34 bars</strong>. He gave ★★★ to 11 you haven't hit yet.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===================== TAB BAR ===================== -->
+      <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:none;border-top:3px solid #17140F;display:flex;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;background:#F1EBDB;">
+          <div onClick="{{ goMap }}" style="flex:1;padding:13px 0;text-align:center;cursor:pointer;background:{{ tabMapBg }};color:{{ tabMapFg }};">MAP</div>
+          <div onClick="{{ goLists }}" style="flex:1;padding:13px 0;text-align:center;cursor:pointer;background:{{ tabListsBg }};color:{{ tabListsFg }};">LISTS</div>
+          <div onClick="{{ goMap }}" style="flex:1;padding:8px 0;text-align:center;cursor:pointer;"><span style="font-family:'Anton',sans-serif;font-size:20px;">◎</span></div>
+          <div onClick="{{ goRanks }}" style="flex:1;padding:13px 0;text-align:center;cursor:pointer;background:{{ tabRanksBg }};color:{{ tabRanksFg }};">RANKS</div>
+          <div onClick="{{ goPassport }}" style="flex:1;padding:13px 0;text-align:center;cursor:pointer;background:{{ tabYouBg }};color:{{ tabYouFg }};">YOU</div>
+        </div>
+      </sc-if>
+
+      <div style="height:24px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ indicatorBg }};">
+        <div style="width:130px;height:5px;border-radius:3px;background:{{ indicatorFg }};"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:560px;">
+    <div onClick="{{ reset }}" style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;border:1.5px solid #4A4237;padding:6px 12px;cursor:pointer;">↺ RESET DEMO</div>
+    <div style="font-family:'Space Mono',monospace;font-size:11px;color:#5C5449;padding:6px 0;">try: tap a bar → check in → rate ★★★ → watch the % and your rank move</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:700,&quot;height&quot;:1100}}">
+const TOTAL = 412;
+const PRIOR = 87;
+
+const BARS = [
+  { id:'trickdog', name:'Trick Dog', hood:'MISSION', addr:'3010 20th St', dist:'0.2 MI', tags:['COCKTAILS','ROOFTOP','$$','TIL 2'], blurb:'“The menu is a whole zine. Order whatever\u2019s weirdest.” \u2014 Dev, \u2605\u2605\u2605', friends:'3 \u00d7 \u2605\u2605\u2605 \u00b7 ON 4 FRIENDS\u2019 LISTS', note:'3 friends gave this \u2605\u2605\u2605' },
+  { id:'zeitgeist', name:'Zeitgeist', hood:'MISSION', addr:'199 Valencia St', dist:'0.4 MI', tags:['BEER GARDEN','DIVE','$','CASH'], blurb:'“Tamale lady energy. Sit outside, stay four hours.” \u2014 Cass, \u2605\u2605\u2605', friends:'2 \u00d7 \u2605\u2605\u2605 \u00b7 1 \u00d7 \u2605\u2605', note:'Dev checked in Friday' },
+  { id:'abv', name:'ABV', hood:'MISSION', addr:'3174 16th St', dist:'0.5 MI', tags:['COCKTAILS','FOOD','$$'], blurb:'“Bartender\u2019s bar. The burger is the sleeper pick.” \u2014 Maya, \u2605\u2605', friends:'1 \u00d7 \u2605\u2605\u2605 \u00b7 3 \u00d7 \u2605\u2605', note:'On 4 of your friends\u2019 lists' },
+  { id:'wildhawk', name:'Wildhawk', hood:'MISSION', addr:'3464 19th St', dist:'0.6 MI', tags:['COCKTAILS','DATE','$$'], blurb:'“Velvet everything. Good for a second date.” \u2014 Priya, \u2605\u2605', friends:'2 \u00d7 \u2605\u2605', note:'Unconquered' },
+  { id:'elrio', name:'El Rio', hood:'MISSION', addr:'3158 Mission St', dist:'0.9 MI', tags:['PATIO','DANCING','$'], blurb:'“Sunday shows on the back patio. No notes.” \u2014 Cass, \u2605\u2605\u2605', friends:'1 \u00d7 \u2605\u2605\u2605', note:'Unconquered' },
+  { id:'comstock', name:'Comstock Saloon', hood:'NORTH BEACH', addr:'155 Columbus Ave', dist:'1.8 MI', tags:['CLASSIC','COCKTAILS','$$'], blurb:'“Best Martinez in the city. Sit at the bar.” \u2014 you, \u2605\u2605\u2605', friends:'4 \u00d7 \u2605\u2605\u2605', note:'Your \u2605\u2605\u2605' },
+  { id:'vesuvio', name:'Vesuvio Cafe', hood:'NORTH BEACH', addr:'255 Columbus Ave', dist:'1.9 MI', tags:['HISTORIC','DIVE','$'], blurb:'“Beat poet tourist trap that\u2019s still somehow great.” \u2014 Theo, \u2605\u2605', friends:'2 \u00d7 \u2605\u2605', note:'Your \u2605\u2605' },
+  { id:'devils', name:'Devil\u2019s Acre', hood:'NORTH BEACH', addr:'256 Columbus Ave', dist:'1.9 MI', tags:['APOTHECARY','COCKTAILS','$$'], blurb:'“Bitters nerds only. Ask what\u2019s off-menu.” \u2014 Dev, \u2605\u2605\u2605', friends:'1 \u00d7 \u2605\u2605\u2605 \u00b7 1 \u00d7 \u2605\u2605', note:'Unconquered' },
+  { id:'bourbon', name:'Bourbon & Branch', hood:'TENDERLOIN', addr:'501 Jones St', dist:'1.2 MI', tags:['SPEAKEASY','RESERVE','$$$'], blurb:'“Password still works. Library room is the move.” \u2014 you, \u2605\u2605\u2605', friends:'3 \u00d7 \u2605\u2605\u2605', note:'Your \u2605\u2605\u2605' },
+  { id:'whitechapel', name:'Whitechapel', hood:'TENDERLOIN', addr:'600 Polk St', dist:'1.3 MI', tags:['GIN','THEMED','$$'], blurb:'“Fake Victorian tube station. 400 gins. Go once.” \u2014 Maya, \u2605\u2605', friends:'2 \u00d7 \u2605\u2605', note:'Unconquered' },
+  { id:'benjamin', name:'Benjamin Cooper', hood:'TENDERLOIN', addr:'398 Geary St', dist:'1.4 MI', tags:['UPSTAIRS','OYSTERS','$$'], blurb:'“Hidden above a hotel lobby. Great late oysters.” \u2014 Cass, \u2605\u2605\u2605', friends:'1 \u00d7 \u2605\u2605\u2605', note:'Unconquered' },
+  { id:'localedition', name:'Local Edition', hood:'SOMA', addr:'691 Market St', dist:'1.0 MI', tags:['BASEMENT','LIVE MUSIC','$$'], blurb:'“Old newspaper basement. Loud, in a good way.” \u2014 Theo, \u2605\u2605', friends:'3 \u00d7 \u2605\u2605', note:'Unconquered' },
+  { id:'bloodhound', name:'Bloodhound', hood:'SOMA', addr:'1145 Folsom St', dist:'1.1 MI', tags:['DIVE','POOL','$'], blurb:'“Antlers on the wall, whiskey on the cheap.” \u2014 Dev, \u2605\u2605', friends:'2 \u00d7 \u2605\u2605', note:'Unconquered' },
+  { id:'houseofshields', name:'House of Shields', hood:'SOMA', addr:'39 New Montgomery', dist:'1.0 MI', tags:['HISTORIC','NO TV','$$'], blurb:'“No clocks, no TVs, 1908 energy.” \u2014 Priya, \u2605\u2605\u2605', friends:'1 \u00d7 \u2605\u2605\u2605 \u00b7 2 \u00d7 \u2605\u2605', note:'Unconquered' },
+  { id:'smugglers', name:'Smuggler\u2019s Cove', hood:'HAYES VALLEY', addr:'650 Gough St', dist:'1.5 MI', tags:['TIKI','RUM','$$'], blurb:'“Three floors of rum. Pace yourself.” \u2014 you, \u2605\u2605', friends:'4 \u00d7 \u2605\u2605\u2605', note:'Your \u2605\u2605' },
+  { id:'anina', name:'Anina', hood:'HAYES VALLEY', addr:'482 Hayes St', dist:'1.5 MI', tags:['FROZEN','NEON','$$'], blurb:'“Frozen cocktails, 80s neon. Unserious and fun.” \u2014 Priya, \u2605\u2605', friends:'2 \u00d7 \u2605\u2605', note:'Unconquered' },
+  { id:'treasury', name:'The Treasury', hood:'FIDI', addr:'200 Bush St', dist:'1.3 MI', tags:['COCKTAILS','AFTER WORK','$$'], blurb:'“Best after-work room downtown.” \u2014 you, \u2605\u2605\u2605', friends:'2 \u00d7 \u2605\u2605\u2605', note:'Your \u2605\u2605\u2605' },
+  { id:'rickhouse', name:'Rickhouse', hood:'FIDI', addr:'246 Kearny St', dist:'1.3 MI', tags:['WHISKEY','LOUD','$$'], blurb:'“Barrel walls, punch bowls, finance bros.” \u2014 Theo, \u2605', friends:'1 \u00d7 \u2605\u2605 \u00b7 1 \u00d7 \u2605', note:'Your \u2605' },
+];
+
+const HOODS = [
+  { name:'MISSION', total:58, base:23 },
+  { name:'NORTH BEACH', total:41, base:17 },
+  { name:'SOMA', total:63, base:14 },
+  { name:'TENDERLOIN', total:47, base:9 },
+  { name:'HAYES VALLEY', total:38, base:11 },
+  { name:'FIDI', total:34, base:13 },
+];
+
+const SEEDED = {
+  comstock: { stars:3, date:'JUL 24' },
+  bourbon:  { stars:3, date:'JUL 19' },
+  treasury: { stars:3, date:'JUL 04' },
+  smugglers:{ stars:2, date:'JUL 11' },
+  vesuvio:  { stars:2, date:'JUN 28' },
+  rickhouse:{ stars:1, date:'JUN 21' },
+};
+
+const RANK_COPY = [
+  { stars:3, title:"ONE OF THE CITY'S BEST", sub:'ADDS IT TO YOUR 3-STAR LIST' },
+  { stars:2, title:'SOLID. WOULD RETURN.', sub:'SAVED TO YOUR PASSPORT' },
+  { stars:1, title:'BEEN THERE. DONE.', sub:'COUNTS FOR THE MAP ONLY' },
+];
+
+const starStr = (n) => '\u2605'.repeat(n);
+
+class Component extends DCLogic {
+  state = { screen:'map', barId:null, pending:0, note:'', query:'', checkins:{ ...SEEDED }, saved:null };
+
+  go = (screen) => this.setState({ screen });
+
+  counts() {
+    const cs = Object.values(this.state.checkins);
+    const extra = Object.keys(this.state.checkins).filter(k => !SEEDED[k]).length;
+    return {
+      conquered: PRIOR + extra,
+      n3: 31 + cs.filter(c => c.stars === 3).length - 3,
+      n2: 38 + cs.filter(c => c.stars === 2).length - 2,
+      n1: 18 + cs.filter(c => c.stars === 1).length - 1,
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const { conquered, n3, n2, n1 } = this.counts();
+    const pctNum = (conquered / TOTAL) * 100;
+    const bar = BARS.find(b => b.id === s.barId) || BARS[0];
+    const mine = s.checkins[s.barId];
+    const newIds = Object.keys(s.checkins).filter(k => !SEEDED[k]);
+
+    const hoods = HOODS.map(h => {
+      const added = newIds.filter(id => (BARS.find(b => b.id === id) || {}).hood === h.name).length;
+      const got = h.base + added;
+      const p = Math.round((got / h.total) * 100);
+      return { name:h.name, label:got + '/' + h.total + ' · ' + p + '%', pct:p };
+    });
+
+    const q = s.query.trim().toLowerCase();
+    const ordered = BARS.filter(b => !q || b.name.toLowerCase().includes(q) || b.hood.toLowerCase().includes(q))
+      .sort((a, b) => (s.checkins[a.id] ? 1 : 0) - (s.checkins[b.id] ? 1 : 0));
+    const visibleBars = ordered.map(b => {
+      const c = s.checkins[b.id];
+      return {
+        name:b.name, hood:b.hood, dist:b.dist,
+        note: c ? 'You rated it ' + starStr(c.stars) : b.note,
+        chip: c ? starStr(c.stars) : '+',
+        chipBg: c ? 'rgba(240,69,30,.12)' : 'transparent',
+        open: () => this.setState({ barId:b.id, screen:'bar' }),
+      };
+    });
+
+    const passport = Object.keys(s.checkins).map(id => {
+      const b = BARS.find(x => x.id === id) || { name:id, hood:'SF' };
+      return { name:b.name, hood:b.hood, stars:starStr(s.checkins[id].stars), date:s.checkins[id].date };
+    }).sort((a, b) => (a.date === 'TODAY' ? -1 : b.date === 'TODAY' ? 1 : 0));
+
+    const threeStar = Object.keys(s.checkins).filter(id => s.checkins[id].stars === 3)
+      .map(id => { const b = BARS.find(x => x.id === id) || {}; return { name:b.name, hood:b.hood }; });
+
+    const board = [
+      { name:'Dev Anand', count:164, you:false },
+      { name:'Maya Okafor', count:141, you:false },
+      { name:'Cass Lin', count:119, you:false },
+      { name:'Theo Marsh', count:88, you:false },
+      { name:'You — Sam Reyes', count:conquered, you:true },
+      { name:'Priya Rao', count:58, you:false },
+    ].sort((a, b) => b.count - a.count);
+    const myIdx = board.findIndex(x => x.you);
+    const leaders = board.map((x, i) => ({
+      r: String(i + 1),
+      name: x.name,
+      sub: x.count + ' BARS · ' + (x.you ? 'THAT\u2019S YOU' : 'SEE THEIR LISTS'),
+      pct: ((x.count / TOTAL) * 100).toFixed(1) + '%',
+      bg: x.you ? 'rgba(240,69,30,.1)' : 'transparent',
+      open: () => this.setState({ screen: x.name === 'Dev Anand' ? 'friend' : 'ranks' }),
+    }));
+
+    const rankOptions = RANK_COPY.map(o => {
+      const on = s.pending === o.stars;
+      return {
+        stars: starStr(o.stars), title:o.title, sub:o.sub,
+        border: on ? '#F0451E' : 'rgba(241,235,219,.4)',
+        bg: on ? '#F0451E' : 'transparent',
+        fg: on ? '#17140F' : '#F1EBDB',
+        starColor: on ? '#17140F' : (o.stars === 2 ? '#1F3FE0' : '#8A8175'),
+        subColor: on ? '#17140F' : '#8A8175',
+        check: on ? '✓' : '',
+        pick: () => this.setState({ pending:o.stars }),
+      };
+    });
+
+    const saveCheckin = () => {
+      if (!s.pending) return;
+      const hood = HOODS.find(h => h.name === bar.hood);
+      const added = newIds.filter(id => (BARS.find(b => b.id === id) || {}).hood === bar.hood).length + (s.checkins[bar.id] ? 0 : 1);
+      const got = (hood ? hood.base : 0) + added;
+      this.setState({
+        checkins: { ...s.checkins, [bar.id]: { stars:s.pending, date:'TODAY' } },
+        screen: 'saved',
+        saved: {
+          name: bar.name, stars: starStr(s.pending), three: s.pending === 3,
+          hoodLine: hood ? bar.hood + ' NOW ' + Math.round((got / hood.total) * 100) + '%' : bar.hood,
+        },
+        pending: 0, note: '',
+      });
+    };
+
+    const isRank = s.screen === 'rank';
+    const isSaved = s.screen === 'saved';
+    const dark = isRank || isSaved;
+
+    return {
+      isMap: s.screen === 'map', isBar: s.screen === 'bar', isRank, isSaved,
+      isPassport: s.screen === 'passport', isLists: s.screen === 'lists',
+      isRanks: s.screen === 'ranks', isFriend: s.screen === 'friend',
+      showTabs: ['map','lists','ranks','passport'].includes(s.screen),
+
+      conquered, n3, n2, n1,
+      pct: pctNum.toFixed(1),
+      pctLabel: pctNum.toFixed(1) + '%',
+      nextNumber: String(conquered + (s.checkins[s.barId] ? 0 : 1)),
+      myRank: '#' + (myIdx + 1),
+      listCount: '4',
+      hoods, visibleBars, passport, leaders, rankOptions,
+      noResults: visibleBars.length === 0,
+      threeStarPreview: threeStar.slice(0, 5),
+      query: s.query, note: s.note,
+
+      barName: bar.name, barUpper: bar.name.toUpperCase(), barAddr: bar.addr, barDist: bar.dist,
+      barTags: bar.tags.map(t => ({ label:t })), barBlurb: bar.blurb, barFriends: bar.friends,
+      hasVisited: !!mine, myStars: mine ? starStr(mine.stars) : '',
+      statusLabel: mine ? 'CONQUERED' : 'UNCONQUERED',
+      statusBg: mine ? 'rgba(240,69,30,.15)' : 'transparent',
+      ctaLabel: mine ? '◎ CHANGE MY RATING' : '◎ CHECK IN',
+
+      savedName: s.saved ? s.saved.name : '', savedStars: s.saved ? s.saved.stars : '',
+      savedToList: s.saved ? s.saved.three : false, savedHoodLine: s.saved ? s.saved.hoodLine : '',
+      saveBg: s.pending ? '#F1EBDB' : 'rgba(241,235,219,.25)',
+      saveFg: s.pending ? '#17140F' : '#8A8175',
+      saveLabel: s.pending ? 'SAVE CHECK-IN' : 'PICK A RATING',
+
+      indicatorBg: dark ? (isSaved ? '#F0451E' : '#17140F') : '#F1EBDB',
+      indicatorFg: isSaved ? '#17140F' : (isRank ? '#F1EBDB' : '#17140F'),
+      tabMapBg: s.screen === 'map' ? '#F0451E' : 'transparent', tabMapFg: s.screen === 'map' ? '#F1EBDB' : '#17140F',
+      tabListsBg: s.screen === 'lists' ? '#F0451E' : 'transparent', tabListsFg: s.screen === 'lists' ? '#F1EBDB' : '#17140F',
+      tabRanksBg: s.screen === 'ranks' ? '#F0451E' : 'transparent', tabRanksFg: s.screen === 'ranks' ? '#F1EBDB' : '#17140F',
+      tabYouBg: s.screen === 'passport' ? '#F0451E' : 'transparent', tabYouFg: s.screen === 'passport' ? '#F1EBDB' : '#17140F',
+
+      customLists: [
+        { n:'01', title:'Where To Take My Parents', meta:'6 BARS · PUBLIC' },
+        { n:'02', title:'Negroni Research', meta:'9 BARS · PUBLIC' },
+        { n:'03', title:'Walkable From My Place', meta:'11 BARS · PRIVATE' },
+        { n:'04', title:'Actually Good Dive Bars', meta:'7 BARS · PUBLIC' },
+      ],
+      devLists: [
+        { n:'01', title:'My ★★★ Dive Bars', meta:'NIGHTLIFE · 8 BARS', top:'Zeitgeist' },
+        { n:'02', title:'Best Last Call in SF', meta:'NIGHTLIFE · 5 BARS', top:'Comstock Saloon' },
+        { n:'03', title:'Bars With Actual Food', meta:'FOOD · 6 BARS', top:'Trick Dog' },
+        { n:'04', title:'Where To Take Out-Of-Towners', meta:'NIGHTLIFE · 5 BARS', top:'Smuggler\u2019s Cove' },
+      ],
+
+      onQuery: (e) => this.setState({ query:e.target.value }),
+      onNote: (e) => this.setState({ note:e.target.value }),
+      backToMap: () => this.go('map'),
+      goMap: () => this.go('map'),
+      goLists: () => this.go('lists'),
+      goRanks: () => this.go('ranks'),
+      goPassport: () => this.go('passport'),
+      startCheckin: () => this.setState({ screen:'rank', pending: mine ? mine.stars : 0 }),
+      cancelCheckin: () => this.go('bar'),
+      saveCheckin,
+      afterSave: () => this.go('passport'),
+      reset: () => this.setState({ screen:'map', checkins:{ ...SEEDED }, barId:null, query:'', pending:0, saved:null }),
+    };
+  }
+}
+</script>
+</body>
+</html>

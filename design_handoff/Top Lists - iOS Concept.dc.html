@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12,400;12,600;12,700&family=DM+Mono:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#211E1A;}
+  *{box-sizing:border-box;}
+  ::-webkit-scrollbar{display:none;}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#211E1A;padding:64px 72px 110px;font-family:'Archivo',system-ui,sans-serif;">
+
+  <div style="display:flex;gap:36px;align-items:flex-end;margin-bottom:52px;flex-wrap:wrap;">
+    <div style="font-family:'Anton',sans-serif;font-size:66px;color:#F1EBDB;line-height:.86;letter-spacing:.01em;">FRIENDS'<br>TOP LISTS</div>
+    <div style="font-family:'Space Mono',monospace;font-size:13px;color:#8A8175;max-width:460px;line-height:1.6;padding-bottom:6px;">iOS concept. Current direction: <a href="#2a" style="color:#F0451E;text-decoration:none;font-weight:700;">2a</a> — conquer the city's bars, check in, tier them 1–3. Earlier general top-lists exploration kept below as <a href="#1a" style="color:#F0451E;text-decoration:none;font-weight:700;">1a</a> / <a href="#1b" style="color:#C97B2C;text-decoration:none;font-weight:700;">1b</a>.</div>
+  </div>
+
+  <section id="turn2" style="margin-bottom:110px;">
+    <div id="2a" style="position:relative;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap;">
+        <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:13px;color:#211E1A;background:#F0451E;padding:4px 11px;border-radius:2px;">2a</div>
+        <div style="font-family:'Anton',sans-serif;font-size:28px;color:#F1EBDB;letter-spacing:.02em;">CONQUEST — BARS ONLY</div>
+        <div style="font-family:'Space Mono',monospace;font-size:12px;color:#8A8175;">check in · rate ★–★★★ · % of city conquered · passport + lists</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:12px;color:#8A8175;max-width:760px;line-height:1.6;margin-bottom:30px;">Refocused on bars. The city is the game board: every bar you check into gets a 1–3 tier and fills in your map. Your passport is the proof, the leaderboard is how people find you, and your top lists are what they read when they do.</div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:44px;width:1268px;">
+
+        <!-- C1 · CONQUEST HOME -->
+        <div data-screen-label="Conquest Home" style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:4px 26px 0;">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                  <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;">SAN FRANCISCO</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">412 BARS ON MAP</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:18px;margin-top:12px;">
+                  <div style="width:112px;height:112px;flex:none;border-radius:50%;background:conic-gradient(#F0451E 0 21%,rgba(23,20,15,.13) 21% 100%);display:flex;align-items:center;justify-content:center;">
+                    <div style="width:84px;height:84px;border-radius:50%;background:#F1EBDB;border:2px solid #17140F;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                      <div style="font-family:'Anton',sans-serif;font-size:32px;line-height:.9;color:#F0451E;">21%</div>
+                      <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.1em;color:#8A8175;">CONQUERED</div>
+                    </div>
+                  </div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Anton',sans-serif;font-size:44px;line-height:.85;">87<span style="font-size:22px;color:#8A8175;">/412</span></div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;letter-spacing:.06em;margin-top:6px;">BARS CHECKED IN</div>
+                    <div style="display:flex;gap:5px;margin-top:9px;font-family:'Space Mono',monospace;font-size:9px;">
+                      <span style="background:#F0451E;color:#F1EBDB;padding:2px 6px;">★★★ 31</span><!-- feeds auto list -->
+                      <span style="background:#1F3FE0;color:#F1EBDB;padding:2px 6px;">★★ 38</span>
+                      <span style="border:1.5px solid #17140F;padding:2px 6px;">★ 18</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="margin:14px 26px 0;height:118px;border:2px solid #17140F;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);position:relative;">
+                <div style="position:absolute;inset:0;background-image:radial-gradient(#F0451E 1.6px,transparent 2px);background-size:19px 19px;opacity:.55;"></div>
+                <span style="position:absolute;bottom:6px;right:9px;font-family:'Space Mono',monospace;font-size:9px;color:#6B6153;">CITY MAP — YOUR PINS</span>
+              </div>
+              <div style="padding:14px 26px 0;">
+                <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;margin-bottom:9px;">BY NEIGHBORHOOD</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;"><span>MISSION</span><span style="color:#8A8175;">24/58 · 41%</span></div>
+                    <div style="height:7px;background:rgba(23,20,15,.13);margin-top:3px;"><div style="width:41%;height:100%;background:#F0451E;"></div></div>
+                  </div>
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;"><span>NORTH BEACH</span><span style="color:#8A8175;">17/41 · 41%</span></div>
+                    <div style="height:7px;background:rgba(23,20,15,.13);margin-top:3px;"><div style="width:41%;height:100%;background:#F0451E;"></div></div>
+                  </div>
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;"><span>SOMA</span><span style="color:#8A8175;">14/63 · 22%</span></div>
+                    <div style="height:7px;background:rgba(23,20,15,.13);margin-top:3px;"><div style="width:22%;height:100%;background:#F0451E;"></div></div>
+                  </div>
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;"><span>TENDERLOIN</span><span style="color:#8A8175;">9/47 · 19%</span></div>
+                    <div style="height:7px;background:rgba(23,20,15,.13);margin-top:3px;"><div style="width:19%;height:100%;background:#F0451E;"></div></div>
+                  </div>
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;"><span>MARINA</span><span style="color:#8A8175;">6/29 · 21%</span></div>
+                    <div style="height:7px;background:rgba(23,20,15,.13);margin-top:3px;"><div style="width:21%;height:100%;background:#F0451E;"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:none;border-top:3px solid #17140F;display:flex;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;">
+              <div style="flex:1;padding:13px 0;text-align:center;background:#F0451E;color:#F1EBDB;">MAP</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">LISTS</div>
+              <div style="flex:1;padding:8px 0;text-align:center;"><span style="font-family:'Anton',sans-serif;font-size:20px;">◎</span></div>
+              <div style="flex:1;padding:13px 0;text-align:center;">RANKS</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">YOU</div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- C2 · NEARBY / BAR DETAIL -->
+        <div data-screen-label="Bar Detail" style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="padding:4px 26px 8px;flex:none;font-family:'Space Mono',monospace;font-size:12px;">‹ MAP</div>
+              <div style="height:182px;flex:none;position:relative;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);border-top:3px solid #17140F;border-bottom:3px solid #17140F;">
+                <div style="position:absolute;top:14px;left:16px;transform:rotate(-7deg);border:2px solid #F0451E;color:#F0451E;font-family:'Anton',sans-serif;font-size:15px;padding:3px 10px;letter-spacing:.06em;">UNCONQUERED</div>
+                <span style="position:absolute;bottom:8px;right:12px;font-family:'Space Mono',monospace;font-size:9px;color:#6B6153;">PHOTO — TRICK DOG</span>
+              </div>
+              <div style="padding:14px 26px 0;flex:1;overflow:hidden;">
+                <div style="font-family:'Anton',sans-serif;font-size:36px;line-height:.95;">TRICK DOG</div>
+                <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;margin-top:6px;">▲ 3010 20TH ST · MISSION · 0.2 MI</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-family:'Space Mono',monospace;font-size:9px;">
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">COCKTAILS</span>
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">ROOFTOP</span>
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">$$</span>
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">OPEN TIL 2</span>
+                </div>
+                <div style="border:2px solid #17140F;margin-top:14px;padding:12px;background:#FBF7EC;position:relative;">
+                  <div style="position:absolute;top:-9px;left:12px;background:#1F3FE0;color:#F1EBDB;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;padding:2px 8px;">YOUR FRIENDS</div>
+                  <div style="display:flex;gap:8px;margin-top:4px;font-family:'Space Mono',monospace;font-size:10px;">
+                    <span style="background:#F0451E;color:#F1EBDB;padding:2px 7px;">3 × ★★★</span>
+                    <span style="background:#1F3FE0;color:#F1EBDB;padding:2px 7px;">1 × ★★</span>
+                  </div>
+                  <div style="font-size:12px;color:#2A251D;margin-top:9px;line-height:1.4;">“The menu is a whole zine. Order whatever's weirdest.” — Dev, ★★★</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;margin-top:7px;">ON 4 FRIENDS' LISTS</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:none;padding:10px 26px;display:flex;gap:9px;">
+              <button style="flex:1;background:#F0451E;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:20px;padding:15px;border:2px solid #17140F;letter-spacing:.03em;">◎ CHECK IN</button>
+              <button style="width:56px;background:#F1EBDB;border:2px solid #17140F;font-size:19px;">▲</button>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- C3 · RANK IT 1-3 -->
+        <div data-screen-label="Check-in Rank" style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#17140F;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#F1EBDB;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;padding:0 26px;display:flex;flex-direction:column;">
+              <div style="text-align:center;padding-top:14px;flex:none;">
+                <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.22em;color:#F0451E;">CHECKED IN · 9:41 PM</div>
+                <div style="font-family:'Anton',sans-serif;font-size:40px;line-height:.9;margin-top:8px;">TRICK DOG</div>
+                <div style="display:inline-block;margin-top:12px;border:2px solid #F0451E;color:#F0451E;font-family:'Anton',sans-serif;font-size:16px;padding:4px 12px;transform:rotate(-3deg);letter-spacing:.06em;">BAR #88 CONQUERED</div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:12px;letter-spacing:.08em;">MISSION NOW 43% · CITY NOW 21%</div>
+              </div>
+              <div style="height:2px;background:rgba(241,235,219,.22);margin:16px 0 0;flex:none;"></div>
+              <div style="font-family:'Anton',sans-serif;font-size:22px;margin-top:16px;flex:none;">RANK IT</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:4px;flex:none;">ONE TAP. YOU CAN CHANGE IT LATER.</div>
+              <div style="display:flex;flex-direction:column;gap:11px;margin-top:14px;flex:none;">
+                <div style="display:flex;gap:13px;align-items:center;border:2px solid #F0451E;background:#F0451E;color:#17140F;padding:13px;">
+                  <div style="font-size:19px;letter-spacing:1px;width:58px;line-height:1;">★★★</div>
+                  <div style="flex:1;"><div style="font-family:'Anton',sans-serif;font-size:19px;">ONE OF THE CITY'S BEST</div><div style="font-family:'Space Mono',monospace;font-size:10px;margin-top:2px;">ADDS IT TO YOUR 3-STAR LIST</div></div>
+                  <div style="font-family:'Anton',sans-serif;font-size:20px;">✓</div>
+                </div>
+                <div style="display:flex;gap:13px;align-items:center;border:2px solid rgba(241,235,219,.4);padding:13px;">
+                  <div style="font-size:19px;letter-spacing:1px;width:58px;line-height:1;color:#1F3FE0;">★★</div>
+                  <div style="flex:1;"><div style="font-family:'Anton',sans-serif;font-size:19px;">SOLID. WOULD RETURN.</div><div style="font-family:'Space Mono',monospace;font-size:10px;margin-top:2px;color:#8A8175;">SAVED TO YOUR PASSPORT</div></div>
+                </div>
+                <div style="display:flex;gap:13px;align-items:center;border:2px solid rgba(241,235,219,.4);padding:13px;">
+                  <div style="font-size:19px;letter-spacing:1px;width:58px;line-height:1;color:#8A8175;">★</div>
+                  <div style="flex:1;"><div style="font-family:'Anton',sans-serif;font-size:19px;">BEEN THERE. DONE.</div><div style="font-family:'Space Mono',monospace;font-size:10px;margin-top:2px;color:#8A8175;">COUNTS FOR THE MAP ONLY</div></div>
+                </div>
+              </div>
+              <div style="border:2px dashed rgba(241,235,219,.35);margin-top:14px;padding:11px;flex:none;">
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;letter-spacing:.1em;">ADD A NOTE (OPTIONAL)</div>
+                <div style="font-size:13px;color:rgba(241,235,219,.55);margin-top:5px;">Sit at the back bar…</div>
+              </div>
+            </div>
+            <div style="flex:none;padding:10px 26px;">
+              <button style="width:100%;background:#F1EBDB;color:#17140F;font-family:'Anton',sans-serif;font-size:20px;padding:15px;border:none;letter-spacing:.03em;">SAVE CHECK-IN</button>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#F1EBDB;"></div></div>
+          </div>
+        </div>
+
+        <!-- C4 · YOUR PASSPORT -->
+        <div data-screen-label="Your Passport" style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:4px 26px 0;">
+                <div style="display:flex;gap:14px;align-items:center;">
+                  <div style="width:66px;height:66px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 6px,#F1EBDB 6px,#F1EBDB 12px);border:2px solid #17140F;"></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Anton',sans-serif;font-size:26px;line-height:.92;">SAM REYES</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:4px;">@sam · SAN FRANCISCO · RANK #4</div>
+                  </div>
+                  <div style="text-align:right;"><div style="font-family:'Anton',sans-serif;font-size:30px;color:#F0451E;line-height:.9;">21%</div><div style="font-family:'Space Mono',monospace;font-size:8px;color:#8A8175;">OF SF</div></div>
+                </div>
+                <div style="display:flex;margin-top:14px;border-top:3px solid #17140F;border-bottom:3px solid #17140F;">
+                  <div style="flex:1;padding:8px 0;text-align:center;border-right:1.5px solid rgba(23,20,15,.2);"><div style="font-family:'Anton',sans-serif;font-size:20px;">87</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">CHECK-INS</div></div>
+                  <div style="flex:1;padding:8px 0;text-align:center;border-right:1.5px solid rgba(23,20,15,.2);"><div style="font-family:'Anton',sans-serif;font-size:20px;color:#F0451E;">31</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">★★★ BARS</div></div>
+                  <div style="flex:1;padding:8px 0;text-align:center;"><div style="font-family:'Anton',sans-serif;font-size:20px;">6</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">LISTS</div></div>
+                </div>
+              </div>
+              <div style="display:flex;gap:7px;padding:12px 26px 0;font-family:'Space Mono',monospace;font-size:10px;">
+                <span style="background:#17140F;color:#F1EBDB;padding:3px 9px;">PASSPORT</span>
+                <span style="border:1.5px solid #17140F;padding:3px 9px;">LISTS</span>
+                <span style="border:1.5px solid #17140F;padding:3px 9px;">MAP</span>
+              </div>
+              <div style="padding:12px 26px 0;">
+                <sc-for list="{{ passportBars }}" as="p" hint-placeholder-count="6">
+                  <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                    <div style="width:52px;flex:none;font-size:14px;letter-spacing:1px;color:#F0451E;line-height:1;">{{ p.stars }}</div>
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ p.name }}</div>
+                      <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:2px;">{{ p.hood }}</div>
+                    </div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">{{ p.date }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="flex:none;border-top:3px solid #17140F;display:flex;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;">
+              <div style="flex:1;padding:13px 0;text-align:center;">MAP</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">LISTS</div>
+              <div style="flex:1;padding:8px 0;text-align:center;"><span style="font-family:'Anton',sans-serif;font-size:20px;">◎</span></div>
+              <div style="flex:1;padding:13px 0;text-align:center;">RANKS</div>
+              <div style="flex:1;padding:13px 0;text-align:center;background:#F0451E;color:#F1EBDB;">YOU</div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- C4b · YOUR LISTS -->
+        <div data-screen-label="Your Lists" style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:4px 26px 0;">
+                <div style="font-family:'Anton',sans-serif;font-size:38px;line-height:.9;">YOUR LISTS</div>
+                <div style="display:flex;gap:7px;margin-top:12px;font-family:'Space Mono',monospace;font-size:10px;">
+                  <span style="border:1.5px solid #17140F;padding:3px 9px;">PASSPORT</span>
+                  <span style="background:#17140F;color:#F1EBDB;padding:3px 9px;">LISTS</span>
+                  <span style="border:1.5px solid #17140F;padding:3px 9px;">MAP</span>
+                </div>
+              </div>
+              <div style="margin:14px 26px 0;border:2px solid #17140F;background:#17140F;color:#F1EBDB;padding:14px;position:relative;">
+                <div style="position:absolute;top:-9px;left:12px;background:#F0451E;color:#17140F;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;padding:2px 8px;">AUTOMATIC</div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:4px;">
+                  <div style="font-family:'Anton',sans-serif;font-size:26px;line-height:.95;">MY 3-STAR BARS</div>
+                  <div style="font-family:'Anton',sans-serif;font-size:26px;color:#F0451E;">31</div>
+                </div>
+                <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:6px;">EVERY BAR YOU RATED ★★★ · UPDATES ITSELF</div>
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:11px;">
+                  <sc-for list="{{ threeStarBars }}" as="b" hint-placeholder-count="4">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid rgba(241,235,219,.18);padding-bottom:5px;">
+                      <span style="font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;">{{ b.name }}</span>
+                      <span style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;">{{ b.hood }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#F0451E;margin-top:10px;letter-spacing:.08em;">SEE ALL 31 ›</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding:16px 26px 4px;">
+                <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;">LISTS YOU MADE</span>
+                <span style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">4</span>
+              </div>
+              <div style="padding:0 26px;">
+                <sc-for list="{{ customLists }}" as="c" hint-placeholder-count="4">
+                  <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                    <div style="font-family:'Anton',sans-serif;font-size:24px;color:#F0451E;width:30px;">{{ c.n }}</div>
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;">{{ c.title }}</div>
+                      <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:2px;">{{ c.meta }}</div>
+                    </div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;border:1.5px solid #17140F;padding:2px 7px;">EDIT</div>
+                  </div>
+                </sc-for>
+                <div style="margin-top:13px;border:2px dashed #17140F;padding:13px;text-align:center;font-family:'Anton',sans-serif;font-size:17px;">＋ NEW LIST</div>
+              </div>
+            </div>
+            <div style="flex:none;border-top:3px solid #17140F;display:flex;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;">
+              <div style="flex:1;padding:13px 0;text-align:center;">MAP</div>
+              <div style="flex:1;padding:13px 0;text-align:center;background:#F0451E;color:#F1EBDB;">LISTS</div>
+              <div style="flex:1;padding:8px 0;text-align:center;"><span style="font-family:'Anton',sans-serif;font-size:20px;">◎</span></div>
+              <div style="flex:1;padding:13px 0;text-align:center;">RANKS</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">YOU</div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- C5 · LEADERBOARD -->
+        <div data-screen-label="City Rankings" style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="padding:4px 26px 0;flex:none;">
+              <div style="font-family:'Anton',sans-serif;font-size:40px;line-height:.9;">THE RANKS</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.14em;color:#8A8175;margin-top:7px;">WHO'S CONQUERED THE MOST OF SF</div>
+              <div style="display:flex;gap:7px;margin-top:12px;font-family:'Space Mono',monospace;font-size:10px;">
+                <span style="background:#F0451E;color:#F1EBDB;padding:3px 9px;">FRIENDS</span>
+                <span style="border:1.5px solid #17140F;padding:3px 9px;">CITY-WIDE</span>
+                <span style="border:1.5px solid #17140F;padding:3px 9px;">MISSION</span>
+              </div>
+            </div>
+            <div style="height:3px;background:#17140F;margin:12px 26px 0;flex:none;"></div>
+            <div style="flex:1;overflow:hidden;padding:0 26px;">
+              <sc-for list="{{ leaders }}" as="L" hint-placeholder-count="6">
+                <div style="display:flex;gap:13px;align-items:center;padding:13px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                  <div style="font-family:'Anton',sans-serif;font-size:30px;width:32px;color:#F0451E;">{{ L.r }}</div>
+                  <div style="width:40px;height:40px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 5px,#F1EBDB 5px,#F1EBDB 10px);border:1.5px solid #17140F;"></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ L.name }}</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:2px;">{{ L.count }} BARS · SEE THEIR LISTS</div>
+                  </div>
+                  <div style="font-family:'Anton',sans-serif;font-size:22px;">{{ L.pct }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:none;border-top:3px solid #17140F;display:flex;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;">
+              <div style="flex:1;padding:13px 0;text-align:center;">MAP</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">LISTS</div>
+              <div style="flex:1;padding:8px 0;text-align:center;"><span style="font-family:'Anton',sans-serif;font-size:20px;">◎</span></div>
+              <div style="flex:1;padding:13px 0;text-align:center;background:#F0451E;color:#F1EBDB;">RANKS</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">YOU</div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- C6 · THEIR PROFILE + TOP LISTS -->
+        <div data-screen-label="Their Top Lists" style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:4px 26px 0;">
+                <div style="font-family:'Space Mono',monospace;font-size:12px;">‹ THE RANKS</div>
+                <div style="display:flex;gap:14px;align-items:center;margin-top:12px;">
+                  <div style="width:66px;height:66px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 6px,#F1EBDB 6px,#F1EBDB 12px);border:2px solid #17140F;"></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Anton',sans-serif;font-size:26px;line-height:.92;">DEV ANAND</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:4px;">@devdrinks · RANK #1 IN SF</div>
+                  </div>
+                  <div style="text-align:right;"><div style="font-family:'Anton',sans-serif;font-size:30px;color:#F0451E;line-height:.9;">39%</div><div style="font-family:'Space Mono',monospace;font-size:8px;color:#8A8175;">164 BARS</div></div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px;">
+                  <button style="flex:1;background:#F0451E;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:15px;padding:9px;border:2px solid #17140F;">FOLLOWING ✓</button>
+                  <button style="flex:1;background:#F1EBDB;font-family:'Anton',sans-serif;font-size:15px;padding:9px;border:2px solid #17140F;">COMPARE MAPS</button>
+                </div>
+                <div style="display:flex;gap:7px;margin-top:12px;font-family:'Space Mono',monospace;font-size:10px;">
+                  <span style="border:1.5px solid #17140F;padding:3px 9px;">PASSPORT</span>
+                  <span style="background:#17140F;color:#F1EBDB;padding:3px 9px;">TOP LISTS</span>
+                  <span style="border:1.5px solid #17140F;padding:3px 9px;">MAP</span>
+                </div>
+              </div>
+              <div style="padding:12px 26px 0;">
+                <sc-for list="{{ devLists }}" as="d" hint-placeholder-count="4">
+                  <div style="display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                    <div style="font-family:'Anton',sans-serif;font-size:26px;color:#F0451E;width:32px;">{{ d.n }}</div>
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ d.title }}</div>
+                      <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8A8175;letter-spacing:.06em;margin-top:2px;">{{ d.meta }}</div>
+                      <div style="font-size:12px;color:#4A4237;margin-top:3px;">#1 · {{ d.top }}</div>
+                    </div>
+                    <div style="font-family:'Anton',sans-serif;font-size:20px;">›</div>
+                  </div>
+                </sc-for>
+                <div style="border:2px solid #17140F;background:#FBF7EC;margin-top:14px;padding:12px;">
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;color:#1F3FE0;">OVERLAP</div>
+                  <div style="font-size:13px;color:#2A251D;margin-top:5px;line-height:1.4;">You've both conquered <strong>34 bars</strong>. He gave ★★★ to 11 you haven't hit yet.</div>
+                </div>
+              </div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="turn1" style="display:flex;flex-wrap:wrap;gap:96px;">
+
+    <!-- =================== OPTION 1a — RISO ZINE =================== -->
+    <div id="1a" style="position:relative;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:30px;">
+        <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:13px;color:#211E1A;background:#F0451E;padding:4px 11px;border-radius:2px;">1a</div>
+        <div style="font-family:'Anton',sans-serif;font-size:28px;color:#F1EBDB;letter-spacing:.02em;">RISO ZINE</div>
+        <div style="font-family:'Space Mono',monospace;font-size:12px;color:#8A8175;">high-contrast · misregistered ink · poster type</div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:44px;width:1268px;">
+
+        <!-- A1 · FEED -->
+        <div style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="padding:6px 26px 12px;flex:none;">
+              <div style="position:relative;line-height:.8;height:52px;">
+                <div style="font-family:'Anton',sans-serif;font-size:56px;color:#1F3FE0;position:absolute;left:3px;top:3px;">TOPS</div>
+                <div style="font-family:'Anton',sans-serif;font-size:56px;color:#F0451E;position:relative;">TOPS</div>
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;margin-top:12px;">WHAT YOUR CREW IS RANKING</div>
+            </div>
+            <div style="height:3px;background:#17140F;margin:0 26px;flex:none;"></div>
+            <div style="flex:1;overflow:hidden;padding:0 26px;">
+              <sc-for list="{{ feed }}" as="f" hint-placeholder-count="5">
+                <div style="padding:14px 0;border-bottom:1.5px solid rgba(23,20,15,.16);display:flex;gap:13px;">
+                  <div style="width:42px;height:42px;flex:none;background:#17140F;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:22px;display:flex;align-items:center;justify-content:center;">{{ f.i }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ f.who }}</div>
+                    <div style="font-size:12px;color:#4A4237;margin-top:1px;">{{ f.note }}</div>
+                    <div style="font-family:'Anton',sans-serif;font-size:16px;color:#F0451E;margin-top:3px;">{{ f.list }}</div>
+                    <div style="display:flex;gap:9px;margin-top:6px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;color:#8A8175;align-items:center;">
+                      <span style="border:1.5px solid #17140F;color:#17140F;padding:1px 6px;">{{ f.cat }}</span>
+                      <span>{{ f.time }}</span>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:none;border-top:3px solid #17140F;display:flex;background:#F1EBDB;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;">
+              <div style="flex:1;padding:13px 0;text-align:center;background:#F0451E;color:#F1EBDB;">FEED</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">FIND</div>
+              <div style="flex:1;padding:9px 0;text-align:center;"><span style="font-family:'Anton',sans-serif;font-size:22px;">+</span></div>
+              <div style="flex:1;padding:13px 0;text-align:center;">LISTS</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">YOU</div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- A2 · FRIEND PROFILE -->
+        <div style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:2px 26px 0;">
+                <div style="font-family:'Space Mono',monospace;font-size:12px;">‹ FEED</div>
+                <div style="display:flex;gap:16px;margin-top:14px;">
+                  <div style="width:96px;height:96px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 6px,#F1EBDB 6px,#F1EBDB 12px);border:2px solid #17140F;position:relative;"><span style="position:absolute;right:4px;bottom:3px;font-family:'Space Mono',monospace;font-size:8px;color:#8A8175;">PHOTO</span></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Anton',sans-serif;font-size:30px;line-height:.92;">MAYA<br>OKAFOR</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;margin-top:6px;">@mayaeats</div>
+                  </div>
+                </div>
+                <div style="font-size:13px;color:#4A4237;margin-top:12px;">Cooks too much. Eats out more. LA ⇄ NYC.</div>
+                <div style="display:flex;margin-top:14px;border-top:3px solid #17140F;border-bottom:3px solid #17140F;">
+                  <div style="flex:1;padding:8px 0;text-align:center;border-right:1.5px solid rgba(23,20,15,.2);"><div style="font-family:'Anton',sans-serif;font-size:20px;">42</div><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;color:#8A8175;">LISTS</div></div>
+                  <div style="flex:1;padding:8px 0;text-align:center;border-right:1.5px solid rgba(23,20,15,.2);"><div style="font-family:'Anton',sans-serif;font-size:20px;">128</div><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;color:#8A8175;">FRIENDS</div></div>
+                  <div style="flex:1;padding:8px 0;text-align:center;"><div style="font-family:'Anton',sans-serif;font-size:20px;color:#F0451E;">✓</div><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;color:#8A8175;">FRIENDS</div></div>
+                </div>
+              </div>
+              <div style="padding:14px 26px 4px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;">HER TOP LISTS</div>
+              <div style="padding:0 26px;">
+                <sc-for list="{{ mayaLists }}" as="L" hint-placeholder-count="4">
+                  <div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                    <div style="font-family:'Anton',sans-serif;font-size:26px;color:#F0451E;width:34px;">{{ L.n }}</div>
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ L.title }}</div>
+                      <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;letter-spacing:.05em;margin-top:2px;">{{ L.meta }}</div>
+                      <div style="font-size:12px;color:#4A4237;margin-top:3px;">#1 · {{ L.top }}</div>
+                    </div>
+                    <div style="font-family:'Anton',sans-serif;font-size:22px;">›</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- A3 · RANKED LIST -->
+        <div style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="padding:2px 26px 0;flex:none;">
+              <div style="font-family:'Space Mono',monospace;font-size:12px;">‹ MAYA</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:#F0451E;margin-top:14px;">FOOD / TACOS</div>
+              <div style="font-family:'Anton',sans-serif;font-size:44px;line-height:.88;margin-top:4px;">TOP 5<br>TACO SPOTS</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:8px;">LOS ANGELES · CURATED BY MAYA</div>
+            </div>
+            <div style="height:3px;background:#17140F;margin:12px 26px 0;flex:none;"></div>
+            <div style="flex:1;overflow:hidden;padding:0 26px;">
+              <sc-for list="{{ tacoItems }}" as="t" hint-placeholder-count="5">
+                <div style="display:flex;gap:13px;padding:12px 0;border-bottom:1.5px solid rgba(23,20,15,.16);align-items:flex-start;">
+                  <div style="font-family:'Anton',sans-serif;font-size:38px;color:#F0451E;width:36px;flex:none;line-height:.9;-webkit-text-stroke:1px #17140F;">{{ t.rank }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Anton',sans-serif;font-size:18px;">{{ t.name }}</div>
+                    <div style="font-size:11px;color:#4A4237;margin-top:3px;line-height:1.32;">{{ t.note }}</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8A8175;margin-top:5px;">{{ t.tags }}</div>
+                  </div>
+                  <div style="width:52px;height:52px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 5px,#F1EBDB 5px,#F1EBDB 10px);border:1.5px solid #17140F;"></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- A4 · ITEM DETAIL -->
+        <div style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="padding:2px 26px 8px;flex:none;font-family:'Space Mono',monospace;font-size:12px;">‹ TOP 5 TACO SPOTS</div>
+              <div style="height:216px;flex:none;position:relative;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);border-top:3px solid #17140F;border-bottom:3px solid #17140F;">
+                <div style="position:absolute;inset:0;background-image:radial-gradient(#17140F 1px,transparent 1.4px);background-size:7px 7px;opacity:.14;"></div>
+                <div style="position:absolute;top:16px;left:16px;transform:rotate(-8deg);background:#F0451E;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:26px;padding:3px 13px;border:2px solid #17140F;">#1</div>
+                <span style="position:absolute;bottom:8px;right:12px;font-family:'Space Mono',monospace;font-size:9px;color:#6B6153;">PHOTO — SONORATOWN</span>
+              </div>
+              <div style="padding:15px 26px 0;flex:1;overflow:hidden;">
+                <div style="font-family:'Anton',sans-serif;font-size:34px;line-height:.95;">SONORATOWN</div>
+                <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;margin-top:6px;">▲ 208 E 8TH ST · DOWNTOWN LA</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.04em;">
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">SONORAN</span>
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">COUNTER-ONLY</span>
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">$$</span>
+                  <span style="border:1.5px solid #17140F;padding:2px 7px;">CASH OK</span>
+                </div>
+                <div style="border:2px solid #17140F;margin-top:16px;padding:13px;position:relative;background:#FBF7EC;">
+                  <div style="position:absolute;top:-9px;left:12px;background:#1F3FE0;color:#F1EBDB;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;padding:2px 8px;">MAYA'S NOTE</div>
+                  <div style="font-size:13px;line-height:1.45;color:#2A251D;margin-top:3px;">Flour tortillas trucked in from Sonora — you can taste it. Get the mesquite chivichanga and the caramelo. My #1 four years running.</div>
+                </div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:12px;">RANKED #1 · ADDED MAR 2024 · 12 FRIENDS SAVED</div>
+              </div>
+            </div>
+            <div style="flex:none;padding:10px 26px;display:flex;gap:9px;border-top:1.5px solid rgba(23,20,15,.16);">
+              <button style="flex:1;background:#F0451E;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:18px;padding:14px;border:2px solid #17140F;letter-spacing:.02em;">SEND TO…</button>
+              <button style="width:56px;background:#F1EBDB;border:2px solid #17140F;font-family:'Archivo',sans-serif;font-size:20px;color:#17140F;">♥</button>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- A5 · SEND SHEET -->
+        <div style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;position:relative;z-index:3;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;position:relative;overflow:hidden;">
+              <div style="padding:14px 26px;">
+                <div style="height:150px;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);border:2px solid #17140F;"></div>
+                <div style="font-family:'Anton',sans-serif;font-size:30px;margin-top:12px;">SONORATOWN</div>
+                <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;margin-top:6px;">▲ 208 E 8TH ST · DOWNTOWN LA</div>
+              </div>
+              <div style="position:absolute;inset:0;background:rgba(23,20,15,.5);"></div>
+              <div style="position:absolute;left:0;right:0;bottom:0;background:#F1EBDB;border-top:3px solid #17140F;border-radius:22px 22px 0 0;padding:16px 24px 6px;">
+                <div style="width:44px;height:4px;background:#17140F;border-radius:3px;margin:0 auto 16px;"></div>
+                <div style="font-family:'Anton',sans-serif;font-size:23px;line-height:1;">SEND SONORATOWN TO…</div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;letter-spacing:.08em;margin-top:5px;">PASS THE REC ALONG</div>
+                <div style="margin-top:12px;">
+                  <sc-for list="{{ sendTargets }}" as="s" hint-placeholder-count="4">
+                    <div style="display:flex;gap:13px;align-items:center;padding:12px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                      <div style="width:40px;height:40px;flex:none;background:#17140F;color:#F1EBDB;font-family:'Anton',sans-serif;font-size:19px;display:flex;align-items:center;justify-content:center;">{{ s.ic }}</div>
+                      <div style="flex:1;min-width:0;">
+                        <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;">{{ s.name }}</div>
+                        <div style="font-size:12px;color:#8A8175;">{{ s.act }}</div>
+                      </div>
+                      <div style="font-family:'Anton',sans-serif;font-size:18px;">›</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="text-align:center;font-family:'Space Mono',monospace;font-size:12px;padding:15px 0 8px;color:#F0451E;letter-spacing:.06em;">CANCEL</div>
+              </div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;z-index:3;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+        <!-- A6 · YOUR PROFILE -->
+        <div style="width:390px;height:844px;background:#100E0B;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#F1EBDB;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#17140F;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;"><span>9:41</span><span>LTE · 100</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:2px 26px 0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;"><span>YOUR PROFILE</span><span style="color:#F0451E;">EDIT</span></div>
+                <div style="display:flex;gap:16px;margin-top:12px;align-items:center;">
+                  <div style="width:78px;height:78px;flex:none;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 6px,#F1EBDB 6px,#F1EBDB 12px);border:2px solid #17140F;"></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Anton',sans-serif;font-size:28px;line-height:.92;">SAM REYES</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8A8175;margin-top:5px;">@sam · San Francisco</div>
+                  </div>
+                </div>
+                <div style="font-size:13px;color:#4A4237;margin-top:10px;">Chasing the perfect negroni.</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 26px 4px;">
+                <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;">YOUR LISTS</span>
+                <span style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;">4 PUBLISHED</span>
+              </div>
+              <div style="padding:0 26px;">
+                <sc-for list="{{ yourLists }}" as="y" hint-placeholder-count="4">
+                  <div style="display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1.5px solid rgba(23,20,15,.16);">
+                    <div style="font-family:'Anton',sans-serif;font-size:18px;color:#8A8175;">≡</div>
+                    <div style="font-family:'Anton',sans-serif;font-size:22px;color:#F0451E;width:30px;">{{ y.n }}</div>
+                    <div style="flex:1;min-width:0;"><div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;">{{ y.title }}</div><div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A8175;margin-top:2px;">{{ y.meta }}</div></div>
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;border:1.5px solid #17140F;padding:2px 7px;">EDIT</div>
+                  </div>
+                </sc-for>
+                <div style="margin-top:16px;border:2px dashed #17140F;padding:14px;text-align:center;font-family:'Anton',sans-serif;font-size:18px;">＋ NEW LIST</div>
+              </div>
+            </div>
+            <div style="flex:none;border-top:3px solid #17140F;display:flex;background:#F1EBDB;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;">
+              <div style="flex:1;padding:13px 0;text-align:center;">FEED</div>
+              <div style="flex:1;padding:13px 0;text-align:center;">FIND</div>
+              <div style="flex:1;padding:9px 0;text-align:center;"><span style="font-family:'Anton',sans-serif;font-size:22px;">+</span></div>
+              <div style="flex:1;padding:13px 0;text-align:center;">LISTS</div>
+              <div style="flex:1;padding:13px 0;text-align:center;background:#F0451E;color:#F1EBDB;">YOU</div>
+            </div>
+            <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#17140F;"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =================== OPTION 1b — ANALOG CATALOG =================== -->
+    <div id="1b" style="position:relative;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:30px;">
+        <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:13px;color:#211E1A;background:#C97B2C;padding:4px 11px;border-radius:20px;">1b</div>
+        <div style="font-family:'Abril Fatface',serif;font-size:30px;color:#E9DEC7;">Analog Catalog</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:#8A8175;">warm · matchbook seals · menu leaders · serif display</div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:44px;width:1268px;">
+
+        <!-- B1 · FEED -->
+        <div style="width:390px;height:844px;background:#241C11;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#E9DEC7;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#2E2417;font-family:'Bricolage Grotesque',sans-serif;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'DM Mono',monospace;font-size:13px;"><span>9:41</span><span>100%</span></div>
+            <div style="padding:8px 24px 12px;flex:none;">
+              <div style="font-family:'Abril Fatface',serif;font-size:44px;color:#A83E2B;line-height:1;">the tops</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:#8A7B60;margin-top:8px;">WHAT YOUR FRIENDS ARE RANKING</div>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:2px 20px;">
+              <sc-for list="{{ feed }}" as="f" hint-placeholder-count="5">
+                <div style="background:#F4ECD8;border:1px solid rgba(46,36,23,.18);border-radius:14px;padding:12px 13px;margin-bottom:11px;box-shadow:0 2px 0 rgba(46,36,23,.1);display:flex;gap:11px;">
+                  <div style="width:40px;height:40px;flex:none;border-radius:50%;background:repeating-linear-gradient(45deg,#DDD0B4,#DDD0B4 4px,#EBE1CA 4px,#EBE1CA 8px);border:1.5px solid #2E2417;display:flex;align-items:center;justify-content:center;font-family:'Abril Fatface',serif;font-size:17px;color:#2E2417;">{{ f.i }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-weight:700;font-size:14px;">{{ f.who }}</div>
+                    <div style="font-size:12px;color:#7A6E58;margin-top:1px;">{{ f.note }}</div>
+                    <div style="font-family:'Abril Fatface',serif;font-size:16px;color:#A83E2B;margin-top:3px;">{{ f.list }}</div>
+                    <div style="display:flex;gap:9px;margin-top:7px;align-items:center;">
+                      <span style="border:1px solid #C97B2C;color:#B5701F;border-radius:20px;padding:1px 9px;font-family:'DM Mono',monospace;font-size:9px;">{{ f.cat }}</span>
+                      <span style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7B60;">{{ f.time }}</span>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:none;padding:6px 20px 4px;">
+              <div style="background:#2E2417;border-radius:22px;display:flex;padding:5px;font-family:'DM Mono',monospace;font-size:10px;color:#C9BB9E;">
+                <div style="flex:1;text-align:center;padding:8px 0;background:#C97B2C;color:#2E2417;border-radius:18px;">feed</div>
+                <div style="flex:1;text-align:center;padding:8px 0;">find</div>
+                <div style="flex:1;text-align:center;padding:6px 0;font-size:18px;color:#E9DEC7;">+</div>
+                <div style="flex:1;text-align:center;padding:8px 0;">lists</div>
+                <div style="flex:1;text-align:center;padding:8px 0;">you</div>
+              </div>
+            </div>
+            <div style="height:24px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#2E2417;"></div></div>
+          </div>
+        </div>
+
+        <!-- B2 · FRIEND PROFILE -->
+        <div style="width:390px;height:844px;background:#241C11;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#E9DEC7;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#2E2417;font-family:'Bricolage Grotesque',sans-serif;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'DM Mono',monospace;font-size:13px;"><span>9:41</span><span>100%</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:4px 24px 0;">
+                <div style="font-family:'DM Mono',monospace;font-size:12px;color:#8A7B60;">‹ feed</div>
+                <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:12px;">
+                  <div style="width:92px;height:92px;border-radius:50%;background:repeating-linear-gradient(45deg,#DDD0B4,#DDD0B4 5px,#EBE1CA 5px,#EBE1CA 10px);border:2px solid #2E2417;position:relative;"><span style="position:absolute;bottom:6px;left:0;right:0;font-family:'DM Mono',monospace;font-size:8px;color:#8A7B60;">PHOTO</span></div>
+                  <div style="font-family:'Abril Fatface',serif;font-size:32px;margin-top:12px;line-height:1;">Maya Okafor</div>
+                  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#8A7B60;margin-top:6px;">@mayaeats</div>
+                  <div style="font-size:13px;color:#6C6049;margin-top:8px;max-width:230px;">Cooks too much. Eats out more. LA ⇄ NYC.</div>
+                  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#8A7B60;margin-top:10px;">42 lists · 128 friends · following</div>
+                </div>
+              </div>
+              <div style="padding:16px 24px 4px;font-family:'Abril Fatface',serif;font-size:20px;">Her top lists</div>
+              <div style="padding:0 24px;">
+                <sc-for list="{{ mayaLists }}" as="L" hint-placeholder-count="4">
+                  <div style="display:flex;gap:13px;align-items:center;padding:12px 0;border-bottom:1px dotted rgba(46,36,23,.35);">
+                    <div style="width:48px;height:48px;flex:none;border-radius:50%;border:2px solid #C97B2C;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#A83E2B;"><span style="font-family:'Abril Fatface',serif;font-size:18px;line-height:1;">{{ L.count }}</span><span style="font-family:'DM Mono',monospace;font-size:7px;color:#B5701F;">PICKS</span></div>
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-family:'Abril Fatface',serif;font-size:17px;">{{ L.title }}</div>
+                      <div style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7B60;margin-top:2px;">{{ L.meta }}</div>
+                      <div style="font-size:12px;color:#6C6049;margin-top:2px;">#1 · {{ L.top }}</div>
+                    </div>
+                    <div style="font-family:'Abril Fatface',serif;font-size:20px;color:#A83E2B;">›</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="height:24px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#2E2417;"></div></div>
+          </div>
+        </div>
+
+        <!-- B3 · RANKED LIST -->
+        <div style="width:390px;height:844px;background:#241C11;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#E9DEC7;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#2E2417;font-family:'Bricolage Grotesque',sans-serif;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'DM Mono',monospace;font-size:13px;"><span>9:41</span><span>100%</span></div>
+            <div style="padding:4px 24px 0;flex:none;">
+              <div style="font-family:'DM Mono',monospace;font-size:12px;color:#8A7B60;">‹ maya</div>
+              <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;color:#A83E2B;margin-top:14px;">FOOD · TACOS</div>
+              <div style="font-family:'Abril Fatface',serif;font-size:38px;line-height:1;margin-top:6px;">Top 5 Taco Spots</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7B60;margin-top:8px;">a top five · los angeles · by maya</div>
+            </div>
+            <div style="height:1px;border-top:1px dotted rgba(46,36,23,.4);margin:14px 24px 0;flex:none;"></div>
+            <div style="flex:1;overflow:hidden;padding:0 24px;">
+              <sc-for list="{{ tacoItems }}" as="t" hint-placeholder-count="5">
+                <div style="display:flex;gap:13px;padding:12px 0;border-bottom:1px dotted rgba(46,36,23,.3);align-items:flex-start;">
+                  <div style="width:40px;height:40px;flex:none;border-radius:50%;background:#A83E2B;color:#F4ECD8;font-family:'Abril Fatface',serif;font-size:20px;display:flex;align-items:center;justify-content:center;">{{ t.rank }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Abril Fatface',serif;font-size:18px;">{{ t.name }}</div>
+                    <div style="font-size:11px;color:#6C6049;font-style:italic;margin-top:3px;line-height:1.35;">{{ t.note }}</div>
+                    <div style="font-family:'DM Mono',monospace;font-size:9px;color:#8A7B60;margin-top:5px;">{{ t.tags }}</div>
+                  </div>
+                  <div style="width:50px;height:50px;flex:none;border-radius:10px;background:repeating-linear-gradient(45deg,#DDD0B4,#DDD0B4 5px,#EBE1CA 5px,#EBE1CA 10px);border:1.5px solid #2E2417;"></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="height:24px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#2E2417;"></div></div>
+          </div>
+        </div>
+
+        <!-- B4 · ITEM DETAIL -->
+        <div style="width:390px;height:844px;background:#241C11;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#E9DEC7;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#2E2417;font-family:'Bricolage Grotesque',sans-serif;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'DM Mono',monospace;font-size:13px;"><span>9:41</span><span>100%</span></div>
+            <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+              <div style="padding:4px 24px 10px;flex:none;font-family:'DM Mono',monospace;font-size:12px;color:#8A7B60;">‹ top 5 taco spots</div>
+              <div style="padding:0 24px;flex:none;">
+                <div style="position:relative;border-radius:16px;overflow:hidden;height:204px;background:repeating-linear-gradient(45deg,#DDD0B4,#DDD0B4 8px,#E7DCC3 8px,#E7DCC3 16px);border:2px solid #2E2417;">
+                  <div style="position:absolute;top:-14px;left:26px;width:60px;height:26px;background:rgba(201,123,44,.5);transform:rotate(-4deg);border:1px solid rgba(46,36,23,.3);"></div>
+                  <div style="position:absolute;bottom:14px;right:14px;width:60px;height:60px;border-radius:50%;background:#C97B2C;color:#2E2417;border:2px solid #2E2417;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-family:'Abril Fatface',serif;font-size:22px;line-height:1;">#1</span><span style="font-family:'DM Mono',monospace;font-size:7px;">RANKED</span></div>
+                  <span style="position:absolute;bottom:8px;left:12px;font-family:'DM Mono',monospace;font-size:9px;color:#8A7B60;">PHOTO — SONORATOWN</span>
+                </div>
+              </div>
+              <div style="padding:14px 24px 0;flex:1;overflow:hidden;">
+                <div style="font-family:'Abril Fatface',serif;font-size:32px;line-height:1;">Sonoratown</div>
+                <div style="font-size:12px;color:#6C6049;margin-top:8px;border-bottom:1px solid #8A7B60;display:inline-block;padding-bottom:1px;">208 E 8th St · Downtown LA</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:11px;">
+                  <span style="border:1px solid #C97B2C;color:#B5701F;border-radius:20px;padding:2px 9px;font-family:'DM Mono',monospace;font-size:9px;">SONORAN</span>
+                  <span style="border:1px solid #C97B2C;color:#B5701F;border-radius:20px;padding:2px 9px;font-family:'DM Mono',monospace;font-size:9px;">COUNTER-ONLY</span>
+                  <span style="border:1px solid #C97B2C;color:#B5701F;border-radius:20px;padding:2px 9px;font-family:'DM Mono',monospace;font-size:9px;">$$</span>
+                </div>
+                <div style="font-family:'Abril Fatface',serif;font-size:16px;font-style:italic;color:#2E2417;line-height:1.4;margin-top:14px;border-left:3px solid #C97B2C;padding-left:12px;">"Flour tortillas trucked in from Sonora. Get the mesquite chivichanga — my #1 four years running."</div>
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7B60;margin-top:12px;">— Maya · ranked #1 · 12 friends saved</div>
+              </div>
+            </div>
+            <div style="flex:none;padding:10px 24px;display:flex;gap:9px;">
+              <button style="flex:1;background:#A83E2B;color:#F4ECD8;font-family:'Abril Fatface',serif;font-size:18px;padding:13px;border:2px solid #2E2417;border-radius:26px;">Send to…</button>
+              <button style="width:54px;background:#E9DEC7;border:2px solid #2E2417;border-radius:26px;font-size:19px;color:#2E2417;">♥</button>
+            </div>
+            <div style="height:24px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#2E2417;"></div></div>
+          </div>
+        </div>
+
+        <!-- B5 · SEND SHEET -->
+        <div style="width:390px;height:844px;background:#241C11;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#E9DEC7;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#2E2417;font-family:'Bricolage Grotesque',sans-serif;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'DM Mono',monospace;font-size:13px;position:relative;z-index:3;"><span>9:41</span><span>100%</span></div>
+            <div style="flex:1;position:relative;overflow:hidden;">
+              <div style="padding:14px 24px;">
+                <div style="height:150px;border-radius:16px;background:repeating-linear-gradient(45deg,#DDD0B4,#DDD0B4 8px,#E7DCC3 8px,#E7DCC3 16px);border:2px solid #2E2417;"></div>
+                <div style="font-family:'Abril Fatface',serif;font-size:30px;margin-top:12px;">Sonoratown</div>
+                <div style="font-size:12px;color:#6C6049;margin-top:6px;">208 E 8th St · Downtown LA</div>
+              </div>
+              <div style="position:absolute;inset:0;background:rgba(46,36,23,.5);"></div>
+              <div style="position:absolute;left:0;right:0;bottom:0;background:#E9DEC7;border-radius:24px 24px 0 0;padding:16px 24px 6px;box-shadow:0 -8px 24px rgba(46,36,23,.2);">
+                <div style="width:44px;height:4px;background:#2E2417;border-radius:3px;margin:0 auto 16px;"></div>
+                <div style="font-family:'Abril Fatface',serif;font-size:26px;line-height:1;">Send Sonoratown to…</div>
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7B60;margin-top:6px;letter-spacing:.06em;">PASS THE REC ALONG</div>
+                <div style="margin-top:12px;">
+                  <sc-for list="{{ sendTargets }}" as="s" hint-placeholder-count="4">
+                    <div style="display:flex;gap:13px;align-items:center;padding:11px 0;border-bottom:1px dotted rgba(46,36,23,.3);">
+                      <div style="width:42px;height:42px;flex:none;border-radius:50%;background:#C97B2C;color:#2E2417;font-family:'Abril Fatface',serif;font-size:18px;display:flex;align-items:center;justify-content:center;">{{ s.ic }}</div>
+                      <div style="flex:1;min-width:0;">
+                        <div style="font-family:'Abril Fatface',serif;font-size:17px;">{{ s.name }}</div>
+                        <div style="font-size:12px;color:#8A7B60;">{{ s.act }}</div>
+                      </div>
+                      <div style="font-family:'Abril Fatface',serif;font-size:18px;color:#A83E2B;">›</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="text-align:center;font-family:'DM Mono',monospace;font-size:12px;padding:14px 0 8px;color:#A83E2B;">cancel</div>
+              </div>
+            </div>
+            <div style="height:24px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;z-index:3;"><div style="width:132px;height:5px;border-radius:3px;background:#2E2417;"></div></div>
+          </div>
+        </div>
+
+        <!-- B6 · YOUR PROFILE -->
+        <div style="width:390px;height:844px;background:#241C11;border-radius:54px;padding:10px;flex:none;box-shadow:0 26px 55px rgba(0,0,0,.5);">
+          <div style="width:100%;height:100%;background:#E9DEC7;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:#2E2417;font-family:'Bricolage Grotesque',sans-serif;">
+            <div style="height:52px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-family:'DM Mono',monospace;font-size:13px;"><span>9:41</span><span>100%</span></div>
+            <div style="flex:1;overflow:hidden;">
+              <div style="padding:4px 24px 0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;font-family:'DM Mono',monospace;font-size:11px;color:#8A7B60;"><span>your profile</span><span style="color:#A83E2B;">edit</span></div>
+                <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:10px;">
+                  <div style="width:76px;height:76px;border-radius:50%;background:repeating-linear-gradient(45deg,#DDD0B4,#DDD0B4 5px,#EBE1CA 5px,#EBE1CA 10px);border:2px solid #2E2417;"></div>
+                  <div style="font-family:'Abril Fatface',serif;font-size:28px;margin-top:10px;line-height:1;">Sam Reyes</div>
+                  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#8A7B60;margin-top:6px;">@sam · San Francisco</div>
+                  <div style="font-size:13px;color:#6C6049;margin-top:6px;">Chasing the perfect negroni.</div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding:16px 24px 4px;">
+                <span style="font-family:'Abril Fatface',serif;font-size:20px;">Your lists</span>
+                <span style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7B60;">4 published</span>
+              </div>
+              <div style="padding:0 24px;">
+                <sc-for list="{{ yourLists }}" as="y" hint-placeholder-count="4">
+                  <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px dotted rgba(46,36,23,.3);">
+                    <div style="font-family:'Abril Fatface',serif;font-size:16px;color:#8A7B60;">≡</div>
+                    <div style="width:36px;height:36px;flex:none;border-radius:50%;border:2px solid #C97B2C;color:#A83E2B;font-family:'Abril Fatface',serif;font-size:15px;display:flex;align-items:center;justify-content:center;">{{ y.count }}</div>
+                    <div style="flex:1;min-width:0;"><div style="font-family:'Abril Fatface',serif;font-size:16px;">{{ y.title }}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:#8A7B60;margin-top:1px;">{{ y.meta }}</div></div>
+                    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#A83E2B;">edit</div>
+                  </div>
+                </sc-for>
+                <div style="margin-top:14px;border:2px dashed #C97B2C;border-radius:26px;padding:13px;text-align:center;font-family:'Abril Fatface',serif;font-size:17px;color:#A83E2B;">＋ New list</div>
+              </div>
+            </div>
+            <div style="flex:none;padding:6px 20px 4px;">
+              <div style="background:#2E2417;border-radius:22px;display:flex;padding:5px;font-family:'DM Mono',monospace;font-size:10px;color:#C9BB9E;">
+                <div style="flex:1;text-align:center;padding:8px 0;">feed</div>
+                <div style="flex:1;text-align:center;padding:8px 0;">find</div>
+                <div style="flex:1;text-align:center;padding:6px 0;font-size:18px;color:#E9DEC7;">+</div>
+                <div style="flex:1;text-align:center;padding:8px 0;">lists</div>
+                <div style="flex:1;text-align:center;padding:8px 0;background:#C97B2C;color:#2E2417;border-radius:18px;">you</div>
+              </div>
+            </div>
+            <div style="height:24px;flex:none;display:flex;align-items:center;justify-content:center;"><div style="width:132px;height:5px;border-radius:3px;background:#2E2417;"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const feed = [
+      { i: 'M', who: 'Maya Okafor', note: 'added Bar Parcelle to', list: 'Top 10 Natural Wine Bars', time: '2h', cat: 'NIGHTLIFE' },
+      { i: 'D', who: 'Dev Anand', note: 're-ranked — Ippudo slid to #4', list: 'Top 10 Ramen', time: '5h', cat: 'FOOD' },
+      { i: 'P', who: 'Priya Rao', note: 'started a new list', list: 'Top 5 Beach Reads', time: 'Yesterday', cat: 'BOOKS' },
+      { i: 'T', who: 'Theo Marsh', note: 'added "Motion" by Calexico to', list: 'Top 5 Long-Drive Songs', time: 'Yesterday', cat: 'MUSIC' },
+      { i: 'C', who: 'Cass Lin', note: 'crowned Gjelina #1 on', list: 'Top 5 Patio Dinners', time: '2d', cat: 'FOOD' },
+    ];
+    const mayaLists = [
+      { n: '01', title: 'Top 5 Taco Spots', meta: 'FOOD · LOS ANGELES', top: 'Sonoratown', count: '5' },
+      { n: '02', title: 'Top 10 Natural Wine Bars', meta: 'NIGHTLIFE · NEW YORK', top: 'Bar Parcelle', count: '10' },
+      { n: '03', title: 'Top 5 Records to Cook To', meta: 'MUSIC · ANYWHERE', top: 'Rumours — Fleetwood Mac', count: '5' },
+      { n: '04', title: 'Top 5 Dive Bars', meta: 'NIGHTLIFE · LOS ANGELES', top: 'The Prince', count: '5' },
+    ];
+    const tacoItems = [
+      { rank: '1', name: 'Sonoratown', note: 'Flour tortillas trucked in from Sonora. Get the mesquite-grilled chivichanga.', tags: 'DOWNTOWN · SONORAN · COUNTER-ONLY' },
+      { rank: '2', name: 'Tacos 1986', note: 'Al pastor shaved straight off the trompo. Go before the lunch line.', tags: 'MID-CITY · AL PASTOR' },
+      { rank: '3', name: "Leo's Tacos Truck", note: 'The pastor-with-pineapple truck at La Brea & Venice. A rite of passage.', tags: 'WEST ADAMS · TRUCK · CASH' },
+      { rank: '4', name: 'Guisados', note: 'Braises on a handmade tortilla. Order the sampler of six.', tags: 'BOYLE HEIGHTS · GUISADOS' },
+      { rank: '5', name: "Villa's Tacos", note: 'Highland Park. Loaded, blue-corn, drowning in red salsa.', tags: 'HIGHLAND PARK · BLUE CORN' },
+    ];
+    const sendTargets = [
+      { ic: '▲', name: 'Apple Maps', act: 'Get directions' },
+      { ic: '◆', name: 'Resy', act: 'Book a table' },
+      { ic: '＋', name: 'Save to my list', act: 'Add to Top 5 LA Eats' },
+      { ic: '↗', name: 'Messages', act: 'Send to a friend' },
+    ];
+    const yourLists = [
+      { n: '01', title: 'Top 5 Negronis in SF', meta: 'NIGHTLIFE · 5 PICKS', count: '5' },
+      { n: '02', title: 'Top 10 Albums of 2025', meta: 'MUSIC · 10 PICKS', count: '10' },
+      { n: '03', title: 'Top 5 Late-Night Eats', meta: 'FOOD · 5 PICKS', count: '5' },
+      { n: '04', title: 'Top 5 Dive Bars', meta: 'NIGHTLIFE · 4 PICKS', count: '4' },
+    ];
+    const nearbyBars = [
+      { name: 'Trick Dog', hood: 'MISSION', dist: '0.2 MI', note: '3 friends gave this ★★★' },
+      { name: 'Zeitgeist', hood: 'MISSION', dist: '0.4 MI', note: 'Dev checked in Friday' },
+      { name: 'ABV', hood: 'MISSION', dist: '0.5 MI', note: 'On 4 of your friends\u2019 top lists' },
+      { name: 'Wildhawk', hood: 'MISSION', dist: '0.6 MI', note: 'Unconquered' },
+      { name: 'El Rio', hood: 'MISSION', dist: '0.9 MI', note: 'Unconquered' },
+    ];
+    const passportBars = [
+      { name: 'Comstock Saloon', stars: '\u2605\u2605\u2605', hood: 'NORTH BEACH', date: 'JUL 24' },
+      { name: 'Bourbon & Branch', stars: '\u2605\u2605\u2605', hood: 'TENDERLOIN', date: 'JUL 19' },
+      { name: 'Smuggler\u2019s Cove', stars: '\u2605\u2605', hood: 'HAYES VALLEY', date: 'JUL 11' },
+      { name: 'The Treasury', stars: '\u2605\u2605\u2605', hood: 'FIDI', date: 'JUL 04' },
+      { name: 'Vesuvio Cafe', stars: '\u2605\u2605', hood: 'NORTH BEACH', date: 'JUN 28' },
+      { name: 'Rickhouse', stars: '\u2605', hood: 'FIDI', date: 'JUN 21' },
+    ];
+    const threeStarBars = [
+      { name: 'Comstock Saloon', hood: 'NORTH BEACH' },
+      { name: 'Bourbon & Branch', hood: 'TENDERLOIN' },
+      { name: 'The Treasury', hood: 'FIDI' },
+      { name: 'Trick Dog', hood: 'MISSION' },
+    ];
+    const customLists = [
+      { n: '01', title: 'Where To Take My Parents', meta: '6 BARS \u00b7 PUBLIC', top: 'Comstock Saloon' },
+      { n: '02', title: 'Negroni Research', meta: '9 BARS \u00b7 PUBLIC', top: 'Bar Part Time' },
+      { n: '03', title: 'Walkable From My Place', meta: '11 BARS \u00b7 PRIVATE', top: 'Wildhawk' },
+      { n: '04', title: 'Actually Good Dive Bars', meta: '7 BARS \u00b7 PUBLIC', top: 'Zeitgeist' },
+    ];
+    const leaders = [
+      { r: '1', name: 'Dev Anand', count: '164', pct: '39%', you: false },
+      { r: '2', name: 'Maya Okafor', count: '141', pct: '34%', you: false },
+      { r: '3', name: 'Cass Lin', count: '119', pct: '28%', you: false },
+      { r: '4', name: 'You \u2014 Sam Reyes', count: '87', pct: '21%', you: true },
+      { r: '5', name: 'Theo Marsh', count: '73', pct: '17%', you: false },
+      { r: '6', name: 'Priya Rao', count: '58', pct: '14%', you: false },
+    ];
+    const devLists = [
+      { n: '01', title: 'My ★★★ Dive Bars', meta: 'NIGHTLIFE \u00b7 8 BARS', top: 'Zeitgeist' },
+      { n: '02', title: 'Best Last Call in SF', meta: 'NIGHTLIFE \u00b7 5 BARS', top: 'Comstock Saloon' },
+      { n: '03', title: 'Bars With Actual Food', meta: 'FOOD \u00b7 6 BARS', top: 'Trick Dog' },
+      { n: '04', title: 'Where To Take Out-Of-Towners', meta: 'NIGHTLIFE \u00b7 5 BARS', top: 'Smuggler\u2019s Cove' },
+    ];
+    return { feed, mayaLists, tacoItems, sendTargets, yourLists, nearbyBars, passportBars, leaders, devLists };
+  }
+}
+</script>
+</body>
+</html>
