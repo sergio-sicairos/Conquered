@@ -638,8 +638,8 @@
     let userHandle = ''; // custom @username
     let selectedAvatarFile = null; // file selected for upload
 
-    // Mapbox setup - token can be set via window.MAPBOX_TOKEN or localStorage.mapboxToken
-    mapboxgl.accessToken = window.MAPBOX_TOKEN || localStorage.getItem('mapboxToken') || '';
+    // Mapbox setup
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2Vyc2ljIiwiYSI6ImNtc2M2ZWY1YjFpeGEzNW93eXA3dXJ2Mm0ifQ.yJit-EW6_jxmqgnDYHU09w';
 
     // ============ AUTH ============
     auth.onAuthStateChanged(user => {
