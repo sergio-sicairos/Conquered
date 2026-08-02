@@ -189,6 +189,26 @@
     .passport-checkin-date { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; }
     .passport-empty { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px; }
 
+    /* Leaderboard Screen */
+    #ranksScreen { flex-direction: column; background: #F1EBDB; }
+    .ranks-header { padding: 16px 24px; }
+    .ranks-title { font-family: 'Anton', sans-serif; font-size: 38px; line-height: .95; }
+    .ranks-subtitle { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .14em; color: #8A8175; margin-top: 4px; }
+    .ranks-filters { display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto; }
+    .ranks-filter { border: 1.5px solid #17140F; padding: 4px 12px; font-family: 'Space Mono', monospace; font-size: 10px; background: transparent; cursor: pointer; color: #17140F; white-space: nowrap; }
+    .ranks-filter.active { background: #F0451E; color: #F1EBDB; border-color: #F0451E; }
+    .ranks-rule { height: 3px; background: #17140F; }
+    .ranks-content { flex: 1; overflow-y: auto; }
+    .ranks-row { display: flex; gap: 12px; align-items: center; padding: 12px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
+    .ranks-row.your-row { background: rgba(240, 69, 30, .1); }
+    .ranks-number { font-family: 'Anton', sans-serif; font-size: 28px; color: #F0451E; width: 32px; }
+    .ranks-avatar { width: 38px; height: 38px; flex: none; border: 2px solid #17140F; background: repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px); }
+    .ranks-info { flex: 1; min-width: 0; }
+    .ranks-name { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 15px; }
+    .ranks-meta { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; margin-top: 2px; }
+    .ranks-pct { font-family: 'Anton', sans-serif; font-size: 21px; text-align: right; }
+    .ranks-empty { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px; }
+
     /* List Editor Modal */
     #listEditorOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 20; }
     #listEditorModal { position: absolute; bottom: 0; left: 0; right: 0; background: #F1EBDB; display: none; flex-direction: column; z-index: 21; border-top: 3px solid #17140F; max-height: 80vh; border-radius: 12px 12px 0 0; }
@@ -425,6 +445,23 @@
         </div>
       </div>
 
+      <!-- Ranks/Leaderboard Screen -->
+      <div id="ranksScreen" class="screen">
+        <div class="ranks-header">
+          <div class="ranks-title">THE RANKS</div>
+          <div class="ranks-subtitle">% OF SAN FRANCISCO CONQUERED</div>
+        </div>
+
+        <div class="ranks-filters">
+          <button class="ranks-filter active" onclick="setRanksFilter('city-wide')">CITY-WIDE</button>
+          <button class="ranks-filter" onclick="setRanksFilter('friends')">FRIENDS</button>
+          <button class="ranks-filter" onclick="setRanksFilter('mission')">MISSION</button>
+        </div>
+
+        <div class="ranks-rule"></div>
+        <div class="ranks-content" id="ranksContent"></div>
+      </div>
+
       <!-- List Editor Modal -->
       <div id="listEditorOverlay" onclick="closeListEditor()"></div>
       <div id="listEditorModal">
@@ -479,6 +516,8 @@
     let customLists = []; // array of { id, uid, title, isPublic, order: [barId], createdAt }
     let editingListId = null; // null (new) or existing list id
     let editingListBars = []; // bars in editing list (subset of allBars)
+    let allUsers = []; // array of { uid, displayName, email, photoURL, conqueredCount, createdAt }
+    let ranksFilter = 'city-wide'; // 'city-wide' | 'friends' | 'mission'
 
     // Mapbox setup - token can be set via window.MAPBOX_TOKEN or localStorage.mapboxToken
     mapboxgl.accessToken = window.MAPBOX_TOKEN || localStorage.getItem('mapboxToken') || '';
@@ -493,6 +532,7 @@
         userDocRef = db.collection('users').doc(user.uid);
         loadUserData();
         loadBars();
+        loadAllUsers();
         initMapbox();
         startGeolocation();
       } else {
@@ -1100,8 +1140,9 @@
           listBadge.style.display = 'none';
         }
 
-        // Refresh map state
+        // Refresh map state and leaderboard
         render();
+        await loadAllUsers(); // Reload leaderboard data
         setScreen('saved');
 
       } catch(err) {
@@ -1239,6 +1280,86 @@
           customListsDiv.appendChild(row);
         });
       }
+    }
+
+    // ============ LEADERBOARD ============
+    async function loadAllUsers() {
+      allUsers = [];
+
+      try {
+        const snapshot = await db.collection('users').get();
+        snapshot.forEach(doc => {
+          allUsers.push({
+            uid: doc.id,
+            ...doc.data()
+          });
+        });
+      } catch(err) {
+        console.error('Error loading users:', err);
+      }
+    }
+
+    function setRanksFilter(filter) {
+      ranksFilter = filter;
+      document.querySelectorAll('.ranks-filter').forEach(f => f.classList.remove('active'));
+      event.target.classList.add('active');
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      const totalBars = allBars.length;
+
+      // Filter users based on filter type
+      let filteredUsers = [...allUsers];
+      if(ranksFilter === 'friends') {
+        // TODO: filter by users in follows collection
+        // For now, just show all
+      } else if(ranksFilter === 'mission') {
+        // TODO: filter by users with bars in Mission neighborhood
+        // For now, just show all
+      }
+
+      // Sort by conqueredCount descending
+      filteredUsers.sort((a, b) => (b.conqueredCount || 0) - (a.conqueredCount || 0));
+
+      const contentDiv = document.getElementById('ranksContent');
+      contentDiv.innerHTML = '';
+
+      if(filteredUsers.length === 0) {
+        contentDiv.innerHTML = '<div class="ranks-empty">No users yet.</div>';
+        return;
+      }
+
+      filteredUsers.forEach((user, index) => {
+        const rank = index + 1;
+        const conqueredCount = user.conqueredCount || 0;
+        const pct = totalBars > 0 ? (conqueredCount / totalBars * 100).toFixed(1) : 0;
+        const isYou = user.uid === currentUser?.uid;
+
+        const row = document.createElement('div');
+        row.className = 'ranks-row' + (isYou ? ' your-row' : '');
+        row.style.cursor = 'pointer';
+        row.innerHTML = `
+          <div class="ranks-number">${rank}</div>
+          <div class="ranks-avatar"></div>
+          <div class="ranks-info">
+            <div class="ranks-name">${user.displayName || 'User'}</div>
+            <div class="ranks-meta">${conqueredCount} BARS · ${isYou ? "THAT'S YOU" : 'SEE THEIR LISTS'}</div>
+          </div>
+          <div class="ranks-pct">${pct}%</div>
+        `;
+
+        if(!isYou) {
+          row.onclick = () => openFriendProfile(user);
+        }
+
+        contentDiv.appendChild(row);
+      });
+    }
+
+    function openFriendProfile(user) {
+      // TODO: Implement friend profile (step 8)
+      alert('Friend profile coming soon (step 8)');
     }
 
     // ============ LISTS ============
@@ -1425,8 +1546,12 @@
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
         } else if(tabName === 'ranks') {
-          // TODO: implement leaderboard tab
-          alert('Leaderboard (step 7) coming soon');
+          renderLeaderboard();
+          currentScreen = 'ranks';
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+          document.getElementById('ranksScreen').classList.add('active');
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
         }
       });
     });
