@@ -189,6 +189,34 @@
     .passport-checkin-date { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; }
     .passport-empty { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px; }
 
+    /* List Editor Modal */
+    #listEditorOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 20; }
+    #listEditorModal { position: absolute; bottom: 0; left: 0; right: 0; background: #F1EBDB; display: none; flex-direction: column; z-index: 21; border-top: 3px solid #17140F; max-height: 80vh; border-radius: 12px 12px 0 0; }
+    .list-editor-header { padding: 16px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
+    .list-editor-title { font-family: 'Anton', sans-serif; font-size: 28px; }
+    .list-editor-input { width: 100%; border: 2px solid #17140F; background: #FBF7EC; padding: 9px 11px; font-family: 'Space Mono', monospace; font-size: 12px; color: #17140F; outline: none; border-radius: 0; margin-top: 8px; }
+    .list-editor-input::placeholder { color: #8A8175; }
+    .list-editor-content { flex: 1; overflow-y: auto; padding: 16px 24px; }
+    .list-editor-bars { display: flex; flex-direction: column; gap: 8px; }
+    .list-editor-bar-item { display: flex; gap: 12px; align-items: center; padding: 12px; border: 1.5px solid #17140F; background: #FBF7EC; cursor: grab; }
+    .list-editor-bar-item:active { cursor: grabbing; }
+    .list-editor-bar-drag { font-family: 'Space Mono', monospace; font-size: 12px; color: #8A8175; }
+    .list-editor-bar-info { flex: 1; min-width: 0; }
+    .list-editor-bar-name { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 14px; }
+    .list-editor-bar-hood { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; }
+    .list-editor-bar-remove { background: none; border: none; color: #8A8175; cursor: pointer; font-size: 16px; }
+    .list-editor-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 1.5px solid rgba(23, 20, 15, .16); }
+    .list-editor-cancel { flex: 1; background: transparent; border: 2px solid rgba(23, 20, 15, .35); color: #8A8175; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; padding: 12px; }
+    .list-editor-save { flex: 1; background: #F0451E; color: #F1EBDB; border: 2px solid #17140F; font-family: 'Anton', sans-serif; font-size: 16px; cursor: pointer; padding: 12px; }
+
+    /* Custom List Row */
+    .custom-list-row { display: flex; gap: 12px; align-items: center; padding: 12px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
+    .custom-list-index { font-family: 'Anton', sans-serif; font-size: 23px; color: #F0451E; width: 30px; }
+    .custom-list-info { flex: 1; min-width: 0; }
+    .custom-list-title { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 14px; }
+    .custom-list-meta { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; margin-top: 2px; }
+    .custom-list-edit { border: 1.5px solid #17140F; padding: 4px 8px; font-family: 'Space Mono', monospace; font-size: 10px; background: none; cursor: pointer; color: #17140F; }
+
     /* Scrollbar hide */
     ::-webkit-scrollbar { width: 0; display: none; }
   </style>
@@ -378,7 +406,7 @@
 
         <div class="passport-content" id="listsContent" style="padding: 16px 24px;">
           <!-- Automatic 3-star list -->
-          <div style="border: 2px solid #17140F; padding: 14px; margin-bottom: 16px; position: relative;">
+          <div style="border: 2px solid #17140F; padding: 14px; margin-bottom: 16px; position: relative; background: #17140F; color: #F1EBDB;">
             <div style="position: absolute; top: -9px; left: 12px; background: #F0451E; color: #17140F; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .06em; padding: 2px 8px;">AUTOMATIC</div>
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
               <div style="font-family: 'Anton', sans-serif; font-size: 25px;">MY 3-STAR BARS</div>
@@ -388,12 +416,29 @@
             <div id="listsThreeStarPreview"></div>
           </div>
 
-          <!-- Custom lists placeholder -->
-          <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .18em; margin-bottom: 8px;">LISTS YOU MADE</div>
-          <div id="listsCustom" style="text-align: center; color: #8A8175; padding: 16px;">No custom lists yet.</div>
-          <div style="border: 2px dashed #17140F; padding: 13px; text-align: center; margin-top: 12px; cursor: pointer;">
+          <!-- Custom lists -->
+          <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .18em; margin-bottom: 8px; margin-top: 16px;">LISTS YOU MADE <span id="listsCustomCount" style="color: #8A8175;">0</span></div>
+          <div id="listsCustom"></div>
+          <div style="border: 2px dashed #17140F; padding: 13px; text-align: center; margin-top: 12px; cursor: pointer;" onclick="openListEditor(null)">
             <div style="font-family: 'Anton', sans-serif; font-size: 17px;">＋ NEW LIST</div>
           </div>
+        </div>
+      </div>
+
+      <!-- List Editor Modal -->
+      <div id="listEditorOverlay" onclick="closeListEditor()"></div>
+      <div id="listEditorModal">
+        <div class="list-editor-header">
+          <div class="list-editor-title" id="listEditorTitle">NEW LIST</div>
+          <input type="text" class="list-editor-input" id="listEditorNameInput" placeholder="List name…">
+        </div>
+        <div class="list-editor-content">
+          <div style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; margin-bottom: 12px;" id="listEditorBarCount">0 BARS</div>
+          <div class="list-editor-bars" id="listEditorBars"></div>
+        </div>
+        <div class="list-editor-footer">
+          <button class="list-editor-cancel" onclick="closeListEditor()">CANCEL</button>
+          <button class="list-editor-save" onclick="saveList()">SAVE LIST</button>
         </div>
       </div>
     </div>
@@ -426,11 +471,14 @@
     let mapboxMap = null;
     let geolocationWatchId = null;
     let userLocation = null;
-    let currentScreen = 'map'; // 'map' | 'bar' | 'rank' | 'saved'
+    let currentScreen = 'map'; // 'map' | 'bar' | 'rank' | 'saved' | 'passport'
     let selectedBar = null; // currently open bar object
     let pendingRating = 0; // 1 | 2 | 3
     let pendingNote = ''; // draft note
     let savedPayload = null; // { name, stars, neighborhood, pct }
+    let customLists = []; // array of { id, uid, title, isPublic, order: [barId], createdAt }
+    let editingListId = null; // null (new) or existing list id
+    let editingListBars = []; // bars in editing list (subset of allBars)
 
     // Mapbox setup - token can be set via window.MAPBOX_TOKEN or localStorage.mapboxToken
     mapboxgl.accessToken = window.MAPBOX_TOKEN || localStorage.getItem('mapboxToken') || '';
@@ -491,6 +539,9 @@
           // Load check-ins from new schema
           await loadCheckinsFromFirestore();
         }
+
+        // Load custom lists
+        await loadLists();
       } catch(err) {
         console.error('Error loading user data:', err);
       }
@@ -1158,11 +1209,196 @@
 
       const previewDiv = document.getElementById('listsThreeStarPreview');
       previewDiv.innerHTML = threeStarBars.slice(0, 5).map(bar => `
-        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(241,235,219,.18); font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 13px;">
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(241,235,219,.18); font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 13px; color: #F1EBDB;">
           <div>${bar.name}</div>
           <div style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175;">${bar.neighborhood}</div>
         </div>
       `).join('');
+
+      // Custom lists
+      document.getElementById('listsCustomCount').textContent = customLists.length;
+      const customListsDiv = document.getElementById('listsCustom');
+      customListsDiv.innerHTML = '';
+
+      if(customLists.length === 0) {
+        customListsDiv.innerHTML = '';
+      } else {
+        customLists.forEach((list, index) => {
+          const barCount = list.order?.length || 0;
+          const isPublic = list.isPublic ? 'PUBLIC' : 'PRIVATE';
+          const row = document.createElement('div');
+          row.className = 'custom-list-row';
+          row.innerHTML = `
+            <div class="custom-list-index">${index + 1}</div>
+            <div class="custom-list-info">
+              <div class="custom-list-title">${list.title}</div>
+              <div class="custom-list-meta">${barCount} BARS · ${isPublic}</div>
+            </div>
+            <button class="custom-list-edit" onclick="openListEditor('${list.id}')">EDIT</button>
+          `;
+          customListsDiv.appendChild(row);
+        });
+      }
+    }
+
+    // ============ LISTS ============
+    async function loadLists() {
+      if(!currentUser) return;
+      customLists = [];
+
+      try {
+        const snapshot = await db.collection('lists').where('uid', '==', currentUser.uid).get();
+        snapshot.forEach(doc => {
+          customLists.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+      } catch(err) {
+        console.error('Error loading lists:', err);
+      }
+    }
+
+    function openListEditor(listId) {
+      editingListId = listId;
+      editingListBars = [];
+
+      if(listId) {
+        // Edit existing list
+        const list = customLists.find(l => l.id === listId);
+        if(list) {
+          document.getElementById('listEditorTitle').textContent = 'EDIT LIST';
+          document.getElementById('listEditorNameInput').value = list.title;
+          editingListBars = allBars.filter(b => list.order?.includes(b.id));
+        }
+      } else {
+        // New list - start with all checked-in bars
+        document.getElementById('listEditorTitle').textContent = 'NEW LIST';
+        document.getElementById('listEditorNameInput').value = '';
+        editingListBars = Object.keys(checkins).map(barId => allBars.find(b => b.id === parseInt(barId))).filter(Boolean);
+      }
+
+      renderListEditor();
+      document.getElementById('listEditorOverlay').style.display = 'block';
+      document.getElementById('listEditorModal').style.display = 'flex';
+    }
+
+    function closeListEditor() {
+      editingListId = null;
+      editingListBars = [];
+      document.getElementById('listEditorOverlay').style.display = 'none';
+      document.getElementById('listEditorModal').style.display = 'none';
+    }
+
+    function renderListEditor() {
+      const barsDiv = document.getElementById('listEditorBars');
+      barsDiv.innerHTML = '';
+
+      document.getElementById('listEditorBarCount').textContent = editingListBars.length + ' BARS';
+
+      editingListBars.forEach((bar, index) => {
+        const item = document.createElement('div');
+        item.className = 'list-editor-bar-item';
+        item.draggable = true;
+        item.innerHTML = `
+          <div class="list-editor-bar-drag">⋮⋮</div>
+          <div class="list-editor-bar-info">
+            <div class="list-editor-bar-name">${bar.name}</div>
+            <div class="list-editor-bar-hood">${bar.neighborhood}</div>
+          </div>
+          <button class="list-editor-bar-remove" onclick="removeBarFromList(${index})">✕</button>
+        `;
+
+        item.addEventListener('dragstart', (e) => {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', index);
+          item.style.opacity = '0.5';
+        });
+
+        item.addEventListener('dragend', () => {
+          item.style.opacity = '1';
+        });
+
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+        });
+
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+          const toIndex = index;
+
+          if(fromIndex !== toIndex) {
+            const [bar] = editingListBars.splice(fromIndex, 1);
+            editingListBars.splice(toIndex, 0, bar);
+            renderListEditor();
+          }
+        });
+
+        barsDiv.appendChild(item);
+      });
+    }
+
+    function removeBarFromList(index) {
+      editingListBars.splice(index, 1);
+      renderListEditor();
+    }
+
+    async function saveList() {
+      if(!currentUser) return;
+
+      const title = document.getElementById('listEditorNameInput').value.trim();
+      if(!title) {
+        alert('List name required');
+        return;
+      }
+
+      try {
+        const barIds = editingListBars.map(b => b.id);
+
+        if(editingListId) {
+          await db.collection('lists').doc(editingListId).update({
+            title: title,
+            order: barIds
+          });
+        } else {
+          const newListRef = await db.collection('lists').add({
+            uid: currentUser.uid,
+            title: title,
+            isPublic: false,
+            order: barIds,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          customLists.push({
+            id: newListRef.id,
+            uid: currentUser.uid,
+            title: title,
+            isPublic: false,
+            order: barIds,
+            createdAt: new Date()
+          });
+        }
+
+        closeListEditor();
+        renderPassport();
+      } catch(err) {
+        console.error('Error saving list:', err);
+        alert('Failed to save list');
+      }
+    }
+
+    async function deleteList(listId) {
+      if(!confirm('Delete this list?')) return;
+
+      try {
+        await db.collection('lists').doc(listId).delete();
+        customLists = customLists.filter(l => l.id !== listId);
+        renderPassport();
+      } catch(err) {
+        console.error('Error deleting list:', err);
+        alert('Failed to delete list');
+      }
     }
 
     // ============ EVENTS ============
