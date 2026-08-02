@@ -1027,7 +1027,7 @@
         id: 'pins-conquered',
         type: 'circle',
         source: 'pins',
-        filter: ['and', ['!=', ['get', 'point_count'], null], ['==', ['get', 'conquered'], true]],
+        filter: ['and', ['!', ['has', 'point_count']], ['==', ['get', 'conquered'], true]],
         minzoom: 15,
         paint: {
           'circle-radius': 12,
@@ -1043,7 +1043,7 @@
         id: 'pins-unconquered',
         type: 'circle',
         source: 'pins',
-        filter: ['and', ['!=', ['get', 'point_count'], null], ['==', ['get', 'conquered'], false]],
+        filter: ['and', ['!', ['has', 'point_count']], ['==', ['get', 'conquered'], false]],
         minzoom: 15,
         paint: {
           'circle-radius': 8,
