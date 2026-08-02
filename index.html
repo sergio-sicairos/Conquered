@@ -209,6 +209,34 @@
     .ranks-pct { font-family: 'Anton', sans-serif; font-size: 21px; text-align: right; }
     .ranks-empty { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px; }
 
+    /* Friend Profile Screen */
+    #friendProfileScreen { flex-direction: column; background: #F1EBDB; }
+    .friend-back { font-family: 'Space Mono', monospace; font-size: 12px; padding: 4px 24px 8px; background: none; border: none; cursor: pointer; color: #17140F; }
+    .friend-identity-row { display: flex; gap: 12px; align-items: center; padding: 16px 24px; }
+    .friend-avatar { width: 62px; height: 62px; flex: none; border: 2px solid #17140F; background: repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px); }
+    .friend-identity-content { flex: 1; min-width: 0; }
+    .friend-name { font-family: 'Anton', sans-serif; font-size: 25px; line-height: .95; }
+    .friend-handle { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; margin-top: 2px; }
+    .friend-pct { text-align: right; }
+    .friend-pct-num { font-family: 'Anton', sans-serif; font-size: 28px; color: #F0451E; line-height: .9; }
+    .friend-pct-label { font-family: 'Space Mono', monospace; font-size: 8px; color: #8A8175; }
+    .friend-actions { display: flex; gap: 12px; padding: 0 24px 16px; }
+    .friend-btn { flex: 1; border: 2px solid #17140F; font-family: 'Anton', sans-serif; font-size: 14px; padding: 9px; cursor: pointer; background: #F1EBDB; color: #17140F; }
+    .friend-btn.following { background: #F0451E; color: #F1EBDB; border-color: #F0451E; }
+    .friend-content { flex: 1; overflow-y: auto; }
+    .friend-lists-heading { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .18em; padding: 12px 24px 8px; color: #8A8175; border-bottom: 1.5px solid rgba(23, 20, 15, .16); }
+    .friend-list-row { display: flex; gap: 12px; align-items: center; padding: 12px 24px; border-bottom: 1.5px solid rgba(23, 20, 15, .16); cursor: pointer; }
+    .friend-list-index { font-family: 'Anton', sans-serif; font-size: 24px; color: #F0451E; width: 30px; }
+    .friend-list-info { flex: 1; min-width: 0; }
+    .friend-list-title { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 14px; }
+    .friend-list-meta { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; margin-top: 2px; }
+    .friend-list-chevron { font-family: 'Anton', sans-serif; font-size: 20px; color: #17140F; }
+    .friend-overlap-card { border: 2px solid #17140F; background: #FBF7EC; padding: 12px; margin: 12px 24px; position: relative; }
+    .friend-overlap-label { position: absolute; top: -9px; left: 12px; background: #1F3FE0; color: #F1EBDB; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .06em; padding: 2px 8px; }
+    .friend-overlap-body { font-size: 12px; color: #2A251D; line-height: 1.45; }
+    .friend-overlap-stat { font-weight: bold; }
+    .friend-empty { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px; }
+
     /* List Editor Modal */
     #listEditorOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 20; }
     #listEditorModal { position: absolute; bottom: 0; left: 0; right: 0; background: #F1EBDB; display: none; flex-direction: column; z-index: 21; border-top: 3px solid #17140F; max-height: 80vh; border-radius: 12px 12px 0 0; }
@@ -445,6 +473,30 @@
         </div>
       </div>
 
+      <!-- Friend Profile Screen -->
+      <div id="friendProfileScreen" class="screen" style="flex-direction: column; background: #F1EBDB;">
+        <button class="friend-back" onclick="goToLeaderboard()">‹ THE RANKS</button>
+
+        <div class="friend-identity-row">
+          <div class="friend-avatar"></div>
+          <div style="flex: 1;">
+            <div class="friend-name" id="friendName"></div>
+            <div class="friend-handle" id="friendHandle"></div>
+          </div>
+          <div class="friend-pct">
+            <div class="friend-pct-num" id="friendPct">0.0%</div>
+            <div class="friend-pct-label">BARS</div>
+          </div>
+        </div>
+
+        <div class="friend-actions">
+          <button class="friend-btn" id="friendFollowBtn" onclick="toggleFollow()">FOLLOW</button>
+          <button class="friend-btn" onclick="compareMaps()">COMPARE MAPS</button>
+        </div>
+
+        <div class="friend-content" id="friendContent"></div>
+      </div>
+
       <!-- Ranks/Leaderboard Screen -->
       <div id="ranksScreen" class="screen">
         <div class="ranks-header">
@@ -518,6 +570,9 @@
     let editingListBars = []; // bars in editing list (subset of allBars)
     let allUsers = []; // array of { uid, displayName, email, photoURL, conqueredCount, createdAt }
     let ranksFilter = 'city-wide'; // 'city-wide' | 'friends' | 'mission'
+    let viewingFriend = null; // currently viewing friend { uid, displayName, conqueredCount }
+    let friendCheckins = {}; // friend's check-ins { barId: { stars, ... } }
+    let userFollows = new Set(); // uids of users current user follows
 
     // Mapbox setup - token can be set via window.MAPBOX_TOKEN or localStorage.mapboxToken
     mapboxgl.accessToken = window.MAPBOX_TOKEN || localStorage.getItem('mapboxToken') || '';
@@ -941,6 +996,14 @@
         document.getElementById('rankSheet').style.display = 'none';
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab')[4].classList.add('active'); // YOU tab
+      } else if(screen === 'friend') {
+        document.getElementById('friendProfileScreen').classList.add('active');
+        document.getElementById('tabBar').style.display = 'none';
+      } else if(screen === 'ranks') {
+        document.getElementById('ranksScreen').classList.add('active');
+        document.getElementById('tabBar').style.display = 'flex';
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab')[3].classList.add('active'); // RANKS tab
       }
     }
 
@@ -1338,7 +1401,6 @@
 
         const row = document.createElement('div');
         row.className = 'ranks-row' + (isYou ? ' your-row' : '');
-        row.style.cursor = 'pointer';
         row.innerHTML = `
           <div class="ranks-number">${rank}</div>
           <div class="ranks-avatar"></div>
@@ -1350,6 +1412,7 @@
         `;
 
         if(!isYou) {
+          row.style.cursor = 'pointer';
           row.onclick = () => openFriendProfile(user);
         }
 
@@ -1357,9 +1420,153 @@
       });
     }
 
-    function openFriendProfile(user) {
-      // TODO: Implement friend profile (step 8)
-      alert('Friend profile coming soon (step 8)');
+    async function openFriendProfile(user) {
+      viewingFriend = user;
+      friendCheckins = {};
+
+      // Load friend's check-ins
+      try {
+        const snapshot = await db.collection('checkins').where('uid', '==', user.uid).get();
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          friendCheckins[data.barId] = data;
+        });
+      } catch(err) {
+        console.error('Error loading friend checkins:', err);
+      }
+
+      // Load user's follows
+      try {
+        const snapshot = await db.collection('follows').where('followerUid', '==', currentUser.uid).get();
+        userFollows.clear();
+        snapshot.forEach(doc => {
+          userFollows.add(doc.data().followeeUid);
+        });
+      } catch(err) {
+        console.error('Error loading follows:', err);
+      }
+
+      renderFriendProfile();
+      currentScreen = 'friend';
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('friendProfileScreen').classList.add('active');
+    }
+
+    function renderFriendProfile() {
+      if(!viewingFriend) return;
+
+      const totalBars = allBars.length;
+      const conqueredCount = viewingFriend.conqueredCount || 0;
+      const pct = totalBars > 0 ? (conqueredCount / totalBars * 100).toFixed(1) : 0;
+
+      // Identity row
+      document.getElementById('friendName').textContent = viewingFriend.displayName || 'User';
+      document.getElementById('friendHandle').textContent = `@user · RANK #1 IN SF`; // TODO: calculate friend's rank
+      document.getElementById('friendPct').textContent = pct + '%';
+
+      // Follow button
+      const followBtn = document.getElementById('friendFollowBtn');
+      if(userFollows.has(viewingFriend.uid)) {
+        followBtn.textContent = 'FOLLOWING ✓';
+        followBtn.classList.add('following');
+      } else {
+        followBtn.textContent = 'FOLLOW';
+        followBtn.classList.remove('following');
+      }
+
+      // Friend's lists
+      const contentDiv = document.getElementById('friendContent');
+      contentDiv.innerHTML = '';
+
+      // Add overlap card first (conversion hook)
+      const overlapCard = document.createElement('div');
+      overlapCard.className = 'friend-overlap-card';
+      overlapCard.innerHTML = `
+        <div class="friend-overlap-label">OVERLAP</div>
+        <div class="friend-overlap-body" id="overlapText"></div>
+      `;
+      contentDiv.appendChild(overlapCard);
+
+      // Calculate and display overlap
+      const sharedBars = Object.keys(friendCheckins).filter(barId => !!checkins[barId]).length;
+      const friendThreeStars = Object.entries(friendCheckins).filter(([_, data]) => data.stars === 3);
+      const youHaventTried = friendThreeStars.filter(([barId]) => !checkins[barId]).length;
+
+      const overlapText = document.getElementById('overlapText');
+      if(sharedBars > 0 || youHaventTried > 0) {
+        overlapText.innerHTML = `You've both conquered <span class="friend-overlap-stat">${sharedBars} bars</span>. They gave ★★★ to <span class="friend-overlap-stat">${youHaventTried}</span> you haven't hit yet.`;
+      } else {
+        overlapText.innerHTML = `No shared bars yet, but their lists might inspire you!`;
+      }
+
+      // Friend's lists (TODO: fetch actual custom lists)
+      const listsHeading = document.createElement('div');
+      listsHeading.className = 'friend-lists-heading';
+      listsHeading.textContent = 'THEIR LISTS';
+      contentDiv.appendChild(listsHeading);
+
+      // For now, show their 3-star list
+      const friendThreeStarBars = Object.entries(friendCheckins)
+        .filter(([_, data]) => data.stars === 3)
+        .map(([barId]) => allBars.find(b => b.id === parseInt(barId)))
+        .filter(Boolean);
+
+      if(friendThreeStarBars.length > 0) {
+        const listRow = document.createElement('div');
+        listRow.className = 'friend-list-row';
+        listRow.innerHTML = `
+          <div class="friend-list-index">★</div>
+          <div class="friend-list-info">
+            <div class="friend-list-title">THEIR BEST BARS</div>
+            <div class="friend-list-meta">${friendThreeStarBars.length} BARS · AUTO-GENERATED</div>
+          </div>
+          <div class="friend-list-chevron">›</div>
+        `;
+        contentDiv.appendChild(listRow);
+      }
+
+      // TODO: Load and display custom lists from lists collection
+
+      if(friendThreeStarBars.length === 0) {
+        contentDiv.innerHTML += '<div class="friend-empty">No lists yet.</div>';
+      }
+    }
+
+    function goToLeaderboard() {
+      viewingFriend = null;
+      friendCheckins = {};
+      renderLeaderboard();
+      setScreen('ranks');
+    }
+
+    function toggleFollow() {
+      if(!currentUser || !viewingFriend) return;
+
+      if(userFollows.has(viewingFriend.uid)) {
+        // Unfollow
+        db.collection('follows').where('followerUid', '==', currentUser.uid)
+          .where('followeeUid', '==', viewingFriend.uid)
+          .get()
+          .then(snapshot => {
+            snapshot.forEach(doc => doc.ref.delete());
+          });
+        userFollows.delete(viewingFriend.uid);
+      } else {
+        // Follow
+        db.collection('follows').add({
+          followerUid: currentUser.uid,
+          followeeUid: viewingFriend.uid,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        userFollows.add(viewingFriend.uid);
+      }
+
+      renderFriendProfile();
+    }
+
+    function compareMaps() {
+      // TODO: Implement map comparison view
+      alert('Map comparison coming soon');
     }
 
     // ============ LISTS ============
