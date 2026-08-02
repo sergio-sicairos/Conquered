@@ -1419,11 +1419,14 @@
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
         } else if(tabName === 'lists') {
-          // TODO: implement lists leaderboard tab
-          alert('Lists tab coming soon');
+          renderPassport();
+          document.getElementById('passportScreen').classList.remove('active');
+          document.getElementById('listsScreen').classList.add('active');
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
         } else if(tabName === 'ranks') {
           // TODO: implement leaderboard tab
-          alert('Leaderboard coming soon');
+          alert('Leaderboard (step 7) coming soon');
         }
       });
     });
