@@ -965,32 +965,61 @@
         data: { type: 'FeatureCollection', features }
       });
 
-      // Conquered pins
+      // Conquered pins (larger, solid red, prominent)
       mapboxMap.addLayer({
         id: 'pins-conquered',
         type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], true],
         paint: {
-          'circle-radius': 6,
+          'circle-radius': 10,
           'circle-color': '#F0451E',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#17140F'
+          'circle-stroke-width': 3,
+          'circle-stroke-color': '#17140F',
+          'circle-opacity': 1
         }
       });
 
-      // Unconquered pins
+      // Unconquered pins (smaller, outline only, less prominent)
       mapboxMap.addLayer({
         id: 'pins-unconquered',
         type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], false],
         paint: {
-          'circle-radius': 4,
-          'circle-color': '#F1EBDB',
-          'circle-stroke-width': 1.5,
-          'circle-stroke-color': '#F0451E'
+          'circle-radius': 5,
+          'circle-color': 'rgba(255, 255, 255, 0)',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#F0451E',
+          'circle-opacity': 0.7
         }
+      });
+
+      // Make pins clickable
+      mapboxMap.on('click', 'pins-conquered', (e) => {
+        const barId = e.features[0].id;
+        const bar = allBars.find(b => b.id === barId);
+        if(bar) openBar(bar);
+      });
+
+      mapboxMap.on('click', 'pins-unconquered', (e) => {
+        const barId = e.features[0].id;
+        const bar = allBars.find(b => b.id === barId);
+        if(bar) openBar(bar);
+      });
+
+      // Change cursor on hover
+      mapboxMap.on('mouseenter', 'pins-conquered', () => {
+        mapboxMap.getCanvas().style.cursor = 'pointer';
+      });
+      mapboxMap.on('mouseleave', 'pins-conquered', () => {
+        mapboxMap.getCanvas().style.cursor = '';
+      });
+      mapboxMap.on('mouseenter', 'pins-unconquered', () => {
+        mapboxMap.getCanvas().style.cursor = 'pointer';
+      });
+      mapboxMap.on('mouseleave', 'pins-unconquered', () => {
+        mapboxMap.getCanvas().style.cursor = '';
       });
     }
 
