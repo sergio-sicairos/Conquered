@@ -1,102 +1,599 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>Conquered</title>
-<style>
-body{margin:0;padding:0;font-family:monospace;height:100vh;display:flex;flex-direction:column}
-header{padding:10px;border-bottom:2px solid #333;background:#f5f5f0;display:flex;justify-content:space-between}
-#mapContainer{flex:1;background:#ddd}
-.tabbar{position:fixed;bottom:0;left:0;right:0;height:60px;background:#f5f5f0;border-top:1px solid #ccc;display:flex;justify-content:space-around;padding:8px 0}
-.tab{flex:1;text-align:center;cursor:pointer;padding:10px;border:none;background:none;font-family:monospace}
-.tab.active{font-weight:bold;color:#5a5a4a}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Conquered</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; font-family: 'Archivo', system-ui, sans-serif; overflow: hidden; }
+    body { background: #F1EBDB; color: #17140F; }
+
+    #app { height: 100vh; display: flex; flex-direction: column; }
+    #statusBar { height: 50px; flex: none; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 24px 5px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; background: #F1EBDB; }
+    #contentArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    #scrollContent { flex: 1; overflow-y: auto; overflow-x: hidden; }
+    #tabBar { height: 60px; flex: none; border-top: 3px solid #17140F; background: #F1EBDB; display: flex; justify-content: space-around; align-items: center; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; }
+    .tab { flex: 1; text-align: center; padding: 13px 0; cursor: pointer; border: none; background: none; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; color: #17140F; }
+    .tab.active { background: #F0451E; color: #F1EBDB; }
+
+    /* Header */
+    .header-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 24px 0; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .2em; }
+
+    /* Progress block */
+    .progress-block { display: flex; align-items: center; gap: 16px; margin-top: 12px; padding: 0 24px; }
+    .progress-ring { width: 108px; height: 108px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .5s; }
+    .progress-ring-inner { width: 82px; height: 82px; border-radius: 50%; background: #F1EBDB; border: 2px solid #17140F; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .progress-pct { font-family: 'Anton', sans-serif; font-size: 27px; line-height: .9; color: #F0451E; }
+    .progress-label { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: .1em; color: #8A8175; }
+    .count-stack { flex: 1; min-width: 0; }
+    .count-main { font-family: 'Anton', sans-serif; font-size: 40px; line-height: .85; }
+    .count-sub { font-size: 20px; color: #8A8175; }
+    .count-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; letter-spacing: .06em; margin-top: 5px; }
+    .star-chips { display: flex; gap: 5px; margin-top: 8px; font-family: 'Space Mono', monospace; font-size: 9px; }
+    .chip { padding: 2px 6px; border-radius: 0; }
+    .chip-3 { background: #F0451E; color: #F1EBDB; }
+    .chip-2 { background: #1F3FE0; color: #F1EBDB; }
+    .chip-1 { border: 1.5px solid #17140F; color: #17140F; background: transparent; }
+
+    /* Map */
+    #map { height: 104px; margin: 14px 24px 0; border: 2px solid #17140F; }
+    .map-caption { position: absolute; bottom: 6px; right: 9px; font-family: 'Space Mono', monospace; font-size: 9px; color: #6B6153; background: rgba(241, 235, 219, .9); padding: 2px 4px; }
+
+    /* Neighborhoods */
+    .neighborhoods { padding: 14px 24px 0; }
+    .hoods-heading { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .18em; margin-bottom: 8px; }
+    .hood-rows { display: flex; flex-direction: column; gap: 7px; }
+    .hood-row { }
+    .hood-label-row { display: flex; justify-content: space-between; font-family: 'Space Mono', monospace; font-size: 10px; }
+    .hood-label-pct { color: #8A8175; }
+    .hood-bar { height: 7px; background: rgba(23, 20, 15, .13); margin-top: 3px; }
+    .hood-bar-fill { height: 100%; background: #F0451E; transition: width .5s; }
+
+    /* Search */
+    .search-container { padding: 16px 24px 0; }
+    .search-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .18em; margin-bottom: 9px; }
+    #searchInput { width: 100%; border: 2px solid #17140F; background: #FBF7EC; padding: 9px 11px; font-family: 'Space Mono', monospace; font-size: 12px; color: #17140F; outline: none; border-radius: 0; }
+    #searchInput::placeholder { color: #8A8175; }
+
+    /* Bar rows */
+    .bars-container { padding: 6px 24px 20px; }
+    .bar-row { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1.5px solid rgba(23, 20, 15, .16); cursor: pointer; }
+    .bar-chip { width: 38px; height: 38px; flex: none; border: 2px solid #17140F; display: flex; align-items: center; justify-content: center; font-size: 13px; letter-spacing: .5px; border-radius: 0; }
+    .bar-chip-unvisited { background: transparent; color: #8A8175; }
+    .bar-chip-visited { background: rgba(240, 69, 30, .12); color: #F0451E; }
+    .bar-info { flex: 1; min-width: 0; }
+    .bar-name { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 15px; }
+    .bar-note { font-size: 11px; color: #4A4237; margin-top: 2px; }
+    .bar-meta { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; letter-spacing: .06em; margin-top: 3px; }
+    .bar-chevron { font-family: 'Anton', sans-serif; font-size: 20px; color: #17140F; }
+
+    .empty-state { font-family: 'Space Mono', monospace; font-size: 11px; color: #8A8175; text-align: center; padding: 22px 0; }
+
+    /* Auth */
+    #authContainer { padding: 24px; text-align: center; }
+    #authContainer button { background: #F0451E; color: #F1EBDB; border: 2px solid #17140F; padding: 12px 24px; font-family: 'Space Mono', monospace; font-size: 14px; cursor: pointer; border-radius: 0; }
+    #authContainer button:hover { background: #17140F; color: #F1EBDB; }
+
+    /* Scrollbar hide */
+    ::-webkit-scrollbar { width: 0; display: none; }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Conquered</h1>
-  <div id="auth"></div>
-</header>
-<div id="mapContainer"></div>
-<div class="tabbar">
-  <button class="tab active" onclick="auth.signOut()">Logout</button>
-</div>
+  <div id="app">
+    <div id="statusBar">
+      <span id="time">9:41</span>
+      <span>LTE · 100</span>
+    </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcr6Za-9HcrfYM6k0DsMyC63M4ej6S85o"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyAq6Vtk7HsWQ7TYWG00pE_m06k428E9-lA",
-  authDomain: "conquered-44781.firebaseapp.com",
-  projectId: "conquered-44781",
-  storageBucket: "conquered-44781.firebasestorage.app",
-  messagingSenderId: "531077493851",
-  appId: "1:531077493851:web:9f0542c4dd0919e13ffb7e"
-});
+    <div id="contentArea">
+      <div id="scrollContent">
+        <!-- Auth screen -->
+        <div id="authScreen" style="display: none;">
+          <div id="authContainer"></div>
+        </div>
 
-const auth = firebase.auth();
-const db = firebase.firestore();
-let map, SEED = [], currentUser = null, visited = new Set(), currentInfoWindow = null;
+        <!-- Map / Conquest Home screen -->
+        <div id="mapScreen" style="display: none;">
+          <div class="header-row">
+            <div>SAN FRANCISCO</div>
+            <div style="color: #8A8175;"><span id="barCount">575</span> BARS ON MAP</div>
+          </div>
 
-auth.onAuthStateChanged(user => {
-  currentUser = user;
-  if(user) {
-    document.getElementById("auth").innerHTML = user.email + ' <button onclick="auth.signOut()">Logout</button>';
-    loadUserData();
-    setTimeout(() => initMap(), 100);
-  } else {
-    document.getElementById("auth").innerHTML = '<button onclick="firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())">Sign In</button>';
-  }
-});
+          <div class="progress-block">
+            <div class="progress-ring" id="progressRing">
+              <div class="progress-ring-inner">
+                <div class="progress-pct" id="progressPct">0.0%</div>
+                <div class="progress-label">CONQUERED</div>
+              </div>
+            </div>
+            <div class="count-stack">
+              <div class="count-main"><span id="conqueredCount">0</span><span class="count-sub">/<span id="totalBarCount">575</span></span></div>
+              <div class="count-label">BARS CHECKED IN</div>
+              <div class="star-chips">
+                <span class="chip chip-3">★★★ <span id="count3">0</span></span>
+                <span class="chip chip-2">★★ <span id="count2">0</span></span>
+                <span class="chip chip-1">★ <span id="count1">0</span></span>
+              </div>
+            </div>
+          </div>
 
-function loadUserData() {
-  if(!currentUser) return;
-  db.collection("users").doc(currentUser.uid).get().then(doc => {
-    if(doc.exists) visited = new Set(doc.data().visited || []);
-    loadBars();
-  });
-}
+          <div style="position: relative; margin: 14px 24px 0;">
+            <div id="map"></div>
+            <div class="map-caption">CITY MAP — YOUR PINS</div>
+          </div>
 
-function initMap() {
-  map = new google.maps.Map(document.getElementById("mapContainer"), {
-    center: {lat: 37.7749, lng: -122.4194},
-    zoom: 12
-  });
-}
+          <div class="neighborhoods">
+            <div class="hoods-heading">BY NEIGHBORHOOD</div>
+            <div class="hood-rows" id="hoodRows"></div>
+          </div>
 
-function loadBars() {
-  fetch("data/bars_full.json")
-    .then(r => r.json())
-    .then(d => {
-      SEED = Array.isArray(d) ? d : d.bars;
-      if(map) showBars();
+          <div class="search-container">
+            <div class="search-label">NEARBY · UNCONQUERED FIRST</div>
+            <input id="searchInput" type="text" placeholder="Search bars…">
+          </div>
+
+          <div class="bars-container" id="barsContainer"></div>
+        </div>
+      </div>
+
+      <div id="tabBar" style="display: none;">
+        <button class="tab active" data-tab="map">MAP</button>
+        <button class="tab" data-tab="lists">LISTS</button>
+        <button class="tab" style="font-family: 'Anton'; font-size: 20px; padding: 8px 0;">◎</button>
+        <button class="tab" data-tab="ranks">RANKS</button>
+        <button class="tab" data-tab="you">YOU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <script>
+    // Initialize Firebase
+    firebase.initializeApp({
+      apiKey: "AIzaSyAq6Vtk7HsWQ7TYWG00pE_m06k428E9-lA",
+      authDomain: "conquered-44781.firebaseapp.com",
+      projectId: "conquered-44781",
+      storageBucket: "conquered-44781.firebasestorage.app",
+      messagingSenderId: "531077493851",
+      appId: "1:531077493851:web:9f0542c4dd0919e13ffb7e"
     });
-}
 
-function showBars() {
-  SEED.forEach(bar => {
-    const isDone = visited.has(bar.name + "|" + bar.neighborhood);
-    const marker = new google.maps.Marker({
-      position: {lat: bar.lat, lng: bar.lon},
-      map: map,
-      title: bar.name,
-      icon: isDone ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png" : "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // State
+    let currentUser = null;
+    let allBars = [];
+    let checkins = {}; // { barId: { stars, note, ts, ... } }
+    let userDocRef = null;
+    let mapboxMap = null;
+    let geolocationWatchId = null;
+    let userLocation = null;
+
+    // Mapbox setup - token can be set via window.MAPBOX_TOKEN or localStorage.mapboxToken
+    mapboxgl.accessToken = window.MAPBOX_TOKEN || localStorage.getItem('mapboxToken') || '';
+
+    // ============ AUTH ============
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      if(user) {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('mapScreen').style.display = 'block';
+        document.getElementById('tabBar').style.display = 'flex';
+        userDocRef = db.collection('users').doc(user.uid);
+        loadUserData();
+        loadBars();
+        initMapbox();
+        startGeolocation();
+      } else {
+        document.getElementById('authScreen').style.display = 'block';
+        document.getElementById('mapScreen').style.display = 'none';
+        document.getElementById('tabBar').style.display = 'none';
+        renderAuthScreen();
+      }
     });
-    
-    const infoWindow = new google.maps.InfoWindow({
-      content: '<div style="padding:8px"><strong>' + bar.name + '</strong><br><small>' + bar.neighborhood + '</small></div>'
+
+    function renderAuthScreen() {
+      const authContainer = document.getElementById('authContainer');
+      authContainer.innerHTML = '<button onclick="firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())">Sign In with Google</button>';
+    }
+
+    // ============ USER DATA ============
+    async function loadUserData() {
+      if(!currentUser) return;
+
+      try {
+        const userDoc = await userDocRef.get();
+
+        if(!userDoc.exists) {
+          // New user - create profile
+          await userDocRef.set({
+            displayName: currentUser.displayName || '',
+            email: currentUser.email,
+            photoURL: currentUser.photoURL || '',
+            city: 'sf',
+            conqueredCount: 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          checkins = {};
+        } else {
+          const userData = userDoc.data();
+
+          // Migration: if old "visited" field exists, migrate to new schema
+          if(userData.visited && Array.isArray(userData.visited)) {
+            await migrateOldData(userData.visited);
+            // Remove old field
+            await userDocRef.update({ visited: firebase.firestore.FieldValue.delete() });
+          }
+
+          // Load check-ins from new schema
+          await loadCheckinsFromFirestore();
+        }
+      } catch(err) {
+        console.error('Error loading user data:', err);
+      }
+    }
+
+    async function migrateOldData(visitedArray) {
+      const barsMap = {};
+      allBars.forEach(bar => {
+        barsMap[bar.name + '|' + bar.neighborhood] = bar;
+      });
+
+      for(const visited of visitedArray) {
+        const bar = barsMap[visited];
+        if(bar) {
+          // Create check-in with default 2 stars and unverified
+          const checkinId = `${currentUser.uid}_${bar.id}`;
+          await db.collection('checkins').doc(checkinId).set({
+            uid: currentUser.uid,
+            barId: bar.id,
+            barName: bar.name,
+            neighborhood: bar.neighborhood,
+            stars: 2,
+            note: '',
+            ts: firebase.firestore.FieldValue.serverTimestamp(),
+            verified: false
+          });
+        }
+      }
+
+      // Update user's conqueredCount
+      await userDocRef.update({
+        conqueredCount: visitedArray.filter(v => barsMap[v]).length
+      });
+    }
+
+    async function loadCheckinsFromFirestore() {
+      if(!currentUser) return;
+      checkins = {};
+
+      try {
+        const snapshot = await db.collection('checkins').where('uid', '==', currentUser.uid).get();
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          checkins[data.barId] = data;
+        });
+      } catch(err) {
+        console.error('Error loading checkins:', err);
+      }
+    }
+
+    // ============ BARS DATA ============
+    async function loadBars() {
+      try {
+        const response = await fetch('data/bars_full.json');
+        const data = await response.json();
+        allBars = data.bars || data;
+        document.getElementById('barCount').textContent = allBars.length;
+        document.getElementById('totalBarCount').textContent = allBars.length;
+        render();
+      } catch(err) {
+        console.error('Error loading bars:', err);
+      }
+    }
+
+    // ============ RENDERING ============
+    function render() {
+      renderProgress();
+      renderNeighborhoods();
+      renderBars();
+      updateMapPins();
+    }
+
+    function renderProgress() {
+      const conqueredCount = Object.keys(checkins).length;
+      const totalBars = allBars.length;
+      const percentage = totalBars > 0 ? (conqueredCount / totalBars * 100) : 0;
+      const pctLabel = percentage.toFixed(1);
+
+      document.getElementById('conqueredCount').textContent = conqueredCount;
+      document.getElementById('progressPct').textContent = pctLabel + '%';
+
+      // Count by stars
+      const counts = { 1: 0, 2: 0, 3: 0 };
+      Object.values(checkins).forEach(checkin => {
+        if(checkin.stars >= 1 && checkin.stars <= 3) {
+          counts[checkin.stars]++;
+        }
+      });
+      document.getElementById('count3').textContent = counts[3];
+      document.getElementById('count2').textContent = counts[2];
+      document.getElementById('count1').textContent = counts[1];
+
+      // Update conic gradient
+      const conic = `conic-gradient(#F0451E 0 ${percentage}%, rgba(23, 20, 15, .13) ${percentage}% 100%)`;
+      document.getElementById('progressRing').style.background = conic;
+    }
+
+    function renderNeighborhoods() {
+      const neighborhoods = {};
+
+      allBars.forEach(bar => {
+        if(!neighborhoods[bar.neighborhood]) {
+          neighborhoods[bar.neighborhood] = { total: 0, conquered: 0 };
+        }
+        neighborhoods[bar.neighborhood].total++;
+        if(checkins[bar.id]) {
+          neighborhoods[bar.neighborhood].conquered++;
+        }
+      });
+
+      const hoodRows = document.getElementById('hoodRows');
+      hoodRows.innerHTML = '';
+
+      Object.keys(neighborhoods).sort().forEach(hoodName => {
+        const hood = neighborhoods[hoodName];
+        const pct = hood.total > 0 ? (hood.conquered / hood.total * 100) : 0;
+
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'hood-row';
+        rowDiv.innerHTML = `
+          <div class="hood-label-row">
+            <span>${hoodName}</span>
+            <span class="hood-label-pct">${hood.conquered}/${hood.total} · ${Math.round(pct)}%</span>
+          </div>
+          <div class="hood-bar">
+            <div class="hood-bar-fill" style="width: ${pct}%;"></div>
+          </div>
+        `;
+        hoodRows.appendChild(rowDiv);
+      });
+    }
+
+    function renderBars() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const barsContainer = document.getElementById('barsContainer');
+      barsContainer.innerHTML = '';
+
+      // Filter and sort
+      let filtered = allBars.filter(bar => {
+        const name = bar.name.toLowerCase();
+        const hood = bar.neighborhood.toLowerCase();
+        return name.includes(query) || hood.includes(query);
+      });
+
+      // Sort: unconquered first, then by name
+      filtered.sort((a, b) => {
+        const aVisited = !!checkins[a.id];
+        const bVisited = !!checkins[b.id];
+        if(aVisited === bVisited) {
+          return a.name.localeCompare(b.name);
+        }
+        return aVisited ? 1 : -1;
+      });
+
+      if(filtered.length === 0) {
+        barsContainer.innerHTML = '<div class="empty-state">NO BARS MATCH THAT.</div>';
+        return;
+      }
+
+      filtered.forEach(bar => {
+        const checkin = checkins[bar.id];
+        const isVisited = !!checkin;
+        const dist = userLocation ? getDistance(userLocation.lat, userLocation.lng, bar.lat, bar.lon) : 0;
+        const distStr = dist < 0.1 ? '< 0.1 MI' : (dist / 1609).toFixed(1) + ' MI';
+
+        let chipContent = '+';
+        let chipBg = 'transparent';
+        if(isVisited) {
+          const stars = checkin.stars;
+          chipContent = '★'.repeat(stars);
+          chipBg = 'rgba(240, 69, 30, .12)';
+        }
+
+        let noteText = '';
+        if(isVisited) {
+          noteText = `You rated it ${'★'.repeat(checkin.stars)}`;
+        } else {
+          noteText = '3 friends gave this ★★★'; // Placeholder for social hook
+        }
+
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'bar-row';
+        rowDiv.innerHTML = `
+          <div class="bar-chip ${isVisited ? 'bar-chip-visited' : 'bar-chip-unvisited'}" style="background: ${chipBg};">${chipContent}</div>
+          <div class="bar-info">
+            <div class="bar-name">${bar.name}</div>
+            <div class="bar-note">${noteText}</div>
+            <div class="bar-meta">${bar.neighborhood} · ${distStr}</div>
+          </div>
+          <div class="bar-chevron">›</div>
+        `;
+        barsContainer.appendChild(rowDiv);
+      });
+    }
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371000; // Earth radius in meters
+      const φ1 = lat1 * Math.PI / 180;
+      const φ2 = lat2 * Math.PI / 180;
+      const Δφ = (lat2 - lat1) * Math.PI / 180;
+      const Δλ = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    // ============ MAPBOX ============
+    function initMapbox() {
+      if(!mapboxgl.accessToken) {
+        console.warn('Mapbox token not set. Set window.MAPBOX_TOKEN or store a token in localStorage.mapboxToken');
+        // Render placeholder
+        document.getElementById('map').innerHTML = '<div style="width:100%;height:100%;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);position:relative;"><div style="position:absolute;inset:0;background-image:radial-gradient(#F0451E 1.6px,transparent 2px);background-size:19px 19px;opacity:.5;"></div></div>';
+        return;
+      }
+
+      try {
+        mapboxMap = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/light-v11',
+          center: [-122.4194, 37.7749],
+          zoom: 12,
+          attributionControl: false
+        });
+
+        mapboxMap.on('load', () => {
+          updateMapPins();
+        });
+      } catch(err) {
+        console.error('Error initializing Mapbox:', err);
+        document.getElementById('map').innerHTML = '<div style="width:100%;height:100%;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);position:relative;"><div style="position:absolute;inset:0;background-image:radial-gradient(#F0451E 1.6px,transparent 2px);background-size:19px 19px;opacity:.5;"></div></div>';
+      }
+    }
+
+    function updateMapPins() {
+      if(!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+
+      // Remove existing layers/sources
+      if(mapboxMap.getSource('pins')) {
+        mapboxMap.removeLayer('pins-conquered');
+        mapboxMap.removeLayer('pins-unconquered');
+        mapboxMap.removeSource('pins');
+      }
+
+      // Create GeoJSON
+      const features = allBars.map(bar => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [bar.lon, bar.lat] },
+        properties: {
+          id: bar.id,
+          name: bar.name,
+          conquered: !!checkins[bar.id],
+          stars: checkins[bar.id]?.stars || 0
+        }
+      }));
+
+      mapboxMap.addSource('pins', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features }
+      });
+
+      // Conquered pins
+      mapboxMap.addLayer({
+        id: 'pins-conquered',
+        type: 'circle',
+        source: 'pins',
+        filter: ['boolean', ['feature-state', 'conquered']],
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#F0451E',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#17140F'
+        }
+      });
+
+      // Unconquered pins
+      mapboxMap.addLayer({
+        id: 'pins-unconquered',
+        type: 'circle',
+        source: 'pins',
+        filter: ['!', ['boolean', ['feature-state', 'conquered']]],
+        paint: {
+          'circle-radius': 4,
+          'circle-color': '#F1EBDB',
+          'circle-stroke-width': 1.5,
+          'circle-stroke-color': '#F0451E'
+        }
+      });
+
+      // Update feature state
+      allBars.forEach(bar => {
+        mapboxMap.setFeatureState(
+          { source: 'pins', id: bar.id },
+          { conquered: !!checkins[bar.id] }
+        );
+      });
+    }
+
+    // ============ GEOLOCATION ============
+    function startGeolocation() {
+      if('geolocation' in navigator) {
+        geolocationWatchId = navigator.geolocation.watchPosition(
+          position => {
+            userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            renderBars(); // Re-render to update distances
+            if(mapboxMap) {
+              mapboxMap.easeTo({
+                center: [userLocation.lng, userLocation.lat],
+                zoom: 13
+              });
+            }
+          },
+          error => {
+            console.warn('Geolocation error:', error);
+          },
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+      }
+    }
+
+    function stopGeolocation() {
+      if(geolocationWatchId !== null) {
+        navigator.geolocation.clearWatch(geolocationWatchId);
+        geolocationWatchId = null;
+      }
+    }
+
+    // ============ EVENTS ============
+    document.getElementById('searchInput').addEventListener('input', () => {
+      renderBars();
     });
-    
-    marker.addListener("click", () => {
-      if(currentInfoWindow) currentInfoWindow.close();
-      infoWindow.open(map, marker);
-      currentInfoWindow = infoWindow;
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        if(tabName) {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          // TODO: implement other tabs
+        }
+      });
     });
-  });
-}
-</script>
+
+    // Update time
+    setInterval(() => {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const mins = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('time').textContent = hours + ':' + mins;
+    }, 1000);
+
+    // Cleanup
+    window.addEventListener('beforeunload', stopGeolocation);
+  </script>
 </body>
 </html>
