@@ -1143,12 +1143,7 @@
               lng: position.coords.longitude
             };
             renderBars(); // Re-render to update distances
-            if(mapboxMap) {
-              mapboxMap.easeTo({
-                center: [userLocation.lng, userLocation.lat],
-                zoom: 13
-              });
-            }
+            // Don't automatically move the map - let the user control zoom/pan
           },
           error => {
             console.warn('Geolocation error:', error);
