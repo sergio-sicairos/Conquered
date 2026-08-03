@@ -19,7 +19,7 @@
     @keyframes riseIn { from { transform: translateY(14px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     #app { height: 100vh; display: flex; flex-direction: column; }
-    #statusBar { height: 50px; flex: none; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 24px 5px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; background: #F1EBDB; }
+    #statusBar { display: none; }
     #contentArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
     #scrollContent { position: absolute; top: 0; left: 0; right: 0; bottom: 60px; overflow-y: auto; overflow-x: hidden; }
     #tabBar { height: 60px; position: fixed; bottom: 0; left: 0; right: 0; border-top: 3px solid #17140F; background: #F1EBDB; display: flex; justify-content: space-around; align-items: center; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .06em; z-index: 100; }
