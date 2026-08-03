@@ -1006,12 +1006,14 @@
         data: { type: 'FeatureCollection', features }
       });
 
-      // Conquered pins (larger, solid red, prominent, easy to tap)
+      // Conquered pins - always visible (show user's progress)
       mapboxMap.addLayer({
         id: 'pins-conquered',
         type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], true],
+        minzoom: 0,
+        maxzoom: 24,
         paint: {
           'circle-radius': 10,
           'circle-color': '#F0451E',
@@ -1021,12 +1023,14 @@
         }
       });
 
-      // Unconquered pins (outlined, easier to tap on mobile)
+      // Unconquered pins - only show when zoomed in (reduce clutter at low zoom)
       mapboxMap.addLayer({
         id: 'pins-unconquered',
         type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], false],
+        minzoom: 13,
+        maxzoom: 24,
         paint: {
           'circle-radius': 6,
           'circle-color': 'rgba(255, 255, 255, 0)',
