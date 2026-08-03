@@ -1043,14 +1043,38 @@
       // Attach event listeners only once to prevent duplicates
       if(!mapEventsAttached) {
         mapboxMap.on('click', (e) => {
-          // Query for pins within 20 pixels of the click point (mobile tap tolerance)
-          const features = mapboxMap.queryRenderedFeatures(
-            { point: e.point },
-            { layers: ['pins-conquered', 'pins-unconquered'], radius: 20 }
-          );
+          // Query for pins - get all rendered features
+          let features = mapboxMap.queryRenderedFeatures({
+            layers: ['pins-conquered', 'pins-unconquered']
+          });
 
-          // Find the closest feature to the click
+          // Filter to only features within 30 pixels of click point
+          const clickPixel = e.point;
+          features = features.filter(feature => {
+            const screenCoords = mapboxMap.project(feature.geometry.coordinates);
+            const distance = Math.sqrt(
+              Math.pow(screenCoords.x - clickPixel.x, 2) +
+              Math.pow(screenCoords.y - clickPixel.y, 2)
+            );
+            return distance < 30;
+          });
+
+          // Sort by distance and take the closest
           if(features.length > 0) {
+            features.sort((a, b) => {
+              const aCoords = mapboxMap.project(a.geometry.coordinates);
+              const bCoords = mapboxMap.project(b.geometry.coordinates);
+              const aDist = Math.sqrt(
+                Math.pow(aCoords.x - clickPixel.x, 2) +
+                Math.pow(aCoords.y - clickPixel.y, 2)
+              );
+              const bDist = Math.sqrt(
+                Math.pow(bCoords.x - clickPixel.x, 2) +
+                Math.pow(bCoords.y - clickPixel.y, 2)
+              );
+              return aDist - bDist;
+            });
+
             const feature = features[0];
             const barId = feature.id;
             const bar = allBars.find(b => b.id === barId);
