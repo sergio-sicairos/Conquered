@@ -1001,42 +1001,54 @@
         }
       }));
 
+      // Map categories to emoji
+      const categoryToEmoji = {
+        'pub': '🍺', 'wine bar': '🍷', 'wine': '🍷', 'cocktail': '🍸', 'cocktail bar': '🍸',
+        'brewery': '🍺', 'lounge': '🛋️', 'dive bar': '🍺', 'bar': '🍺', 'restaurant': '🍽️',
+        'coffee': '☕', 'cafe': '☕', 'whiskey': '🥃', 'spirits': '🥃', 'beer': '🍺',
+        'club': '🎵', 'music': '🎵', 'venue': '🎭'
+      };
+
+      // Add emoji to features based on category
+      features.forEach(feature => {
+        const category = feature.properties.category?.toLowerCase() || 'bar';
+        feature.properties.emoji = categoryToEmoji[category] || '🍺';
+      });
+
       mapboxMap.addSource('pins', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features }
       });
 
-      // Conquered pins - always visible (show user's progress)
+      // Conquered pins - emoji icons, always visible (show user's progress)
       mapboxMap.addLayer({
         id: 'pins-conquered',
-        type: 'circle',
+        type: 'symbol',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], true],
         minzoom: 0,
         maxzoom: 24,
-        paint: {
-          'circle-radius': 10,
-          'circle-color': '#F0451E',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#17140F',
-          'circle-opacity': 1
+        layout: {
+          'text-field': ['get', 'emoji'],
+          'text-size': 28,
+          'text-allow-overlap': true,
+          'text-ignore-placement': false
         }
       });
 
-      // Unconquered pins - only show when zoomed in (reduce clutter at low zoom)
+      // Unconquered pins - emoji icons, only show when zoomed in (reduce clutter at low zoom)
       mapboxMap.addLayer({
         id: 'pins-unconquered',
-        type: 'circle',
+        type: 'symbol',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], false],
         minzoom: 13,
         maxzoom: 24,
-        paint: {
-          'circle-radius': 6,
-          'circle-color': 'rgba(255, 255, 255, 0)',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#F0451E',
-          'circle-opacity': 1
+        layout: {
+          'text-field': ['get', 'emoji'],
+          'text-size': 24,
+          'text-allow-overlap': true,
+          'text-ignore-placement': false
         }
       });
 
