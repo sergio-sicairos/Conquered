@@ -1076,11 +1076,19 @@
       // Attach event listeners only once to prevent duplicates
       if(!mapEventsAttached) {
         mapboxMap.on('click', (e) => {
-          // Query rendered features with a large radius for easier mobile tapping
-          const features = mapboxMap.queryRenderedFeatures({
-            layers: ['clusters', 'pins-conquered', 'pins-unconquered'],
+          // Try to find clusters first with a larger tap radius for mobile
+          let features = mapboxMap.queryRenderedFeatures({
+            layers: ['clusters'],
             point: e.point
           });
+
+          // If no clusters found, try individual pins
+          if(features.length === 0) {
+            features = mapboxMap.queryRenderedFeatures({
+              layers: ['pins-conquered', 'pins-unconquered'],
+              point: e.point
+            });
+          }
 
           if(features.length > 0) {
             const feature = features[0];
@@ -1088,15 +1096,20 @@
             // If it's a cluster, zoom in to it
             if(feature.layer.id === 'clusters') {
               const clusterId = feature.properties.cluster_id;
-              mapboxMap.getSource('pins').getClusterExpansionZoom(clusterId, (err, zoom) => {
-                if(err) return;
-                mapboxMap.flyTo({
-                  center: feature.geometry.coordinates,
-                  zoom: zoom,
-                  duration: 500
+              if(clusterId !== undefined && clusterId !== null) {
+                mapboxMap.getSource('pins').getClusterExpansionZoom(clusterId, (err, zoom) => {
+                  if(err) {
+                    console.error('Error getting cluster zoom:', err);
+                    return;
+                  }
+                  mapboxMap.flyTo({
+                    center: feature.geometry.coordinates,
+                    zoom: zoom,
+                    duration: 500
+                  });
                 });
-              });
-            } else {
+              }
+            } else if(feature.layer.id === 'pins-conquered' || feature.layer.id === 'pins-unconquered') {
               // If it's a pin, open the bar detail
               const barId = feature.id;
               const bar = allBars.find(b => b.id === barId);
@@ -1105,9 +1118,9 @@
           }
         });
 
-        // Change cursor on hover over pins or clusters
+        // Change cursor on hover - check both clusters and pins
         mapboxMap.on('mousemove', (e) => {
-          const features = mapboxMap.queryRenderedFeatures({
+          let features = mapboxMap.queryRenderedFeatures({
             layers: ['clusters', 'pins-conquered', 'pins-unconquered'],
             point: e.point
           });
