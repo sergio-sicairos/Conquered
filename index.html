@@ -1041,13 +1041,14 @@
         }
       });
 
-      // Conquered pins (larger, solid red, prominent, easy to tap) - only show when zoomed in
+      // Conquered pins (larger, solid red, prominent, easy to tap) - show when clusters are disabled
       mapboxMap.addLayer({
         id: 'pins-conquered',
         type: 'circle',
         source: 'pins',
         filter: ['and', ['!', ['has', 'point_count']], ['==', ['get', 'conquered'], true]],
-        minzoom: 15,
+        minzoom: 12,
+        maxzoom: 24,
         paint: {
           'circle-radius': 12,
           'circle-color': '#F0451E',
@@ -1057,13 +1058,14 @@
         }
       });
 
-      // Unconquered pins (outlined, easier to tap on mobile) - only show when zoomed in
+      // Unconquered pins (outlined, easier to tap on mobile) - show when clusters are disabled
       mapboxMap.addLayer({
         id: 'pins-unconquered',
         type: 'circle',
         source: 'pins',
         filter: ['and', ['!', ['has', 'point_count']], ['==', ['get', 'conquered'], false]],
-        minzoom: 15,
+        minzoom: 12,
+        maxzoom: 24,
         paint: {
           'circle-radius': 8,
           'circle-color': 'rgba(255, 255, 255, 0)',
