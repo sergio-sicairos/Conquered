@@ -1134,37 +1134,33 @@
     function setScreen(screen) {
       currentScreen = screen;
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      // Always keep tab bar visible
+      document.getElementById('tabBar').style.display = 'flex';
+      document.getElementById('rankSheetOverlay').style.display = 'none';
+      document.getElementById('rankSheet').style.display = 'none';
+
       if(screen === 'map') {
         document.getElementById('mapScreen').classList.add('active');
-        document.getElementById('tabBar').style.display = 'flex';
-        document.getElementById('rankSheetOverlay').style.display = 'none';
-        document.getElementById('rankSheet').style.display = 'none';
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab')[0].classList.add('active'); // MAP tab
       } else if(screen === 'bar') {
         document.getElementById('barDetailScreen').classList.add('active');
-        document.getElementById('tabBar').style.display = 'none';
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       } else if(screen === 'rank') {
         document.getElementById('rankSheetOverlay').style.display = 'block';
         document.getElementById('rankSheet').style.display = 'flex';
       } else if(screen === 'saved') {
         document.getElementById('savedConfirmScreen').classList.add('active');
-        document.getElementById('tabBar').style.display = 'none';
-        document.getElementById('rankSheetOverlay').style.display = 'none';
-        document.getElementById('rankSheet').style.display = 'none';
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       } else if(screen === 'passport') {
         document.getElementById('passportScreen').classList.add('active');
-        document.getElementById('tabBar').style.display = 'flex';
-        document.getElementById('rankSheetOverlay').style.display = 'none';
-        document.getElementById('rankSheet').style.display = 'none';
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab')[4].classList.add('active'); // YOU tab
       } else if(screen === 'friend') {
         document.getElementById('friendProfileScreen').classList.add('active');
-        document.getElementById('tabBar').style.display = 'none';
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       } else if(screen === 'ranks') {
         document.getElementById('ranksScreen').classList.add('active');
-        document.getElementById('tabBar').style.display = 'flex';
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab')[3].classList.add('active'); // RANKS tab
       }
