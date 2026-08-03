@@ -1001,54 +1001,42 @@
         }
       }));
 
-      // Map categories to emoji
-      const categoryToEmoji = {
-        'pub': '🍺', 'wine bar': '🍷', 'wine': '🍷', 'cocktail': '🍸', 'cocktail bar': '🍸',
-        'brewery': '🍺', 'lounge': '🛋️', 'dive bar': '🍺', 'bar': '🍺', 'restaurant': '🍽️',
-        'coffee': '☕', 'cafe': '☕', 'whiskey': '🥃', 'spirits': '🥃', 'beer': '🍺',
-        'club': '🎵', 'music': '🎵', 'venue': '🎭'
-      };
-
-      // Add emoji to features based on category
-      features.forEach(feature => {
-        const category = feature.properties.category?.toLowerCase() || 'bar';
-        feature.properties.emoji = categoryToEmoji[category] || '🍺';
-      });
-
       mapboxMap.addSource('pins', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features }
       });
 
-      // Conquered pins - emoji icons, always visible (show user's progress)
+      // Conquered pins - always visible (show user's progress)
       mapboxMap.addLayer({
         id: 'pins-conquered',
-        type: 'symbol',
+        type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], true],
         minzoom: 0,
         maxzoom: 24,
-        layout: {
-          'text-field': ['get', 'emoji'],
-          'text-size': 28,
-          'text-allow-overlap': true,
-          'text-ignore-placement': false
+        paint: {
+          'circle-radius': 10,
+          'circle-color': '#F0451E',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#17140F',
+          'circle-opacity': 1
         }
       });
 
-      // Unconquered pins - emoji icons, only show when zoomed in (reduce clutter at low zoom)
+      // Unconquered pins - only show when zoomed in (reduce clutter at low zoom)
       mapboxMap.addLayer({
         id: 'pins-unconquered',
-        type: 'symbol',
+        type: 'circle',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], false],
         minzoom: 13,
         maxzoom: 24,
-        layout: {
-          'text-field': ['get', 'emoji'],
-          'text-size': 24,
-          'text-allow-overlap': true,
-          'text-ignore-placement': false
+        paint: {
+          'circle-radius': 6,
+          'circle-color': 'rgba(255, 255, 255, 0)',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#F0451E',
+          'circle-opacity': 1
         }
       });
 
