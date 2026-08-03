@@ -1049,12 +1049,17 @@
             point: e.point
           });
 
+          console.log('Click detected, features found:', features.length);
+
           // Find the closest feature to the click
           if(features.length > 0) {
             const feature = features[0];
+            console.log('Clicked feature ID:', feature.id, 'Layer:', feature.layer.id);
             const barId = feature.id;
             const bar = allBars.find(b => b.id === barId);
+            console.log('Bar found:', bar?.name, 'Bar ID from click:', barId);
             if(bar) {
+              console.log('Opening bar:', bar.name);
               openBar(bar);
             }
           }
