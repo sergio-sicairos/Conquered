@@ -2054,7 +2054,8 @@
           tab.classList.add('active');
         } else if(tabName === 'lists') {
           renderPassport();
-          document.getElementById('passportScreen').classList.remove('active');
+          currentScreen = 'lists';
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('listsScreen').classList.add('active');
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
