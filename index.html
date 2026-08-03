@@ -858,25 +858,45 @@
       const barsContainer = document.getElementById('barsContainer');
       barsContainer.innerHTML = '';
 
+      const MAX_DISTANCE_M = 804.67; // 0.5 miles in meters
+
       // Filter and sort
       let filtered = allBars.filter(bar => {
+        // Distance filter: only show bars within 0.5 miles if user location is available
+        if(userLocation) {
+          const dist = getDistance(userLocation.lat, userLocation.lng, bar.lat, bar.lon);
+          if(dist > MAX_DISTANCE_M) return false;
+        }
+
+        // Search filter
         const name = bar.name.toLowerCase();
         const hood = bar.neighborhood.toLowerCase();
         return name.includes(query) || hood.includes(query);
       });
 
-      // Sort: unconquered first, then by name
+      // Sort: unconquered first, then by name, then by distance
       filtered.sort((a, b) => {
         const aVisited = !!checkins[a.id];
         const bVisited = !!checkins[b.id];
-        if(aVisited === bVisited) {
-          return a.name.localeCompare(b.name);
+
+        // Sort by visited status first
+        if(aVisited !== bVisited) {
+          return aVisited ? 1 : -1;
         }
-        return aVisited ? 1 : -1;
+
+        // Then by distance if user location is available
+        if(userLocation) {
+          const aDist = getDistance(userLocation.lat, userLocation.lng, a.lat, a.lon);
+          const bDist = getDistance(userLocation.lat, userLocation.lng, b.lat, b.lon);
+          if(aDist !== bDist) return aDist - bDist;
+        }
+
+        // Finally by name
+        return a.name.localeCompare(b.name);
       });
 
       if(filtered.length === 0) {
-        barsContainer.innerHTML = '<div class="empty-state">NO BARS MATCH THAT.</div>';
+        barsContainer.innerHTML = '<div class="empty-state">NO NEARBY BARS WITHIN 0.5 MILES.</div>';
         return;
       }
 
