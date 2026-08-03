@@ -1043,16 +1043,22 @@
       // Attach event listeners only once to prevent duplicates
       if(!mapEventsAttached) {
         mapboxMap.on('click', (e) => {
+          console.log('Map clicked at:', e.point);
+
           // Query for pins with a tap radius for mobile
           const features = mapboxMap.queryRenderedFeatures({
             layers: ['pins-conquered', 'pins-unconquered'],
             point: e.point
           });
 
+          console.log('Features found:', features.length, features);
+
           if(features.length > 0) {
             const feature = features[0];
+            console.log('Tapped bar ID:', feature.id);
             const barId = feature.id;
             const bar = allBars.find(b => b.id === barId);
+            console.log('Found bar:', bar);
             if(bar) openBar(bar);
           }
         });
