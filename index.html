@@ -27,8 +27,8 @@
     .tab.active { background: #F0451E; color: #F1EBDB; }
 
     /* Screen visibility */
-    .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 60px; display: none; flex-direction: column; overflow-y: auto; overflow-x: hidden; background: #F1EBDB; }
-    .screen.active { display: flex; }
+    .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 60px; display: none !important; flex-direction: column; overflow-y: auto; overflow-x: hidden; background: #F1EBDB; z-index: 1; }
+    .screen.active { display: flex !important; z-index: 10; }
     #savedConfirmScreen { background: #F0451E; }
 
     /* Header */
