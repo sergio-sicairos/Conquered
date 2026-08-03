@@ -1043,23 +1043,18 @@
       // Attach event listeners only once to prevent duplicates
       if(!mapEventsAttached) {
         mapboxMap.on('click', (e) => {
-          // Query for pins within a radius (for mobile tap tolerance)
-          const features = mapboxMap.queryRenderedFeatures({
-            layers: ['pins-conquered', 'pins-unconquered'],
-            point: e.point
-          });
-
-          console.log('Click detected, features found:', features.length);
+          // Query for pins within 20 pixels of the click point (mobile tap tolerance)
+          const features = mapboxMap.queryRenderedFeatures(
+            { point: e.point },
+            { layers: ['pins-conquered', 'pins-unconquered'], radius: 20 }
+          );
 
           // Find the closest feature to the click
           if(features.length > 0) {
             const feature = features[0];
-            console.log('Clicked feature ID:', feature.id, 'Layer:', feature.layer.id);
             const barId = feature.id;
             const bar = allBars.find(b => b.id === barId);
-            console.log('Bar found:', bar?.name, 'Bar ID from click:', barId);
             if(bar) {
-              console.log('Opening bar:', bar.name);
               openBar(bar);
             }
           }
