@@ -1137,45 +1137,52 @@
     }
 
     function openBar(bar) {
-      selectedBar = bar;
-      const checkin = checkins[bar.id];
-      const isVisited = !!checkin;
+      try {
+        console.log('openBar called with:', bar.name);
+        selectedBar = bar;
+        const checkin = checkins[bar.id];
+        const isVisited = !!checkin;
 
-      // Render bar detail screen
-      document.getElementById('barDetailName').textContent = bar.name;
-      document.getElementById('barDetailPhotoCaption').textContent = 'PHOTO — ' + bar.name;
+        // Render bar detail screen
+        document.getElementById('barDetailName').textContent = bar.name;
+        document.getElementById('barDetailPhotoCaption').textContent = 'PHOTO — ' + bar.name;
 
-      const dist = userLocation ? getDistance(userLocation.lat, userLocation.lng, bar.lat, bar.lon) : 0;
-      const distStr = dist < 0.1 ? '< 0.1 MI' : (dist / 1609).toFixed(1) + ' MI';
-      document.getElementById('barDetailAddress').textContent = `▲ ${bar.name} · ${distStr}`;
+        const dist = userLocation ? getDistance(userLocation.lat, userLocation.lng, bar.lat, bar.lon) : 0;
+        const distStr = dist < 0.1 ? '< 0.1 MI' : (dist / 1609).toFixed(1) + ' MI';
+        document.getElementById('barDetailAddress').textContent = `▲ ${bar.name} · ${distStr}`;
 
-      const stamp = document.getElementById('barDetailStamp');
-      if(isVisited) {
-        stamp.textContent = 'CONQUERED';
-        stamp.classList.add('conquered');
-      } else {
-        stamp.textContent = 'UNCONQUERED';
-        stamp.classList.remove('conquered');
+        const stamp = document.getElementById('barDetailStamp');
+        if(isVisited) {
+          stamp.textContent = 'CONQUERED';
+          stamp.classList.add('conquered');
+        } else {
+          stamp.textContent = 'UNCONQUERED';
+          stamp.classList.remove('conquered');
+        }
+
+        // Tags (placeholder)
+        document.getElementById('barDetailTags').innerHTML = '<div class="bar-detail-tag">Bar</div><div class="bar-detail-tag">' + bar.neighborhood + '</div>';
+
+        // Show rating card only if visited
+        const ratingCard = document.getElementById('barDetailRatingCard');
+        if(isVisited) {
+          ratingCard.style.display = 'flex';
+          const stars = '★'.repeat(checkin.stars);
+          document.getElementById('barDetailRatingStars').textContent = stars;
+        } else {
+          ratingCard.style.display = 'none';
+        }
+
+        // Update button label
+        const btn = document.getElementById('barDetailCheckinBtn');
+        btn.textContent = isVisited ? '◎ CHANGE MY RATING' : '◎ CHECK IN';
+
+        console.log('About to call setScreen(bar)');
+        setScreen('bar');
+        console.log('setScreen called successfully');
+      } catch(err) {
+        console.error('Error in openBar:', err);
       }
-
-      // Tags (placeholder)
-      document.getElementById('barDetailTags').innerHTML = '<div class="bar-detail-tag">Bar</div><div class="bar-detail-tag">' + bar.neighborhood + '</div>';
-
-      // Show rating card only if visited
-      const ratingCard = document.getElementById('barDetailRatingCard');
-      if(isVisited) {
-        ratingCard.style.display = 'flex';
-        const stars = '★'.repeat(checkin.stars);
-        document.getElementById('barDetailRatingStars').textContent = stars;
-      } else {
-        ratingCard.style.display = 'none';
-      }
-
-      // Update button label
-      const btn = document.getElementById('barDetailCheckinBtn');
-      btn.textContent = isVisited ? '◎ CHANGE MY RATING' : '◎ CHECK IN';
-
-      setScreen('bar');
     }
 
     function goToMap() {
