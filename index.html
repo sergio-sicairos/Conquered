@@ -1171,6 +1171,16 @@
         document.getElementById('barDetailName').textContent = bar.name;
         document.getElementById('barDetailPhotoCaption').textContent = 'PHOTO — ' + bar.name;
 
+        // Display bar image if available
+        const barPhotoDiv = document.querySelector('.bar-detail-photo');
+        if(bar.imageUrl) {
+          barPhotoDiv.style.backgroundImage = `url('${bar.imageUrl}')`;
+          barPhotoDiv.style.backgroundSize = 'cover';
+          barPhotoDiv.style.backgroundPosition = 'center';
+        } else {
+          barPhotoDiv.style.backgroundImage = 'none';
+        }
+
         const dist = userLocation ? getDistance(userLocation.lat, userLocation.lng, bar.lat, bar.lon) : 0;
         const distStr = dist < 0.1 ? '< 0.1 MI' : (dist / 1609).toFixed(1) + ' MI';
         document.getElementById('barDetailAddress').textContent = `▲ ${bar.name} · ${distStr}`;
