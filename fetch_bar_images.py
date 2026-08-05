@@ -6,7 +6,7 @@ import json
 import requests
 import time
 
-API_KEY = "YOUR_API_KEY_HERE"  # Replace with your new API key
+API_KEY = "AIzaSyC0p7Cf7TRj-9ST8JcDYt0NmozNbR-hmd8"  # Replace with your new API key
 PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
 PHOTO_API_URL = "https://maps.googleapis.com/maps/api/place/photo"
 

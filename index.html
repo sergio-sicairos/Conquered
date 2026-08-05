@@ -1174,11 +1174,9 @@
         // Display bar image if available
         const barPhotoDiv = document.querySelector('.bar-detail-photo');
         if(bar.imageUrl) {
-          barPhotoDiv.style.backgroundImage = `url('${bar.imageUrl}')`;
-          barPhotoDiv.style.backgroundSize = 'cover';
-          barPhotoDiv.style.backgroundPosition = 'center';
+          barPhotoDiv.style.background = `url('${bar.imageUrl}') center/cover no-repeat`;
         } else {
-          barPhotoDiv.style.backgroundImage = 'none';
+          barPhotoDiv.style.background = 'repeating-linear-gradient(45deg, #E1D8C2, #E1D8C2 8px, #EFE7D3 8px, #EFE7D3 16px)';
         }
 
         const dist = userLocation ? getDistance(userLocation.lat, userLocation.lng, bar.lat, bar.lon) : 0;
