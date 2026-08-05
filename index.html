@@ -1228,21 +1228,31 @@
     }
 
     function startCheckin() {
-      if(!selectedBar || !userLocation) {
+      if(!selectedBar) {
+        alert('No bar selected');
+        return;
+      }
+
+      // Check if this is a new check-in or re-rating
+      const existingCheckin = checkins[selectedBar.id];
+      const isNewCheckin = !existingCheckin;
+
+      // Geofence gate: only required for NEW check-ins, not re-ratings
+      if(isNewCheckin && !userLocation) {
         alert('Location required for check-in');
         return;
       }
 
-      // Geofence gate: must be within ~150m of the bar
-      const distM = getDistance(userLocation.lat, userLocation.lng, selectedBar.lat, selectedBar.lon);
-      const GEOFENCE_RADIUS_M = 150;
-      if(distM > GEOFENCE_RADIUS_M) {
-        alert(`Too far away (${Math.round(distM)}m). Get within ${GEOFENCE_RADIUS_M}m of the bar to check in.`);
-        return;
+      if(isNewCheckin && userLocation) {
+        const distM = getDistance(userLocation.lat, userLocation.lng, selectedBar.lat, selectedBar.lon);
+        const GEOFENCE_RADIUS_M = 150;
+        if(distM > GEOFENCE_RADIUS_M) {
+          alert(`Too far away (${Math.round(distM)}m). Get within ${GEOFENCE_RADIUS_M}m of the bar to check in.`);
+          return;
+        }
       }
 
       // Pre-fill rating if re-rating
-      const existingCheckin = checkins[selectedBar.id];
       pendingRating = existingCheckin ? existingCheckin.stars : 0;
       pendingNote = existingCheckin?.note || '';
 
