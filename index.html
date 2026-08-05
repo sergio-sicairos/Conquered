@@ -128,14 +128,14 @@
 
     /* Rank Sheet */
     #rankSheetOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 10; }
-    #rankSheet { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; background: #17140F; color: #F1EBDB; display: none; flex-direction: column; z-index: 11; animation: sheetUp .28s ease-out; }
-    .rank-header { text-align: center; padding: 24px; }
+    #rankSheet { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; background: #17140F; color: #F1EBDB; display: none; flex-direction: column; z-index: 11; animation: sheetUp .28s ease-out; overflow-y: auto; }
+    .rank-header { text-align: center; padding: 24px; flex-shrink: 0; }
     .rank-time { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .22em; color: #F0451E; }
     .rank-name { font-family: 'Anton', sans-serif; font-size: 38px; line-height: .9; margin: 8px 0; }
     .rank-badge { display: inline-block; border: 2px solid #F0451E; color: #F0451E; font-family: 'Anton', sans-serif; font-size: 16px; padding: 4px 12px; transform: rotate(-3deg); margin-top: 8px; }
-    .rank-divider { height: 2px; background: rgba(241, 235, 219, .22); }
-    .rank-title { font-family: 'Anton', sans-serif; font-size: 21px; padding: 16px 24px 0; }
-    .rank-subtitle { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; padding: 0 24px 16px; }
+    .rank-divider { height: 2px; background: rgba(241, 235, 219, .22); flex-shrink: 0; }
+    .rank-title { font-family: 'Anton', sans-serif; font-size: 21px; padding: 16px 24px 0; flex-shrink: 0; }
+    .rank-subtitle { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; padding: 0 24px 16px; flex-shrink: 0; }
     .rank-options { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 0 24px; overflow-y: auto; }
     .rank-option { display: flex; gap: 12px; padding: 13px; border: 2px rgba(241, 235, 219, .4) solid; background: transparent; cursor: pointer; transition: background .15s, border-color .15s; }
     .rank-option:hover { background: rgba(241, 235, 219, .08); }
@@ -149,11 +149,11 @@
     .rank-option-title { font-family: 'Anton', sans-serif; font-size: 18px; color: #F1EBDB; }
     .rank-option-sub { font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175; }
     .rank-option-check { font-family: 'Anton', sans-serif; font-size: 19px; color: transparent; }
-    .rank-note-field { border: 2px dashed rgba(241, 235, 219, .35); padding: 11px; margin: 0 24px 16px; background: transparent; }
+    .rank-note-field { border: 2px dashed rgba(241, 235, 219, .35); padding: 11px; margin: 0 24px 16px; background: transparent; flex-shrink: 0; }
     .rank-note-label { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; display: block; margin-bottom: 8px; }
     .rank-note-input { width: 100%; background: transparent; border: none; outline: none; color: #F1EBDB; font-family: 'Archivo', sans-serif; font-size: 13px; }
     .rank-note-input::placeholder { color: #8A8175; }
-    .rank-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 2px solid rgba(241, 235, 219, .22); }
+    .rank-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 2px solid rgba(241, 235, 219, .22); flex-shrink: 0; }
     .rank-cancel { width: 96px; background: transparent; border: 2px solid rgba(241, 235, 219, .35); color: #8A8175; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; }
     .rank-save { flex: 1; background: rgba(241, 235, 219, .25); color: #8A8175; border: 2px solid rgba(241, 235, 219, .35); font-family: 'Anton', sans-serif; font-size: 19px; cursor: not-allowed; padding: 12px; }
     .rank-save.enabled { background: #F1EBDB; color: #17140F; cursor: pointer; border-color: #F1EBDB; }
