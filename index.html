@@ -128,7 +128,7 @@
 
     /* Rank Sheet */
     #rankSheetOverlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 10; }
-    #rankSheet { position: absolute; top: 0; left: 0; right: 0; bottom: 60px; background: #17140F; color: #F1EBDB; display: none; flex-direction: column; z-index: 11; animation: sheetUp .28s ease-out; overflow-y: auto; }
+    #rankSheet { position: absolute; top: 0; left: 0; right: 0; bottom: 60px; background: #17140F; color: #F1EBDB; display: none; flex-direction: column; z-index: 11; animation: sheetUp .28s ease-out; overflow-y: auto; padding-bottom: 90px; }
     .rank-header { text-align: center; padding: 24px; flex-shrink: 0; }
     .rank-time { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: .22em; color: #F0451E; }
     .rank-name { font-family: 'Anton', sans-serif; font-size: 38px; line-height: .9; margin: 8px 0; }
@@ -153,7 +153,7 @@
     .rank-note-label { font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; display: block; margin-bottom: 8px; }
     .rank-note-input { width: 100%; background: transparent; border: none; outline: none; color: #F1EBDB; font-family: 'Archivo', sans-serif; font-size: 13px; }
     .rank-note-input::placeholder { color: #8A8175; }
-    .rank-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 2px solid rgba(241, 235, 219, .22); flex-shrink: 0; }
+    .rank-footer { position: fixed; bottom: 60px; left: 0; right: 0; display: flex; gap: 12px; padding: 16px 24px; border-top: 2px solid rgba(241, 235, 219, .22); background: #17140F; z-index: 12; }
     .rank-cancel { width: 96px; height: 48px; background: transparent; border: 2px solid rgba(241, 235, 219, .35); color: #8A8175; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer; }
     .rank-save { flex: 1; height: 48px; background: rgba(241, 235, 219, .25); color: #8A8175; border: 2px solid rgba(241, 235, 219, .35); font-family: 'Anton', sans-serif; font-size: 19px; cursor: not-allowed; padding: 12px; display: flex; align-items: center; justify-content: center; }
     .rank-save.enabled { background: #F1EBDB; color: #17140F; cursor: pointer; border-color: #F1EBDB; }
