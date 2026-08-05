@@ -596,6 +596,21 @@
           <button class="list-editor-save" onclick="saveList()">SAVE LIST</button>
         </div>
       </div>
+
+      <!-- List View Modal -->
+      <div id="listViewOverlay" style="position: absolute; inset: 0; background: rgba(0, 0, 0, .4); display: none; z-index: 10;" onclick="closeListView()"></div>
+      <div id="listViewModal" style="position: absolute; bottom: 60px; left: 0; right: 0; top: 0; background: #F1EBDB; color: #17140F; display: none; z-index: 11; flex-direction: column; overflow: hidden;">
+        <div style="padding: 16px 24px; border-bottom: 2px solid #17140F; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button onclick="closeListView()" style="background: none; border: none; font-size: 20px; cursor: pointer; padding: 0;">←</button>
+            <div style="flex: 1;">
+              <div style="font-family: 'Anton', sans-serif; font-size: 28px;" id="listViewTitle">List</div>
+              <div style="font-family: 'Space Mono', monospace; font-size: 10px; color: #8A8175;" id="listViewMeta">0 BARS</div>
+            </div>
+          </div>
+        </div>
+        <div id="listViewContent" style="flex: 1; overflow-y: auto; padding: 12px 24px;"></div>
+      </div>
     </div>
   </div>
 
@@ -1477,9 +1492,29 @@
     }
 
     function openAutoList(list) {
-      // Open a modal or view showing the bars in this list
       const bars = list.barIds.map(id => allBars.find(b => b.id === id)).filter(Boolean);
-      alert(`${list.name}\n\n${bars.map(b => b.name).join('\n')}`);
+
+      document.getElementById('listViewTitle').textContent = list.name;
+      document.getElementById('listViewMeta').textContent = `${bars.length} BAR${bars.length !== 1 ? 'S' : ''} · ★★★`;
+
+      const contentDiv = document.getElementById('listViewContent');
+      contentDiv.innerHTML = bars.map((bar, idx) => `
+        <div style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(23,20,15,.16); cursor: pointer;" onclick="openBar(${bar.id})">
+          <div style="font-family: 'Anton', sans-serif; font-size: 18px; color: #F0451E; width: 30px;">${idx + 1}</div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 14px;">${bar.name}</div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 9px; color: #8A8175; margin-top: 2px;">${bar.neighborhood}</div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('listViewOverlay').style.display = 'block';
+      document.getElementById('listViewModal').style.display = 'flex';
+    }
+
+    function closeListView() {
+      document.getElementById('listViewOverlay').style.display = 'none';
+      document.getElementById('listViewModal').style.display = 'none';
     }
 
     function renderPassport() {
