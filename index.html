@@ -684,7 +684,10 @@
 
         // Other non-blocking loads
         loadAllUsers();
-        initMapbox();
+        // Delay map initialization to ensure DOM is laid out
+        setTimeout(() => {
+          initMapbox();
+        }, 100);
         startGeolocation();
       } else {
         document.getElementById('authScreen').style.display = 'block';
@@ -988,10 +991,10 @@
           updateMapPins();
         });
 
-        // Also resize when the map becomes visible
-        setTimeout(() => {
-          mapboxMap.resize();
-        }, 100);
+        // Resize after style loads and multiple times to ensure proper rendering
+        setTimeout(() => mapboxMap.resize(), 50);
+        setTimeout(() => mapboxMap.resize(), 200);
+        setTimeout(() => mapboxMap.resize(), 500);
       } catch(err) {
         console.error('Error initializing Mapbox:', err);
         document.getElementById('map').innerHTML = '<div style="width:100%;height:100%;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);position:relative;"><div style="position:absolute;inset:0;background-image:radial-gradient(#F0451E 1.6px,transparent 2px);background-size:19px 19px;opacity:.5;"></div></div>';
