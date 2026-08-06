@@ -992,125 +992,47 @@
       }
     }
 
+    let markers = [];
+
+    function getEmojiForCategory(category) {
+      const emojiMap = {
+        'wine': '🍷',
+        'brewery': '🍺',
+        'bar': '🍸',
+        'pub': '🍻',
+        'gastropub': '🍴',
+        'club': '🎵',
+        'sports': '🏈'
+      };
+      return emojiMap[category] || '🍸';
+    }
+
     function updateMapPins() {
       if(!mapboxMap || !mapboxMap.isStyleLoaded()) return;
 
-      // Remove existing layers/sources
-      if(mapboxMap.getSource('pins')) {
-        if(mapboxMap.getLayer('clusters')) mapboxMap.removeLayer('clusters');
-        if(mapboxMap.getLayer('cluster-count')) mapboxMap.removeLayer('cluster-count');
-        if(mapboxMap.getLayer('pins-conquered')) mapboxMap.removeLayer('pins-conquered');
-        if(mapboxMap.getLayer('pins-unconquered')) mapboxMap.removeLayer('pins-unconquered');
-        mapboxMap.removeSource('pins');
-      }
+      // Remove existing markers
+      markers.forEach(marker => marker.remove());
+      markers = [];
 
-      // Create GeoJSON
-      const features = allBars.map(bar => ({
-        id: bar.id,
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [bar.lon, bar.lat] },
-        properties: {
-          name: bar.name,
-          conquered: !!checkins[bar.id],
-          stars: checkins[bar.id]?.stars || 0,
-          category: bar.category
-        }
-      }));
+      // Create custom emoji markers
+      allBars.forEach(bar => {
+        const isConquered = !!checkins[bar.id];
+        const emoji = getEmojiForCategory(bar.category);
 
-      mapboxMap.addSource('pins', {
-        type: 'geojson',
-        data: { type: 'FeatureCollection', features }
+        const el = document.createElement('div');
+        el.style.cursor = 'pointer';
+        el.style.fontSize = isConquered ? '32px' : '24px';
+        el.style.opacity = isConquered ? '1' : '0.6';
+        el.textContent = emoji;
+
+        el.onclick = () => openBar(bar.id);
+
+        const marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([bar.lon, bar.lat])
+          .addTo(mapboxMap);
+
+        markers.push(marker);
       });
-
-      // Conquered pins - always visible (show user's progress)
-      mapboxMap.addLayer({
-        id: 'pins-conquered',
-        type: 'circle',
-        source: 'pins',
-        filter: ['==', ['get', 'conquered'], true],
-        minzoom: 0,
-        maxzoom: 24,
-        paint: {
-          'circle-radius': 10,
-          'circle-color': '#F0451E',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#17140F',
-          'circle-opacity': 1
-        }
-      });
-
-      // Unconquered pins - only show when zoomed in (reduce clutter at low zoom)
-      mapboxMap.addLayer({
-        id: 'pins-unconquered',
-        type: 'circle',
-        source: 'pins',
-        filter: ['==', ['get', 'conquered'], false],
-        minzoom: 13,
-        maxzoom: 24,
-        paint: {
-          'circle-radius': 6,
-          'circle-color': 'rgba(255, 255, 255, 0)',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#F0451E',
-          'circle-opacity': 1
-        }
-      });
-
-      // Attach event listeners only once to prevent duplicates
-      if(!mapEventsAttached) {
-        mapboxMap.on('click', (e) => {
-          // Query for pins - get all rendered features
-          let features = mapboxMap.queryRenderedFeatures({
-            layers: ['pins-conquered', 'pins-unconquered']
-          });
-
-          // Filter to only features within 30 pixels of click point
-          const clickPixel = e.point;
-          features = features.filter(feature => {
-            const screenCoords = mapboxMap.project(feature.geometry.coordinates);
-            const distance = Math.sqrt(
-              Math.pow(screenCoords.x - clickPixel.x, 2) +
-              Math.pow(screenCoords.y - clickPixel.y, 2)
-            );
-            return distance < 30;
-          });
-
-          // Sort by distance and take the closest
-          if(features.length > 0) {
-            features.sort((a, b) => {
-              const aCoords = mapboxMap.project(a.geometry.coordinates);
-              const bCoords = mapboxMap.project(b.geometry.coordinates);
-              const aDist = Math.sqrt(
-                Math.pow(aCoords.x - clickPixel.x, 2) +
-                Math.pow(aCoords.y - clickPixel.y, 2)
-              );
-              const bDist = Math.sqrt(
-                Math.pow(bCoords.x - clickPixel.x, 2) +
-                Math.pow(bCoords.y - clickPixel.y, 2)
-              );
-              return aDist - bDist;
-            });
-
-            const feature = features[0];
-            const barId = feature.id;
-            const bar = allBars.find(b => b.id === barId);
-            if(bar) {
-              openBar(bar);
-            }
-          }
-        });
-
-        // Change cursor on hover
-        mapboxMap.on('mousemove', (e) => {
-          const features = mapboxMap.queryRenderedFeatures({
-            layers: ['pins-conquered', 'pins-unconquered'],
-            point: e.point
-          });
-          mapboxMap.getCanvas().style.cursor = features.length > 0 ? 'pointer' : '';
-        });
-
-        mapEventsAttached = true;
-      }
     }
 
     // ============ GEOLOCATION ============
