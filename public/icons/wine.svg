@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
+  <title id="title">Wine bar map marker</title>
+  <desc id="desc">Round burgundy map marker with a white wine glass icon</desc>
+  <circle cx="32" cy="32" r="29" fill="#9F1239"/>
+  <circle cx="32" cy="32" r="27" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M22 17h20l-2.1 13.2A8 8 0 0 1 32 37a8 8 0 0 1-7.9-6.8L22 17Z" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M24.2 25h15.6l-.8 4.8A7.1 7.1 0 0 1 32 35a7.1 7.1 0 0 1-7-5.2l-.8-4.8Z" fill="#F9A8D4"/>
+  <path d="M32 37v10M25 49h14" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

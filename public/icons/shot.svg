@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
+  <title id="title">Shot bar map marker</title>
+  <desc id="desc">Round violet map marker with a white shot glass icon</desc>
+  <circle cx="32" cy="32" r="29" fill="#6D28D9"/>
+  <circle cx="32" cy="32" r="27" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M21 19h22l-3 28H24l-3-28Z" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M24 30h16l-1.5 14h-13L24 30Z" fill="#C4B5FD"/>
+  <path d="M19 19h26" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+</svg>
