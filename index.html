@@ -984,8 +984,14 @@
 
         mapEventsAttached = false; // Reset flag for new map instance
         mapboxMap.on('load', () => {
+          mapboxMap.resize();
           updateMapPins();
         });
+
+        // Also resize when the map becomes visible
+        setTimeout(() => {
+          mapboxMap.resize();
+        }, 100);
       } catch(err) {
         console.error('Error initializing Mapbox:', err);
         document.getElementById('map').innerHTML = '<div style="width:100%;height:100%;background:repeating-linear-gradient(45deg,#E1D8C2,#E1D8C2 8px,#EFE7D3 8px,#EFE7D3 16px);position:relative;"><div style="position:absolute;inset:0;background-image:radial-gradient(#F0451E 1.6px,transparent 2px);background-size:19px 19px;opacity:.5;"></div></div>';
