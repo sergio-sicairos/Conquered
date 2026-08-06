@@ -991,6 +991,11 @@
           updateMapPins();
         });
 
+        // Update pins when zoom changes
+        mapboxMap.on('zoom', () => {
+          updateMapPins();
+        });
+
         // Resize after style loads and multiple times to ensure proper rendering
         setTimeout(() => mapboxMap.resize(), 50);
         setTimeout(() => mapboxMap.resize(), 200);
@@ -1016,6 +1021,25 @@
       return emojiMap[category] || '🍸';
     }
 
+    function shouldShowBar(bar, zoomLevel) {
+      const isConquered = !!checkins[bar.id];
+      const stars = checkins[bar.id]?.stars || 0;
+
+      if(zoomLevel < 11) {
+        // Very zoomed out: only show 3-star bars
+        return stars === 3;
+      } else if(zoomLevel < 13) {
+        // Zoomed out: show 2-3 star bars
+        return stars >= 2;
+      } else if(zoomLevel < 14) {
+        // Zoomed in: show all conquered bars
+        return isConquered;
+      } else {
+        // Very zoomed in: show all bars
+        return true;
+      }
+    }
+
     function updateMapPins() {
       if(!mapboxMap || !mapboxMap.isStyleLoaded()) return;
 
@@ -1023,8 +1047,12 @@
       markers.forEach(marker => marker.remove());
       markers = [];
 
-      // Create custom emoji markers
+      const zoomLevel = mapboxMap.getZoom();
+
+      // Create custom emoji markers based on zoom level
       allBars.forEach(bar => {
+        if(!shouldShowBar(bar, zoomLevel)) return;
+
         const isConquered = !!checkins[bar.id];
         const emoji = getEmojiForCategory(bar.category);
 
