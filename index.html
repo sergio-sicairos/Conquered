@@ -1012,7 +1012,8 @@
         properties: {
           name: bar.name,
           conquered: !!checkins[bar.id],
-          stars: checkins[bar.id]?.stars || 0
+          stars: checkins[bar.id]?.stars || 0,
+          category: bar.category
         }
       }));
 
@@ -1021,37 +1022,71 @@
         data: { type: 'FeatureCollection', features }
       });
 
+      // Emoji mapping for bar categories
+      const getEmojiForCategory = (category) => {
+        const emojiMap = {
+          'wine': '🍷',
+          'brewery': '🍺',
+          'bar': '🍸',
+          'pub': '🍻',
+          'gastropub': '🍴',
+          'club': '🎵',
+          'sports': '🏈'
+        };
+        return emojiMap[category] || '🍸';
+      };
+
       // Conquered pins - always visible (show user's progress)
       mapboxMap.addLayer({
         id: 'pins-conquered',
-        type: 'circle',
+        type: 'symbol',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], true],
         minzoom: 0,
         maxzoom: 24,
-        paint: {
-          'circle-radius': 10,
-          'circle-color': '#F0451E',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#17140F',
-          'circle-opacity': 1
-        }
+        layout: {
+          'text-field': [
+            'case',
+            ['==', ['get', 'category'], 'wine'], '🍷',
+            ['==', ['get', 'category'], 'brewery'], '🍺',
+            ['==', ['get', 'category'], 'pub'], '🍻',
+            ['==', ['get', 'category'], 'gastropub'], '🍴',
+            ['==', ['get', 'category'], 'club'], '🎵',
+            ['==', ['get', 'category'], 'sports'], '🏈',
+            '🍸'
+          ],
+          'text-size': 28,
+          'text-allow-overlap': true,
+          'text-ignore-placement': true
+        },
+        paint: {}
       });
 
       // Unconquered pins - only show when zoomed in (reduce clutter at low zoom)
       mapboxMap.addLayer({
         id: 'pins-unconquered',
-        type: 'circle',
+        type: 'symbol',
         source: 'pins',
         filter: ['==', ['get', 'conquered'], false],
         minzoom: 13,
         maxzoom: 24,
-        paint: {
-          'circle-radius': 6,
-          'circle-color': 'rgba(255, 255, 255, 0)',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#F0451E',
-          'circle-opacity': 1
+        layout: {
+          'text-field': [
+            'case',
+            ['==', ['get', 'category'], 'wine'], '🍷',
+            ['==', ['get', 'category'], 'brewery'], '🍺',
+            ['==', ['get', 'category'], 'pub'], '🍻',
+            ['==', ['get', 'category'], 'gastropub'], '🍴',
+            ['==', ['get', 'category'], 'club'], '🎵',
+            ['==', ['get', 'category'], 'sports'], '🏈',
+            '🍸'
+          ],
+          'text-size': 20,
+          'text-allow-overlap': true,
+          'text-ignore-placement': true,
+          'text-opacity': 0.6
+        },
+        paint: {}
         }
       });
 
