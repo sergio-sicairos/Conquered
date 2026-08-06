@@ -670,8 +670,6 @@
     auth.onAuthStateChanged(user => {
       currentUser = user;
       if(user) {
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('mapScreen').style.display = 'block';
         document.getElementById('tabBar').style.display = 'flex';
         userDocRef = db.collection('users').doc(user.uid);
 
@@ -679,19 +677,20 @@
         loadUserData().then(() => {
           loadBars().then(() => {
             render(); // Render after all data is loaded
+            // Show map screen after data is ready
+            setScreen('map');
+            // Initialize map after screen is visible
+            setTimeout(() => {
+              initMapbox();
+            }, 50);
           });
         });
 
         // Other non-blocking loads
         loadAllUsers();
-        // Delay map initialization to ensure DOM is laid out
-        setTimeout(() => {
-          initMapbox();
-        }, 100);
         startGeolocation();
       } else {
         document.getElementById('authScreen').style.display = 'block';
-        document.getElementById('mapScreen').style.display = 'none';
         document.getElementById('tabBar').style.display = 'none';
         renderAuthScreen();
       }
