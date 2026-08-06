@@ -309,12 +309,15 @@
     <div id="contentArea">
       <div id="scrollContent">
         <!-- Auth screen -->
-        <div id="authScreen" style="display: none;">
-          <div id="authContainer"></div>
+        <div id="authScreen" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+          <div style="text-align: center; padding: 24px;">
+            <div style="font-family: 'Anton', sans-serif; font-size: 48px; margin-bottom: 24px;">CONQUERED</div>
+            <div id="authContainer"></div>
+          </div>
         </div>
 
         <!-- Bar Detail screen -->
-        <div id="barDetailScreen" class="screen" style="flex-direction: column; background: #F1EBDB;">
+        <div id="barDetailScreen" class="screen" style="flex-direction: column; background: #F1EBDB; display: none;">
           <button class="bar-detail-back" onclick="goToMap()">‹ MAP</button>
           <div class="bar-detail-photo">
             <div class="bar-detail-photo-overlay"></div>
@@ -347,7 +350,7 @@
         </div>
 
         <!-- Map / Conquest Home screen -->
-        <div id="mapScreen" class="screen active">
+        <div id="mapScreen" class="screen" style="display: none;">
           <div class="header-row">
             <div>SAN FRANCISCO</div>
             <div style="color: #8A8175;"><span id="barCount">575</span> BARS ON MAP</div>
